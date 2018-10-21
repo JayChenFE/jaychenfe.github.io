@@ -1,0 +1,396 @@
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+}
+
+.header-inner, .content {
+    margin-top: 20px;
+}
+
+/* 背景设置 */
+[class='container sidebar-position-left '], .main, [class$='page-home'] #footer, [class$='page-post-detail'] #footer, .page-archive {
+    background: rgba(255, 255, 255, .83);
+}
+
+[class='container sidebar-position-left '] .main, [class$='sidebar-position-left'] #footer, .page-archive .main {
+    background: transparent;
+}
+
+.pagination, .post-block, .comments, .container .header-inner, .sidebar-inner {
+    background: rgba(255, 255, 255, .45);
+}
+
+// 归档
+#sidebar {
+    background: rgba(255, 255, 255, 0);
+}
+
+.menu .menu-item a:hover {
+    border-bottom-color: transparent;
+    background: #2222223b;
+}
+
+.menu-item-active a {
+    border-bottom-color: transparent;
+    background: #fbcb3fbd;
+}
+
+.tabs ul.nav-tabs li.tab.active, .tabs .tab-content {
+    background-color: rgba(255, 255, 255, .62) !important;
+}
+
+.gitment-editor-body textarea {
+    background-color: #ffffff9e !important;
+}
+
+.gitment-editor-preview-field {
+    background-color: #ffffff40 !important;
+}
+
+.gitment-comment-header {
+    background-color: transparent !important;
+}
+
+#gitment-container a {
+    border-bottom: none;
+}
+
+/* 侧边栏 */
+.post-toc ol a {
+    border-bottom-color: transparent;
+
+    &:hover {
+        border-bottom-color: #666;
+    }
+}
+
+// active状态下的超链接样式
+.post-toc .nav li[class$='active']>.nav-link {
+    border-bottom-color: transparent;
+
+    &:hover {
+        border-bottom-color: #fc6423;
+    }
+}
+
+// 当前正在访问的超链接样式
+.post-toc .nav li[class$='active-current']>.nav-link {
+    display: block;
+    padding: 5px 7px;
+    border-bottom-color: transparent;
+    border-radius: 3.6px;
+    background: #337ab7;
+    color: white;
+
+    &:hover {
+        background: orange;
+        color: black;
+    }
+}
+
+.site-title {
+    font-weight: bold;
+}
+
+.site-state-item {
+    border-left: 1px solid #b1b1b1;
+}
+
+// 各级目录的显示宽度 - 主要是为了不让边框超出侧边栏
+.post-toc .nav .active-current.nav-level-2 a {
+    width: 303px;
+}
+
+.post-toc .nav .active-current.nav-level-3 a {
+    width: 296px;
+}
+
+.post-toc .nav .active-current.nav-level-4 a {
+    width: 286px;
+}
+
+.post-toc .nav .active-current.nav-level-5 a {
+    width: 276px;
+}
+
+.post-toc .nav .active-current.nav-level-6 a {
+    width: 266px;
+}
+
+.post-toc {
+    width: calc(100% + 17px);
+}
+
+/* 标题 */
+.posts-expand article:only-of-type h1 {
+    font-weight: bold;
+    font-size: 37px;
+}
+
+// 二级标题(正常显示器分辨率)
+// 其实要在左下角和右下角加上一个折角、翻折的效果（一个三角形）
+.post-body h2 {
+    position: relative;
+    margin: 20px -42.3px 15px -48px;
+    padding-left: 1.7%;
+    height: 48px;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    background-color: #eaf1f7;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .12), 0 3px 1px -2px rgba(0, 0, 0, .06), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    font-weight: bold;
+    line-height: 40px;
+}
+
+// 二级标题(移动终端分辨率)
+@media (min-width: 768px) and (max-width: 991px) {
+    .main .post-body h2 {
+        margin: 20px -23px 15px -28px;
+    }
+}
+
+@media (max-width: 767px) {
+    .main .post-body h2 {
+        margin: 20px -15px 15px -18px;
+    }
+}
+
+// 三级标题
+.post-body h3 {
+    padding-bottom: .3em;
+    border-bottom: 1px solid #cfd8dc !important;
+}
+
+/* 文章页面内的各种元素 */
+.post-body .note {
+    border-color: #ddd;
+    background-color: #f9f9f980;
+}
+
+// 文章内的普通超链接
+.post-body a {
+    border-bottom: none;
+    color: #0593d3;
+
+    &:hover {
+        color: #FF4500;
+    }
+}
+
+// 代码块内的超链接
+.post-body a code {
+    border-bottom: none;
+    color: #0593d3;
+
+    &:hover {
+        color: #FF4500;
+    }
+}
+
+// 分页导航（上/下一篇文章的超链接）
+.post-nav-item a {
+    border-bottom: none;
+    color: #0593d3;
+
+    &:hover {
+        color: #FF4500;
+    }
+}
+
+// 阅读全文按钮的超链接
+.post-button .btn {
+    border-bottom: 2px solid #555;
+}
+
+// 无序列表
+.posts-expand .post-body ul li {
+    list-style: disc;
+}
+
+// 有序列表
+.posts-expand .post-body ol {
+    counter-reset: counter;
+}
+
+.posts-expand .post-body ol>li {
+    position: relative;
+    list-style-type: none;
+}
+
+.posts-expand .post-body ol>li:before {
+    position: absolute;
+    top: 5px;
+    left: -27px;
+    padding: 3px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #49b1f5; // #929ca2;
+    color: #fff;
+    content: counter(counter);
+    counter-increment: counter;
+    text-align: center;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1;
+}
+
+// fancybox图片
+.posts-expand .post-body .fancybox img {
+    display: block !important;
+    margin-left: 0;
+    cursor: pointer;
+    cursor: zoom-in;
+    cursor: -webkit-zoom-in;
+}
+
+// 图片底下的描述性文字
+.post-body .image-caption, .post-body .figure .caption {
+    text-align: left;
+}
+
+// label块
+.post-body .label {
+    margin: 0 3px;
+    padding: 3px 4px;
+    border-radius: .25em;
+    font-weight: bold;
+}
+
+.post-body .label.primary {
+    background-color: #ecd6ff;
+}
+
+.post-body .label.info {
+    background-color: #c3e8f9;
+}
+
+.post-body .label.success {
+    background-color: #b2eabb;
+}
+
+.post-body .label.default {
+    background-color: #dcdcdc;
+}
+
+.post-body .label.warning {
+    background-color: #ffe89a;
+}
+
+.post-body .label.danger {
+    background-color: #f9c1ca;
+}
+
+// 代码区
+.highlight .code pre {
+    background-color: transparent;
+}
+
+.highlight {
+    border: 1px solid #ddd;
+    border-radius: 2px;
+}
+
+// 原样输出的代码块
+pre {
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    background: #f9f9f980;
+}
+
+pre code {
+    border: transparent;
+}
+
+pre, .highlight {
+    // background-color: #1d1f21;
+    // color: #c5c8c6;
+    // font-size: 13px;
+}
+
+.highlight .gutter pre {
+    // background-color: #000;
+    // color: #888f96;
+}
+
+// 块引用
+blockquote {
+    border-left-color: #6b8afb;
+    background-color: #f9f9f980;
+}
+
+// 表格奇数行
+.highlight table>tbody>tr {
+    &:nth-of-type(odd) {
+        background-color: transparent;
+    }
+}
+
+// 表格每一行鼠标经过时的颜色
+table>tbody>tr {
+    &:hover {
+        background-color: #FFFFF0;
+    }
+}
+
+// 表格的单元格
+table td, table th {
+    border-right: 1px solid #dcdcdc;
+}
+
+// 侧边栏头部
+.site-meta {
+    background: #337ab7;
+}
+
+// 文章底部的标签
+.posts-expand .post-tags a {
+    padding: 3px 4px;
+    border-bottom: none;
+    border-radius: 3px;
+    background: #e6e6e6;
+    color: #2ca6cb;
+
+    &:hover {
+        background: #2ca6cb;
+        color: white;
+    }
+}
+
+// 分割线
+hr {
+    margin: 0;
+    height: 1px;
+    border: none;
+    background-image: none;
+}
+
+// code代码块
+code {
+    margin: 0 2px;
+    background: #dcdcdc;
+}
+
+// 选项卡被选中的那一项
+.tabs ul.nav-tabs li.tab.active a {
+    font-size: 19px;
+}
+
+// 浏览器滚动条
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #49b1f5;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.page-archive #footer {
+    position: inherit;
+    padding-bottom: 1.9%;
+    height: 1px;
+}
