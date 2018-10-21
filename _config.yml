@@ -99,9 +99,11 @@ search:
   format: html
   limit: 10000
 
-# # RSS订阅
-# feed:
-#   type: atom
-#   path: atom.xml
-#   limit: 20
-#   hub: 
+# RSS订阅
+plugin:
+  hexo-generator-feed
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub: 
