@@ -7,9 +7,13 @@ tags:
 - hexo
 ---
 
+[TOC]
+
+
+
 本文介绍如何使用`Hexo`搭建个人博客并托管到`GithubPages`的过程,使用`Next(6.x版本)的Gemini`主题,持续集成工具为`travis ci`
 
-需要提前安装好git和node.js,并熟悉github的基本操作
+需要提前安装好git和node.js,并熟悉github的基本操作,访问部分工具需要科学上网
 
 为方便说明 **假设你的github名为jay,实际操作时请`替换`成自己的用户名**
 
@@ -27,7 +31,9 @@ git checkout -b blog
 
 这里把仓库clone到了本地,新建并切换到了blog分支
 
-下面的操作都将在blog分支根目录进行(以下简称为根目录),blog分支用于保存源文件,master分支用于发布.**不要操作master分支**
+下面的操作都将在blog分支根目录进行(以下简称为根目录),blog分支用于保存源文件,master分支用于发布.**不要手动操作master分支**
+
+> 也可以使用两个repo,分别作为源码版本管理的repo和发布的repo,不过一个已经够用了
 
 # 安装Hexo
 
@@ -827,4 +833,87 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
 
 # 发布
 
+1. 安装 [hexo-deployer-git](https://github.com/hexojs/hexo-deployer-git)。
+
+   ```bash
+   $ npm i hexo-deployer-git --save
+   ```
+
+2. 修改站点配置文件,添加内容
+
+   ```yml
+   deploy:
+     type: git
+     repo: git@github.com:jay/jay.github.io.git
+     branch: master
+   ```
+
+   将发布到master分支
+
+3. 使用`hexo generate --deploy`发布,可以简写成`hexo g -d`
+
+至此,我们完成了博客的搭建,但是每次有新的文章都要发布,我们可以使用持续集自动化这个过程
+
 # 持续集成
+
+使用`Travis CI`进行持续集成
+
+1. 生成github token
+
+   在github点击头像 - setting - Developer settings- Personal access tokens  
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181020203431.png)
+   点击底部的生成,token只会出现一次,保存生成的token备用
+
+2. 使用Github账号登录[Travis CI官网](https://travis-ci.org/)
+
+3. `https://travis-ci.org/account/repositories`下选择博客所在的仓库
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181020204823.png)
+
+4. 进入项目，在`More options`中点击setting
+
+   添加步骤1中生成的token,key值为`GH_TOKEN`
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181020212821.png)
+
+5. 在根目录下新建`.travis.yml`文件,添加内容:
+
+   ```yml
+   language: node_js
+   node_js: stable
+   
+   # S: Build Lifecycle
+   install:
+     - npm install
+   
+   
+   #before_script:
+    # - npm install -g gulp
+   
+   script:
+     - hexo g
+   
+   after_script:
+     - cd ./public
+     - git init
+     - git config user.name "这里填你的github用户名,这里假定为jay"
+     - git config user.email "这里填你的github邮箱"
+     - git add . -f
+     - git commit -m "Update docs"
+     - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master
+   
+   branches:
+     only:
+       - blog
+   env:
+    global:
+      - GH_REF: github.com/jay/jay.github.io.git
+   
+   ```
+
+   注意`GH_REF`填写**实际的项目地址,是https://后面的内容,不是ssh的地址**
+
+现在我们对blog分支推送的任何更新都会由`Travis CI`将构建后的内容推送到master分支,可以在`Travis CI`查看构建的过程
+
+可以删除原来手动发布所需的相关依赖和配置,当然保留也没关系
+
+# 参考
+
