@@ -580,7 +580,7 @@ $content-desktop-largest = 75%;
 
 # 增加其他功能
 
-### 增加标签和分类
+## 增加标签和分类
 
 1. 根目录下输入命令,会在根目录的source文件夹下生成categories文件夹和tags文件夹
 
@@ -752,14 +752,13 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
    # Support for LiveRe comments system.
    # You can get your uid from https://livere.com/insight/myCode (General web site)
    #livere_uid: your uid
-   
-     enable: true
-     githubID: jay    
-     repo: 你的github上任意一个公开的repo
-     ClientID: 步骤1中的ClientID
-     ClientSecret: 步骤1中的ClientSecret
-     adminUser: jay
-     distractionFreeMode: true
+   enable: true
+   githubID: jay    
+   repo: 你的github上任意一个公开的repo
+   ClientID: 步骤1中的ClientID
+   ClientSecret: 步骤1中的ClientSecret
+   adminUser: jay
+   distractionFreeMode: true
    ```
 
    实际的评论会生成为repo中的issue
@@ -808,7 +807,6 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
      //<div id="gitalk-container"></div>
      {% endif %}
    {% endif %}
-   
    ```
 
 7. 新建`themes\next\source\css\_common\components\third-party\gitalk.styl`
@@ -817,7 +815,6 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
    .gt-header a, .gt-comments a, .gt-popup a {
        border-bottom: none;
    }
-   
    .gt-container .gt-popup .gt-action.is--active:before {
        top: 0.7em;
    }
@@ -836,7 +833,7 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
 1. 安装 [hexo-deployer-git](https://github.com/hexojs/hexo-deployer-git)。
 
    ```bash
-   $ npm i hexo-deployer-git --save
+   npm i hexo-deployer-git --save
    ```
 
 2. 修改站点配置文件,添加内容
@@ -879,18 +876,13 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
    ```yml
    language: node_js
    node_js: stable
-   
    # S: Build Lifecycle
    install:
      - npm install
-   
-   
    #before_script:
     # - npm install -g gulp
-   
    script:
      - hexo g
-   
    after_script:
      - cd ./public
      - git init
@@ -899,14 +891,12 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
      - git add . -f
      - git commit -m "Update docs"
      - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master
-   
    branches:
      only:
        - blog
    env:
     global:
       - GH_REF: github.com/jay/jay.github.io.git
-   
    ```
 
    注意`GH_REF`填写**实际的项目地址,是https://后面的内容,不是ssh的地址**
@@ -915,5 +905,6 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
 
 可以删除原来手动发布所需的相关依赖和配置,当然保留也没关系
 
-# 参考6
+# 参考7
 
+参考
