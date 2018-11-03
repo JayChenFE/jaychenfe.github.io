@@ -84,7 +84,7 @@ top:
 
 
 
-![image.png](https://video.jirengu.com/xdml/image/11621da1-d0da-451b-aad4-07530e96963c/2018-9-7-23-22-10.png)image.png
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125850.png)
 
 
 
@@ -92,17 +92,13 @@ top:
 
 1. 设置环境变量 `M2_HOME` 为maven安装的路径, 例如:
 
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130548.png)
+
+2. 添加`%M2_HOME%\bin`到系统环境变量path中, 例如:
+
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130621.png)
 
 
-![image.png](https://video.jirengu.com/xdml/image/11621da1-d0da-451b-aad4-07530e96963c/2018-9-7-23-29-40.png)image.png
-
-
-
-1. 添加`%M2_HOME%\bin`到系统环境变量path中, 例如:
-
-
-
-![image.png](https://video.jirengu.com/xdml/image/11621da1-d0da-451b-aad4-07530e96963c/2018-9-7-23-30-39.png)image.png
 
 
 
@@ -110,11 +106,7 @@ top:
 
 运行命令: `mvn -version`:
 
-
-
-![image.png](https://video.jirengu.com/xdml/image/11621da1-d0da-451b-aad4-07530e96963c/2018-9-7-23-31-34.png)
-
-
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130739.png)
 
 ## macOS 安装
 
@@ -130,7 +122,7 @@ top:
 
 ## VSCode配置
 
-### 	一.基础环境
+### 一.基础环境
 
 1. 在插件市场中搜索“Java Extension Pack”并安装。 
 
@@ -192,27 +184,23 @@ top:
 
 ### 一. IntelliJ IDEA安装
 
-在Intellij官方网站下载Community版
+1. 在Intellij官方网站下载Community版
 
-- Windows 下载地址: <https://www.jetbrains.com/idea/download/#section=windows>
-- Mac 下载地址: <https://www.jetbrains.com/idea/download/#section=mac>
-- Linux 下载地址: <https://www.jetbrains.com/idea/download/#section=linux>
+   - Windows 下载地址: <https://www.jetbrains.com/idea/download/#section=windows>
 
-直接双击安装包，开始安装
+   - Mac 下载地址: <https://www.jetbrains.com/idea/download/#section=mac>
 
-1. 选择安装JRE
+   - Linux 下载地址: <https://www.jetbrains.com/idea/download/#section=linux>
 
+     直接双击安装包，开始安装
 
+2. 选择安装JRE
 
-![图片](https://video.jirengu.com/FnOcFeS_xnuns2FXpSWwE6TxmI3E)图片
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124005.png)
 
+3. 选择导入配置信息或者不导入配置信息
 
-
-1. 选择导入配置信息或者不导入配置信息
-
-
-
-![图片](https://video.jirengu.com/Fh6y9o82Aa7SxvbQxoDSSqXXznHf)图片
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124257.png)
 
 
 
@@ -222,25 +210,15 @@ top:
 
 1. 选择喜欢的UI配色
 
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124542.png)
 
+2. 选择安装推荐插件，这里保持默认就好，或者根据你的需要安装插件
 
-![图片](https://video.jirengu.com/FqJZlN1LDg2ylN01GRTycBQnM542)图片
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124733.png)
 
+3.配置build任务，保持默认就好
 
-
-1. 选择安装推荐插件，这里保持默认就好，或者根据你的需要安装插件
-
-
-
-![图片](https://video.jirengu.com/FncMdxs_TZSW5Z1_az8ENVK5W03x)图片
-
-
-
-1. 配置build任务，保持默认就好
-
-
-
-![图片](https://video.jirengu.com/FnJVuCH2HtnNxIBbXNkG-A38uQxJ)图片
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124924.png)
 
 
 
@@ -248,53 +226,33 @@ top:
 
 1. 在IDEA启动窗口，选择 *Configure* -> *Project Default* -> *Project Structure*, 打开 *Default Project Structure* 窗口
 
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125035.png)
 
+2. 在 *Project SDK* 标签下，选择一个 Java SDK或者点击 *New* -> *+ JDK* 选择新的Java SDK
 
-![图片](https://video.jirengu.com/FiXfBLnFy34c7yIH88OZ3dfq04ZU)图片
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125150.png)
 
-
-
-1. 在 *Project SDK* 标签下，选择一个 Java SDK或者点击 *New* -> *+ JDK* 选择新的Java SDK
-
-
-
-![图片](https://video.jirengu.com/Fnb0dlwgcxlBahtx7IJa3MO1wRQa)图片
-
-
-
-1. 点击右下角 *确认*
+3. 点击右下角 *确认*
 
 ### 四. 创建第一个Java项目
 
 1. 点击Java启动窗口的 *Create New Project*
 
-
-
-![图片](https://video.jirengu.com/FsvTaR5741SGm6Z_YdvwJyethcxK)图片
-
-
-
-1. 左边标签栏选择 *Java*, 在Project设置窗口中还可以选择 *Project SDK*，不需要选择其他的库和框架，点击下一步
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125400.png)
 
 
 
-![图片](https://video.jirengu.com/FuD-u9FcqE5ScRTGhgQW0SHjy6PV)图片
+2. 左边标签栏选择 *Java*, 在Project设置窗口中还可以选择 *Project SDK*，不需要选择其他的库和框架，点击下一步
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125559.png)
+
+3. 在 *New Project* 窗口下，选择 *Create Project from template (从模板创建项目)*，然后勾选 *Command Line App (命令行程序)*，点击下一步
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125656.png)
 
 
 
-1. 在 *New Project* 窗口下，选择 *Create Project from template (从模板创建项目)*，然后勾选 *Command Line App (命令行程序)*，点击下一步
-
-
-
-![图片](https://video.jirengu.com/FsPlAXkGCT__7YOI44jNrKtkSeIT)图片
-
-
-
-1. 设置 *Project Name*，选择 *Project location*，此处可以保持默认 *package*，课程中会再介绍 package 概念，然后点击下一步，完成项目创建。
-
-
-
-![图片](https://video.jirengu.com/FqdotC7vXBF_bU7qdtUYeao__CvV)图片
+4. 设置 *Project Name*，选择 *Project location*，此处可以保持默认 *package*，课程中会再介绍 package 概念，然后点击下一步，完成项目创建。![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125738.png)
 
 ### 五. IntelliJ IDEA 插件推荐
 

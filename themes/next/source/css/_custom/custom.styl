@@ -127,6 +127,12 @@ body {
     font-size: 37px;
 }
 
+.posts-expand article:only-of-type h2 {
+    font-weight: bold;
+    font-size: 30px;
+    border-bottom: 1px solid #cfd8dc;
+}
+
 // 一级标题(正常显示器分辨率)
 // 其实要在左下角和右下角加上一个折角、翻折的效果（一个三角形）
 .post-body h1 {
@@ -140,6 +146,10 @@ body {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.06), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
     font-weight: bold;
     line-height: 60px;
+}
+
+.post-body h2 {
+    margin-left: -20px;
 }
 
 // 二级标题(移动终端分辨率)
@@ -158,7 +168,7 @@ body {
 // 三级标题
 .post-body h3 {
     padding-bottom: 0.3em;
-    border-bottom: 1px solid #cfd8dc !important;
+    border: none;
 }
 
 /* 文章页面内的各种元素 */
