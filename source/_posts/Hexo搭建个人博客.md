@@ -648,7 +648,7 @@ tags:
 
 一篇文章只能有**一个分类**,可以有**一个或多个标签**
 
-### 增加站内搜索
+## 增加站内搜索
 
 1. 安装站内搜索插件
 
@@ -827,6 +827,44 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
    ```
 
    评论区的正式效果需要发布后才能查看
+
+## 文章置顶+置顶标签
+
+1. 安装插件
+
+   ```bash
+   $ npm uninstall hexo-generator-index --save
+   $ npm install hexo-generator-index-pin-top --save
+   ```
+
+2. 文章模板`scaffolds\post.md`
+
+   ```markdown
+   ---
+   title: {{ title }}
+   date: {{ date }}
+   categories:
+   tags:
+   top: 
+   ---
+   ```
+
+   在实际的文章中`top:true`就可以置顶
+
+3.  设置置顶标志
+
+    打开：`/blog/themes/next/layout/_macro` 目录下的`post.swig`文件，定位到`<div class="post-meta">`标签下，插入如下代码：
+
+    ```html
+    {% if post.top %}
+                <i class="fa fa-thumb-tack"></i>
+                <font color=7D26CD>置顶</font>
+                <span class="post-meta-divider">|</span>
+     {% endif %}
+    ```
+
+
+
 
 # 发布
 
