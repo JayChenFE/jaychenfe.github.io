@@ -16,7 +16,7 @@ top:
 
 2. 点击安装包进行安装，记住安装路径
 
-   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095231.png)图片
+   ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095231.png)
 
 3. 设置Windows环境变量Java_Home：
 
