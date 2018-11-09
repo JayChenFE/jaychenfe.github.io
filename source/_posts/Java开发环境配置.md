@@ -12,7 +12,10 @@ top:
 
 ## Windows环境
 
-1. 从Java官网下载Windows版本的JDK ( Java SE Development Kit 8u161): <http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html>
+1. 从Java官网下载Windows版本的JDK 
+
+   - [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+   - [JDK11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
 
 2. 点击安装包进行安装，记住安装路径
 
