@@ -17,25 +17,16 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 ### Hello, World.
 
-
-
-> ![Hello, World in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/hello.png)
-
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110200415.png)
 
 
 ### Editing, compiling, and executing.
 
-
-
-> ![Compiling Hello, World in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/developing.png)
-
-
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110200731.png)
 
 ### Built-in data types.
 
-
-
-> ![Built-in types of data](https://introcs.cs.princeton.edu/java/11cheatsheet/images/built-in.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202129.png)
 
 
 
@@ -43,7 +34,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Assignment statements](https://introcs.cs.princeton.edu/java/11cheatsheet/images/assignment.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202203.png)
 
 
 
@@ -51,11 +42,11 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![int data type](https://introcs.cs.princeton.edu/java/11cheatsheet/images/int.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202211.png)
 
 
 
-> ![Integer expressions](https://introcs.cs.princeton.edu/java/11cheatsheet/images/int-expressions.png)
+> !![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202217.png)
 
 
 
@@ -63,11 +54,11 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![double data type](https://introcs.cs.princeton.edu/java/11cheatsheet/images/double.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202339.png)
 
 
 
-> ![double expressions](https://introcs.cs.princeton.edu/java/11cheatsheet/images/double-expressions.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202527.png)
 
 
 
@@ -75,39 +66,31 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![boolean data type](https://introcs.cs.princeton.edu/java/11cheatsheet/images/boolean.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202452.png)
 
-
-
-> ![Boolean operators](https://introcs.cs.princeton.edu/java/11cheatsheet/images/boolean-ops.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202605.png)
 
 
 
 ### Comparison operators.
 
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202625.png)
+
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202630.png)
 
 
-> ![Comparison operators](https://introcs.cs.princeton.edu/java/11cheatsheet/images/comparison-ops.png)
-
-
-
-> ![Comparison examples](https://introcs.cs.princeton.edu/java/11cheatsheet/images/comparison-expressions.png)
 
 
 
 ### Printing.
 
-
-
-> ![System.out.print()](https://introcs.cs.princeton.edu/java/11cheatsheet/images/system.out.print-api.png)
-
-
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110202730.png)
 
 ### Parsing command-line arguments.
 
 
 
-> ![parsing Command-line arguments](https://introcs.cs.princeton.edu/java/11cheatsheet/images/parse-api.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110203636.png)
 
 
 
@@ -115,7 +98,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Math library API](https://introcs.cs.princeton.edu/java/11cheatsheet/images/math-api.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110203708.png)
 
 
 
@@ -127,7 +110,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Expressions that use Java library methods](https://introcs.cs.princeton.edu/java/11cheatsheet/images/library-calls.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110203714.png)
 
 
 
@@ -135,7 +118,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Type conversion](https://introcs.cs.princeton.edu/java/11cheatsheet/images/casts.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110203822.png)
 
 
 
@@ -143,15 +126,13 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![anatomy of an if statement](https://introcs.cs.princeton.edu/java/11cheatsheet/images/if.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110203841.png)
 
 
 
 ### If and if-else statements.
 
-
-
-> ![If-else statements](https://introcs.cs.princeton.edu/java/11cheatsheet/images/if-else.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110203901.png)
 
 
 
@@ -159,7 +140,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Nested if-else statements in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/nested-if-else.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110204646.png)
 
 
 
@@ -167,7 +148,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![While loop](https://introcs.cs.princeton.edu/java/11cheatsheet/images/while.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110204709.png)
 
 
 
@@ -175,7 +156,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![For loop](https://introcs.cs.princeton.edu/java/11cheatsheet/images/for.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110204741.png)
 
 
 
@@ -183,7 +164,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![While and for loops in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/for-while.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110204802.png)
 
 
 
@@ -191,7 +172,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Break statement in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/break.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205018.png)
 
 
 
@@ -199,7 +180,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Do-while loop in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/do-while.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205041.png)
 
 
 
@@ -207,7 +188,7 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![Switch statement in Java](https://introcs.cs.princeton.edu/java/11cheatsheet/images/switch.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205100.png)
 
 
 
@@ -215,25 +196,25 @@ This appendix summarizes the most commonly used Java language features and APIs 
 
 
 
-> ![An array](https://introcs.cs.princeton.edu/java/11cheatsheet/images/array.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205632.png)
 
 Inline array initialization.
 
-> ![Inline initialization of arrays](https://introcs.cs.princeton.edu/java/11cheatsheet/images/array-init.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205637.png)
 
 Typical array-processing code.
 
-> ![Typical array-processing code](https://introcs.cs.princeton.edu/java/11cheatsheet/images/array-examples.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205641.png)
 
 ### Two-dimensional arrays.
 
 
 
-> ![2D array](https://introcs.cs.princeton.edu/java/11cheatsheet/images/array2d.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110205744.png)
 
-Inline initialization.
+### Inline initialization.
 
-> ![2D array inline initialization](https://introcs.cs.princeton.edu/java/11cheatsheet/images/array2d-init.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210112.png)
 
 ### Command line.
 
@@ -247,12 +228,6 @@ Inline initialization.
 
 > ![Redirecting standard output](https://introcs.cs.princeton.edu/java/11cheatsheet/images/redirect-stdout.png)                ![Redirecting standard input](https://introcs.cs.princeton.edu/java/11cheatsheet/images/redirect-stdin.png)
 
-
-
-> ![Piping](https://introcs.cs.princeton.edu/java/11cheatsheet/images/piping.png)
-
-
-
 ### Functions.
 
 
@@ -261,7 +236,7 @@ Inline initialization.
 
 
 
-> ![Example functions](https://introcs.cs.princeton.edu/java/11cheatsheet/images/function-examples.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210452.png)
 
 
 
@@ -269,7 +244,7 @@ Inline initialization.
 
 
 
-> ![Library abstraction](https://introcs.cs.princeton.edu/java/11cheatsheet/images/library.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210530.png)
 
 
 
@@ -277,7 +252,7 @@ Inline initialization.
 
 
 
-> ![Using an object](https://introcs.cs.princeton.edu/java/11cheatsheet/images/object.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210557.png)
 
 
 
@@ -285,7 +260,7 @@ Inline initialization.
 
 
 
-> ![Anatomy of instance variables](https://introcs.cs.princeton.edu/java/11cheatsheet/images/instance-variables.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210721.png)
 
 
 
@@ -293,7 +268,7 @@ Inline initialization.
 
 
 
-> ![Anatomy of a constructor](https://introcs.cs.princeton.edu/java/11cheatsheet/images/constructor.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210756.png)
 
 
 
@@ -301,7 +276,7 @@ Inline initialization.
 
 
 
-> ![Anatomy of an instance method](https://introcs.cs.princeton.edu/java/11cheatsheet/images/instance-method.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110210844.png)
 
 
 
@@ -309,7 +284,7 @@ Inline initialization.
 
 
 
-> ![Anatomy of a class](https://introcs.cs.princeton.edu/java/11cheatsheet/images/class.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110211143.png)
 
 
 
@@ -317,7 +292,7 @@ Inline initialization.
 
 
 
-> ![Object-oriented library abstraction](https://introcs.cs.princeton.edu/java/11cheatsheet/images/library-oop.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110211239.png)
 
 
 
@@ -325,11 +300,11 @@ Inline initialization.
 
 
 
-> ![String library API](https://introcs.cs.princeton.edu/java/11cheatsheet/images/string-api.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110211259.png)
 
+The full [java.lang.String API](http://docs.oracle.com/javase/6/docs/api/java/lang/String.html)
 
-
-> ![String operations](https://introcs.cs.princeton.edu/java/11cheatsheet/images/string-ops.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110211338.png)
 
 
 
@@ -337,15 +312,15 @@ Inline initialization.
 
 
 
-> ![Color library API](https://introcs.cs.princeton.edu/java/11cheatsheet/images/color-api.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110211417.png)
 
 
 
-
+The full [java.awt.Color API](http://docs.oracle.com/javase/6/docs/api/java/awt/Color.html)
 
 ### Iterable.
 
 
 
-> ![Anatomy of an iterable](https://introcs.cs.princeton.edu/java/11cheatsheet/images/iterable-anatomy.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20181110211604.png)
 
