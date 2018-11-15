@@ -1,7 +1,7 @@
 ---
 title: Java基础语法CheatSheet
 date: 2018-11-05 07:13:09
-categories: [Java,ch]
+categories: [Java]
 tags:
 - Java基础
 top:
