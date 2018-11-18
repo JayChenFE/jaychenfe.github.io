@@ -1,7 +1,7 @@
 ---
 title: Java OOP
 date: 2018-11-17 08:16:59
-categories:[Java,Java基础]
+categories: [Java,Java基础]
 tags:
 top:
 ---
