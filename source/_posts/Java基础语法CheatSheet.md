@@ -217,7 +217,7 @@ Typical array-processing code.
 
 ### Command line.
 
-> ![command line](https://introcs.cs.princeton.edu/java/11cheatsheet/images/command.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190301212923.png)
 
 
 
@@ -225,13 +225,14 @@ Typical array-processing code.
 
 
 
-> ![Redirecting standard output](https://introcs.cs.princeton.edu/java/11cheatsheet/images/redirect-stdout.png)                ![Redirecting standard input](https://introcs.cs.princeton.edu/java/11cheatsheet/images/redirect-stdin.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190301213058.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190301213306.png)
 
 ### Functions.
 
 
 
-> ![Anatomy of a function](https://introcs.cs.princeton.edu/java/11cheatsheet/images/function.png)
+> ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190301213409.png)
 
 
 
