@@ -16,6 +16,7 @@ top:
 
    - [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
    - [JDK11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
+   - [JDK12](https://www.oracle.com/technetwork/java/javase/downloads/jdk12-downloads-5295953.html)
 
 2. 点击安装包进行安装，记住安装路径
 
@@ -24,7 +25,7 @@ top:
 3. 设置Windows环境变量Java_Home：
 
    ```
-   C:\Program Files\Java\jdk-1.8.0_161
+   C:\Program Files\Java\jdk-12
    ```
 
 4. 设置Windows环境变量Path，在原有内容之后添加:
@@ -82,8 +83,8 @@ top:
 
 ### 下载和安装
 
-1. 从[Maven官方](http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.zip)下载安装压缩包
-2. 解压文件夹 `apache-maven-3.5.4` 到任意文件夹, 例如我解压到 `http://www-eu.apache.org/dist/maven/maven-3/3.5.4/source/apache-maven-3.5.4-src.zip`
+1. 从[Maven官方](http://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.zip)下载安装压缩包
+2. 解压文件夹 `apache-maven-3.6.0` 到任意文件夹, 例如我解压到 `http://www-eu.apache.org/dist/maven/maven-3/3.5.4/source/apache-maven-3.5.4-src.zip`
 
 
 
