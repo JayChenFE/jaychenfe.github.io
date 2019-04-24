@@ -523,14 +523,9 @@ There are many implications:
 
 A system model enumerates the many assumptions associated with a particular system design.
 
-<dl>
-  <dt>System model</dt>
-  <dd>a set of assumptions about the environment and facilities on which a distributed system is implemented</dd>
-</dl>
-
-#### 系统模型
-
-**分布式系统实施过程中的一系列关于环境与设置的假设**
+>System model 系统模型
+>a set of assumptions about the environment and facilities on which a distributed system is implemented 
+分布式系统实施过程中的一系列关于环境与设置的假设
 
 System models vary in their assumptions about the environment and facilities. These assumptions include:
 
@@ -568,34 +563,54 @@ Nodes serve as hosts for computation and storage. They have:
 
 Nodes execute deterministic algorithms: the local computation, the local state after the computation, and the messages sent are determined uniquely by the message received and local state when the message was received.
 
+节点执行时满足：当消息被接收到时，本地状态与消息决定了本地运算、本地运算后的状态以及消息发送的唯一性
+
 There are many possible failure models which describe the ways in which nodes can fail. In practice, most systems assume a crash-recovery failure model: that is, nodes can only fail by crashing, and can (possibly) recover after crashing at some later point.
+
+有许多故障模型会描述能够容许节点发生什么样类型的失败。实际上，大部分系统都是一个**崩溃恢复失效模型**：节点只能由于崩溃而失败,并且在接下来的时间节点能够被恢复
 
 Another alternative is to assume that nodes can fail by misbehaving in any arbitrary way. This is known as [Byzantine fault tolerance](http://en.wikipedia.org/wiki/Byzantine_fault_tolerance). Byzantine faults are rarely handled in real world commercial systems, because algorithms resilient to arbitrary faults are more expensive to run and more complex to implement. I will not discuss them here.
 
-### Communication links in our system model
+另一种故障模型是**拜占庭容错**：节点可以能以任意方式发生故障，其容错过于复杂昂贵，现实中很少处理。
+
+### Communication links in our system model 系统模型中的通信链路
 
 Communication links connect individual nodes to each other, and allow messages to be sent in either direction. Many books that discuss distributed algorithms assume that there are individual links between each pair of nodes, that the links provide FIFO (first in, first out) order for messages, that they can only deliver messages that were sent, and that sent messages can be lost.
+
+通信链路使得各个分布的节点之间能相互连接，并传输信息。
 
 Some algorithms assume that the network is reliable: that messages are never lost and never delayed indefinitely. This may be a reasonable assumption for some real-world settings, but in general it is preferable to consider the network to be unreliable and subject to message loss and delays.
 
 A network partition occurs when the network fails while the nodes themselves remain operational. When this occurs, messages may be lost or delayed until the network partition is repaired. Partitioned nodes may be accessible by some clients, and so must be treated differently from crashed nodes. The diagram below illustrates a node failure vs. a network partition:
 
-<img src="D:/git_home/download/distsysbook/input/images/system-of-2.png" alt="replication" style="max-height: 100px;">
+当节点仍在操作时，网络发生失败会导致网络分区，信息将会丢失或者发生延迟，直到网络修复。但此时用户仍然能够访问节点。所以网络失败必须要和节点失败区分开来。下同阐明了两种情况：
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190424215207.png)
 
 It is rare to make further assumptions about communication links. We could assume that links only work in one direction, or we could introduce different communication costs (e.g. latency due to physical distance) for different links. However, these are rarely concerns in commercial environments except for long-distance links (WAN latency) and so I will not discuss them here; a more detailed model of costs and topology allows for better optimization at the cost of complexity.
 
-### Timing / ordering assumptions
+### Timing / ordering assumptions 时间/顺序假设
 
 One of the consequences of physical distribution is that each node experiences the world in a unique manner. This is inescapable, because information can only travel at the speed of light. If nodes are at different distances from each other, then any messages sent from one node to the others will arrive at a different time and potentially in a different order at the other nodes.
 
+分布式中，节点之间存在距离，信息传递一定存在通信时间，并且每个节点接收到信息的时刻不一致
+
 Timing assumptions are a convenient shorthand for capturing assumptions about the extent to which we take this reality into account. The two main alternatives are:
 
-<dl>
-  <dt>Synchronous system model</dt>
-  <dd>Processes execute in lock-step; there is a known upper bound on message transmission delay; each process has an accurate clock</dd>
-  <dt>Asynchronous system model</dt>
-  <dd>No timing assumptions - e.g. processes execute at independent rates; there is no bound on message transmission delay; useful clocks do not exist</dd>
-</dl>
+- **Synchronous system model** 
+
+  Processes execute in lock-step; there is a known upper bound on message transmission delay; each process has an accurate clock
+
+- **Asynchronous system model**
+
+  No timing assumptions - e.g. processes execute at independent rates; there is no bound on message transmission delay; useful clocks do not exist
+
+两种关于时间假设选择的模型：
+
+- **同步系统模型**
+  程序锁步执行，消息传播延迟有明确的上限，每一步都有精确的时钟
+- **异步系统模型**
+  没有时间假设，每个进程执行在相互独立的比率下，消息传播没有延迟上限，时钟不存在
 
 The synchronous system model imposes many constraints on time and order. It essentially assumes that the nodes have the same experience: that messages that are sent are always received within a particular maximum transmission delay, and that processes execute in lock-step. This is convenient, because it allows you as the system designer to make assumptions about time and order, while the asynchronous system model doesn't.
 
