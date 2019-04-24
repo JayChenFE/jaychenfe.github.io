@@ -451,7 +451,7 @@ Only one consistency model for replication - strong consistency - allows you to 
 - [Fallacies of Distributed Computing](http://en.wikipedia.org/wiki/Fallacies_of_Distributed_Computing)
 - [Notes on Distributed Systems for Young Bloods](http://www.somethingsimilar.com/2013/01/14/notes-on-distributed-systems-for-young-bloods/) - Hodges, 2013
 
-# 二. Up and down the level of abstraction<br>一系列的抽象来描述系统的特征
+# 二. Up and down the level of abstraction 抽象描述系统的特征
 
 In this chapter, we'll travel up and down the level of abstraction, look at some impossibility results (CAP and FLP), and then travel back down for the sake of performance.
 
@@ -614,13 +614,19 @@ Timing assumptions are a convenient shorthand for capturing assumptions about th
 
 The synchronous system model imposes many constraints on time and order. It essentially assumes that the nodes have the same experience: that messages that are sent are always received within a particular maximum transmission delay, and that processes execute in lock-step. This is convenient, because it allows you as the system designer to make assumptions about time and order, while the asynchronous system model doesn't.
 
+同步系统有许多时间与顺序的限制，默认节点有相同的体验，消息传播延迟在一定的范围内，程序执行严格按照锁步。但在异步系统中，时间的依赖不存在
+
 Asynchronicity is a non-assumption: it just assumes that you can't rely on timing (or a "time sensor").
 
 It is easier to solve problems in the synchronous system model, because assumptions about execution speeds, maximum message transmission delays and clock accuracy all help in solving problems since you can make inferences based on those assumptions and rule out inconvenient failure scenarios by assuming they never occur.
 
 Of course, assuming the synchronous system model is not particularly realistic. Real-world networks are subject to failures and there are no hard bounds on message delay. Real world systems are at best partially synchronous: they may occasionally work correctly and provide some upper bounds, but there will be times where messages are delayed indefinitely and clocks are out of sync. I won't really discuss algorithms for synchronous systems here, but you will probably run into them in many other introductory books because they are analytically easier (but unrealistic).
 
-### The consensus problem
+因此对于同步系统来说，解决问题更容易一些，因为你能通过对于时间和顺序的假设，来推测和排除失败场景发生在哪些地方。
+
+但通常而言，同步系统模型能更好解释和理解，但不现实
+
+### The consensus problem 一致性问题
 
 During the rest of this text, we'll vary the parameters of the system model. Next, we'll look at how varying two system properties:
 
@@ -628,6 +634,13 @@ During the rest of this text, we'll vary the parameters of the system model. Nex
 - synchronous vs. asynchronous timing assumptions
 
 influence the system design choices by discussing two impossibility results (FLP and CAP).
+
+接下来讨论两个系统中的属性差异：
+
+- **失败模型中是否包含网络分区**
+- **同步异步时间假设**
+
+会对系统设计造成什么样的影响，以及会带来的两种结果（FLP与CAP）
 
 Of course, in order to have a discussion, we also need to introduce a problem to solve. The problem I'm going to discuss is the [consensus problem](http://en.wikipedia.org/wiki/Consensus_%28computer_science%29).
 
@@ -640,9 +653,26 @@ Several computers (or nodes) achieve consensus if they all agree on some value. 
 
 The consensus problem is at the core of many commercial distributed systems. After all, we want the reliability and performance of a distributed system without having to deal with the consequences of distribution (e.g. disagreements / divergence between nodes), and solving the consensus problem makes it possible to solve several related, more advanced problems such as atomic broadcast and atomic commit.
 
-### Two impossibility results
+首先解释什么是**一致性问题**：
+
+1.  **一致性（Agreement]）**：每个正确的进程对某个值达成共识
+
+2.  **完整性（Integrity）**：每个正确的进程最多决定一个值，一旦决定了某个值，那么这个值一定被其它进程接受
+
+3. **终止性（Termination）**：所有进程最终达成一致同意某个值
+
+4.  **合法性（Validity）**：如果所有正确的节点进程提出相同的值V，那么所有正确的节点进程达成一致，承认值V
+
+共识问题是许多商业分布式系统的核心，解决共识问题可以解决几个相关的、更高级的问题，如原子广播和原子提交
+
+### Two impossibility results 两个不可能结果
 
 The first impossibility result, known as the FLP impossibility result, is an impossibility result that is particularly relevant to people who design distributed algorithms. The second - the CAP theorem - is a related result that is more relevant to practitioners; people who need to choose between different system designs but who are not directly concerned with the design of algorithms.
+
+- **FLP定理**
+  分布式算法需要关注
+- **CAP定理**
+  实践者需要关注（不关心算法，关心选择什么样的系统设计）
 
 ## The FLP impossibility result
 
@@ -656,6 +686,12 @@ This impossibility result is important because it highlights that assuming the a
 
 This insight is particularly relevant to people who design algorithms, because it imposes a hard constraint on the problems that we know are solvable in the asynchronous system model. The CAP theorem is a related theorem that is more relevant to practitioners: it makes slightly different assumptions (network failures rather than node failures), and has more clear implications for practitioners choosing between system designs.
 
+### FLP
+
+**FLP定理：在异步通信场景，即使只有一个进程失败了，没有任何算法能保证非失败进程能够达到一致性**（在假设网络可靠、节点只会因崩溃而失效的最小化异步模型系统中，仍然不存在一个可以解决一致性问题的确定性算法。FLP只是证明了异步通信的最坏情况，实际上根据FLP定理，异步网络中是无法完全同时保证 safety 和 liveness 的一致性算法，但如果我们 safety 或 liveness 要求，这个算法进入无法表决通过的无限死循环的概率是非常低的。）
+
+因为异步系统中的消息传播具有延迟性，那么如果存在这样一个算法，这个算法会在任何的时间内保持着不确定信，无法保证达成一致性，与假设矛盾。因此通常异步系统模型需要进行折中处理：放弃一定的安全性当消息传播延迟上限不能确定时
+
 ## The CAP theorem
 
 The CAP theorem was initially a conjecture made by computer scientist Eric Brewer. It's a popular and fairly useful way to think about tradeoffs in the guarantees that a system design makes. It even has a [formal proof](http://www.comp.nus.edu.sg/~gilbert/pubs/BrewersConjecture-SigAct.pdf) by [Gilbert](http://www.comp.nus.edu.sg/~gilbert/biblio.html) and [Lynch](http://en.wikipedia.org/wiki/Nancy_Lynch) and no, [Nathan Marz](http://nathanmarz.com/) didn't debunk it, in spite of what [a particular discussion site](http://news.ycombinator.com/) thinks.
@@ -666,9 +702,21 @@ The theorem states that of these three properties:
 - Availability: node failures do not prevent survivors from continuing to operate.
 - Partition tolerance: the system continues to operate despite message loss due to network and/or node failure
 
+### CAP
+
+**CAP定理：一个分布式系统不可能同时满足consistency、availability、partition tolerance这三个基本需求，最多同时满足两个**
+
+-  **consistency一致性**：所有节点同一时刻看到相同数据
+-  **availability可用性**：节点失败不阻止其他正在运行的节点的工作
+-  **partition tolerance分区容错**：即使出现信息丢失或网络、节点失败，系统也能继续运行（通过复制）
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190424221433.png)
+
 only two can be satisfied simultaneously. We can even draw this as a pretty diagram, picking two properties out of three gives us three types of systems that correspond to different intersections:
 
-![CAP theorem](D:/git_home/download/distsysbook/input/images/CAP.png)
+这三种性质进行俩俩组合，得到下面三种情况
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190424221652.png)
 
 Note that the theorem states that the middle piece (having all three properties) is not achievable. Then we get three different system types:
 
@@ -676,18 +724,29 @@ Note that the theorem states that the middle piece (having all three properties)
 - CP (consistency + partition tolerance). Examples include majority quorum protocols in which minority partitions are unavailable such as Paxos.
 - AP (availability + partition tolerance). Examples include protocols using conflict resolution, such as Dynamo.
 
+- **CA：完全严格的仲裁协议**，例如2PC（两阶段提交协议，第一阶段投票，第二阶段事物提交）
+- **CP：不完全（多数）仲裁协议**，例如Paxos、Raft
+- **AP：使用冲突解决的协议**，例如Dynamo、Gossip
+
 The CA and CP system designs both offer the same consistency model: strong consistency. The only difference is that a CA system cannot tolerate any node failures; a CP system can tolerate up to `f` faults given `2f+1` nodes in a non-Byzantine failure model (in other words, it can tolerate the failure of a minority `f` of the nodes as long as majority `f+1` stays up). The reason is simple:
 
 - A CA system does not distinguish between node failures and network failures, and hence must stop accepting writes everywhere to avoid introducing divergence (multiple copies). It cannot tell whether a remote node is down, or whether just the network connection is down: so the only safe thing is to stop accepting writes.
 - A CP system prevents divergence (e.g. maintains single-copy consistency) by forcing asymmetric behavior on the two sides of the partition. It only keeps the majority partition around, and requires the minority partition to become unavailable (e.g. stop accepting writes), which retains a degree of availability (the majority partition) and still ensures single-copy consistency.
 
+CA和CP系统设计遵循的都是强一致性理论。不同的是CA系统不能容忍节点发生故障。CP系统能够容忍2f+1个节点中有f个节点发生失败。原因如下：
+
+- CA系统无法辨别是网络故障还是节点故障，因此一旦发生失败，系统为了避免带来数据分歧，会立马阻止写操作（不能判别，所以安全的办法就是stop）
+- CP系统通过强制性分开两侧分区的不对称行为来阻止发生分歧。仅仅保证主要的分区工作，并且要求最少的分区是不可用的。最终能够使得主要的分区能够运行工作，保证一定程度上的可用性，确保单拷贝一致性
+
 I'll discuss this in more detail in the chapter on replication when I discuss Paxos. The important thing is that CP systems incorporate network partitions into their failure model and distinguish between a majority partition and a minority partition using an algorithm like Paxos, Raft or viewstamped replication. CA systems are not partition-aware, and are historically more common: they often use the two-phase commit algorithm and are common in traditional distributed relational databases.
 
-
+重要的一点是，CP系统中将网络分区考虑到了它的故障模型中，并且用算法识别主要分区和小分区。CA系统不关注分区
 
 Assuming that a partition occurs, the theorem reduces to a binary choice between availability and consistency.
 
-![Based on http://blog.mikiobraun.de/2013/03/misconceptions-about-cap-theorem.html](D:/git_home/download/distsysbook/input/images/CAP_choice.png)
+当我们假设分区一定发生时，那么在可用性和一致性中怎样进行一个选择呢
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190424222016.png)
 
 I think there are four conclusions that should be drawn from the CAP theorem:
 
