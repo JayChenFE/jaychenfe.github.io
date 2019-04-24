@@ -146,7 +146,7 @@ Most things are trivial at a small scale - and the same problem becomes much har
 So everything starts with size - scalability. Informally speaking, in a scalable system as we move from small to large, things should not get incrementally worse. Here's another definition:
 
 
->  	[Scalability](http://en.wikipedia.org/wiki/Scalability)	 is the ability of a system, network, or process, to handle a growing amount of work in a capable manner or its ability 			   to be  enlarged to accommodate that growth.
+>[Scalability](http://en.wikipedia.org/wiki/Scalability) is the ability of a system, network, or process, to handle a growing amount of work in a capable manner or its ability to be  enlarged to accommodate that growth.
 >  扩展性：一个系统、网络或进程适应任务量增长的能力，增长后性能不会受很大的影响
 
 
@@ -172,10 +172,8 @@ A scalable system is one that continues to meet the needs of its users as scale 
 
 ## Performance (and latency) 	性能（和延迟）
 
-> ​	[Performance](http://en.wikipedia.org/wiki/Computer_performance)	is characterized by the amount of useful work accomplished by a computer system compared to the time and 				     resources used.
->
-> ​	性能：任务所花费的时间和资源
-
+> [Performance](http://en.wikipedia.org/wiki/Computer_performance) is characterized by the amount of useful work accomplished by a computer system compared to the time and resources used.
+> 性能：任务所花费的时间和资源
 
 Depending on the context, this may involve achieving one or more of the following:
 
