@@ -196,18 +196,15 @@ I find that low latency - achieving a short response time - is the most interest
 
 There are a lot of really specific definitions for latency, but I really like the idea that the etymology of the word evokes:
 
-<dl>
-  <dt>Latency</dt>
-  <dd>The state of being latent; delay, a period between the initiation of something and the occurrence.</dd>
-</dl>
-**延迟性：事务从发生开始到产生具象的时长**
+>Latency	
+The state of being latent; delay, a period between the initiation of something and the occurrence.
+延迟性：事务从发生开始到产生具象的时长
+
 
 And what does it mean to be "latent"?
 
-<dl>
-  <dt>Latent</dt>
-  <dd>From Latin latens, latentis, present participle of lateo ("lie hidden"). Existing or present but concealed or inactive.</dd>
-</dl>
+>Latent
+From Latin latens, latentis, present participle of lateo ("lie hidden"). Existing or present but concealed or inactive.
 
 This definition is pretty cool, because it highlights how latency is really the time between when something happened and the time it has an impact or becomes visible.
 
@@ -238,11 +235,9 @@ How much that minimum latency impacts your queries depends on the nature of thos
 
 The second aspect of a scalable system is availability.
 
-<dl>
-  <dt>[Availability](http://en.wikipedia.org/wiki/High_availability)</dt>
-  <dd>the proportion of time a system is in a functioning condition. If a user cannot access the system, it is said to be unavailable. </dd>
-</dl>
-**可用性：系统所能处于可用状态的时间比例**
+> [Availability](http://en.wikipedia.org/wiki/High_availability) the proportion of time a system is in a functioning condition. If a user cannot access the system, it is said to be unavailable.
+可用性：系统所能处于可用状态的时间比例
+
 **Availability = uptime /（uptime + downtime）**
 
 Distributed systems allow us to achieve desirable characteristics that would be hard to accomplish on a single system. For example, a single machine cannot tolerate any failures since it either fails or doesn't.
@@ -261,37 +256,14 @@ Availability from a technical perspective is mostly about being fault tolerant. 
 
 For example:
 
-<table>
-<tr>
-  <td>Availability %</td>
-  <td>How much downtime is allowed per year?</td>
-</tr>
-<tr>
-  <td>90% ("one nine")</td>
-  <td>More than a month</td>
-</tr>
-<tr>
-  <td>99% ("two nines")</td>
-  <td>Less than 4 days</td>
-</tr>
-<tr>
-  <td>99.9% ("three nines")</td>
-  <td>Less than 9 hours</td>
-</tr>
-<tr>
-  <td>99.99% ("four nines")</td>
-  <td>Less than an hour</td>
-</tr>
-<tr>
-  <td>99.999% ("five nines")</td>
-  <td>~ 5 minutes</td>
-</tr>
-<tr>
-  <td>99.9999% ("six nines")</td>
-  <td>~ 31 seconds</td>
-</tr>
-</table>
-
+| Availability %|  How much downtime is allowed per year?    |
+| ---- | ---- |
+| 90% (“one nine”) | More than a month |
+| 99% (“two nines”) | Less than 4 days |
+| 99.9% (“three nines”) | Less than 9 hours |
+| 99.99% (“four nines”) | Less than an hour |
+| 99.999% (“five nines”) | ~ 5 minutes |
+| 99.9999% (“six nines”) | ~ 31 seconds |
 
 Availability is in some sense a much wider concept than uptime, since the availability of a service can also be affected by, say, a network outage or the company owning the service going out of business (which would be a factor which is not really relevant to fault tolerance but would still influence the availability of the system). But without knowing every single specific aspect of the system, the best we can do is design for fault tolerance.
 
@@ -476,8 +448,6 @@ The choice of a consistency model is crucial: a good consistency model provides 
 Only one consistency model for replication - strong consistency - allows you to program as-if the underlying data was not replicated. Other consistency models expose some internals of the replication to the programmer. However, weaker consistency models can provide lower latency and higher availability - and are not necessarily harder to understand, just different.
 
 复制来到好处的同时，也带来了很多问题，最大的就是数据一致性问题，只有当模型是 strong consistency 的时候，我们才会得到一个简单的编程模型（和单机系统一致），其他模型我们都好去理解系统内部是怎么做的，这样子才能很好的满足我们的需求。
-
----
 
 ## Further reading
 
