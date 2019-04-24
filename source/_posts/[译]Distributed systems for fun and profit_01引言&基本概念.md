@@ -268,18 +268,14 @@ For example:
 Availability is in some sense a much wider concept than uptime, since the availability of a service can also be affected by, say, a network outage or the company owning the service going out of business (which would be a factor which is not really relevant to fault tolerance but would still influence the availability of the system). But without knowing every single specific aspect of the system, the best we can do is design for fault tolerance.
 
 可用性的概念比正常运行时间概念更广。例如一个系统如果遭遇断电、或者服务发生中断，这个时候与系统的容错性无关，但是这些情况仍然会影响系统的可用性。
-
 但通常而言，**系统的容错性越强，可用性越高。**提高系统的容错性是我们最需要关注的
 
 What does it mean to be fault tolerant?
 
-<dl>
-  <dt>Fault tolerance</dt>
-  <dd>ability of a system to behave in a well-defined manner once faults occur</dd>
-</dl>
+>Fault tolerance
+ability of a system to behave in a well-defined manner once faults occur
 Fault tolerance boils down to this: define what faults you expect and then design a system or an algorithm that is tolerant of them. You can't tolerate faults you haven't considered.
-
-**容错性：系统在错误发生后有明确的处理方式**
+容错性：系统在错误发生后有明确的处理方式
 
 系统定义发生的错误，并定义相应的处理方法。系统的容错性设计是考虑已想到的故障，没有考虑到的故障，系统是没法容错的
 
