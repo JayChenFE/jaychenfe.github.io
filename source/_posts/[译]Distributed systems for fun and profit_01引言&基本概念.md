@@ -43,7 +43,7 @@ I hope you like it! If you want to say thanks, follow me on [Github](https://git
 
 ## 1. Basics 基本概念
 
-[The first chapter](intro.html) covers distributed systems at a high level by introducing a number of important terms and concepts. It covers high level goals, such as scalability, availability, performance, latency and fault tolerance; how those are hard to achieve, and how abstractions and models as well as partitioning and replication come into play.
+[The first chapter](http://book.mixu.net/distsys/single-page.html#intro) covers distributed systems at a high level by introducing a number of important terms and concepts. It covers high level goals, such as scalability, availability, performance, latency and fault tolerance; how those are hard to achieve, and how abstractions and models as well as partitioning and replication come into play.
 
 第一节会介绍分布式系统的一些重要术语和概念。包括可扩展性、实用性、性能、延迟和容错性，及这些实施起来的难度，并引入抽象和模型比如分区和复制的设计规则
 
@@ -51,25 +51,25 @@ I hope you like it! If you want to say thanks, follow me on [Github](https://git
 
 ## 一系列的抽象来描述系统的特征
 
-[The second chapter](abstractions.html) dives deeper into abstractions and impossibility results. It starts with a Nietzsche quote, and then introduces system models and the many assumptions that are made in a typical system model. It then discusses the CAP theorem and summarizes the FLP impossibility result. It then turns to the implications of the CAP theorem, one of which is that one ought to explore other consistency models. A number of consistency models are then discussed.
+[The second chapter](http://book.mixu.net/distsys/single-page.html#abstractions) dives deeper into abstractions and impossibility results. It starts with a Nietzsche quote, and then introduces system models and the many assumptions that are made in a typical system model. It then discusses the CAP theorem and summarizes the FLP impossibility result. It then turns to the implications of the CAP theorem, one of which is that one ought to explore other consistency models. A number of consistency models are then discussed.
 
 第二节会关注抽象和不可能的结果。首先会介绍尼采的引言，然后会从各种典型的系统模型的假设来介绍分布式系统模型，接着会讨论CAP原理以及FLP不可能结果。最后会介绍CAP原理怎样实施。还会讨论许多一致性的模型
 
 ## 3. Time and order 时间和顺序
 
-A big part of understanding distributed systems is about understanding time and order.  To the extent that we fail to understand and model time, our systems will fail. [The third chapter](time.html) discusses time and order, and clocks as well as the various uses of time, order and clocks (such as vector clocks and failure detectors).
+A big part of understanding distributed systems is about understanding time and order.  To the extent that we fail to understand and model time, our systems will fail. [The third chapter](http://book.mixu.net/distsys/single-page.html#time) discusses time and order, and clocks as well as the various uses of time, order and clocks (such as vector clocks and failure detectors).
 
 理解分布式系统的很重要的一点，需要了解时间和顺序。错误理解模型的时间，系统也不能很好的理解。第三节将讨论时间、顺序和时钟及他们的应用
 
 ## 4. Replication: preventing divergence 复制：强一致性
 
-The [fourth chapter](replication.html) introduces the replication problem, and the two basic ways in which it can be performed. It turns out that most of the relevant characteristics can be discussed with just this simple characterization. Then, replication methods for maintaining single-copy consistency are discussed from the least fault tolerant (2PC) to Paxos.
+The [fourth chapter](http://book.mixu.net/distsys/single-page.html#replication) introduces the replication problem, and the two basic ways in which it can be performed. It turns out that most of the relevant characteristics can be discussed with just this simple characterization. Then, replication methods for maintaining single-copy consistency are discussed from the least fault tolerant (2PC) to Paxos.
 
 第四节将讨论分布式系统中的复制问题，以及介绍两种主要的复制方式。将从最小容错到Paxos来论述保持单拷贝一致性的复制方法
 
 ## 5. Replication: accepting divergence  复制：弱一致性
 
-The [fifth chapter](eventual.html) discussed replication with weak consistency guarantees. It introduces a basic reconciliation scenario, where partitioned replicas attempt to reach agreement. It then discusses Amazon's Dynamo as an example of a system design with weak consistency guarantees. Finally, two perspectives on disorderly programming are discussed: CRDTs and the CALM theorem.
+The [fifth chapter](http://book.mixu.net/distsys/single-page.html#eventual) discussed replication with weak consistency guarantees. It introduces a basic reconciliation scenario, where partitioned replicas attempt to reach agreement. It then discusses Amazon's Dynamo as an example of a system design with weak consistency guarantees. Finally, two perspectives on disorderly programming are discussed: CRDTs and the CALM theorem.
 
 第五节将讨论保持弱一致性的复制。首先介绍分散复制集如何达到最终一致，然后以亚马逊的Dynamo系统作为一个例子，来讨论怎样设计一个保证弱一致性的分布式系统。最后，介绍了CRDTs和CALM理论
 
@@ -145,13 +145,10 @@ Most things are trivial at a small scale - and the same problem becomes much har
 
 So everything starts with size - scalability. Informally speaking, in a scalable system as we move from small to large, things should not get incrementally worse. Here's another definition:
 
-<dl>
-  <dt>[Scalability](http://en.wikipedia.org/wiki/Scalability)</dt>
-  <dd>is the ability of a system, network, or process, to handle a growing amount of work in a capable manner or its ability to be enlarged to accommodate that growth.</dd>
-</dl>
-### **扩展性：**
 
-**一个系统、网络或进程适应任务量增长的能力，增长后性能不会受很大的影响**
+>  	[Scalability](http://en.wikipedia.org/wiki/Scalability)	 is the ability of a system, network, or process, to handle a growing amount of work in a capable manner or its ability 			   to be  enlarged to accommodate that growth.
+>  扩展性：一个系统、网络或进程适应任务量增长的能力，增长后性能不会受很大的影响
+
 
 What is it that is growing? Well, you can measure growth in almost any terms (number of people, electricity usage etc.). But there are three particularly interesting things to look at:
 
@@ -175,11 +172,10 @@ A scalable system is one that continues to meet the needs of its users as scale 
 
 ## Performance (and latency) 	性能（和延迟）
 
-<dl>
-  <dt>[Performance](http://en.wikipedia.org/wiki/Computer_performance)</dt>
-  <dd>is characterized by the amount of useful work accomplished by a computer system compared to the time and resources used.</dd>
-</dl>
-**性能：任务所花费的时间和资源**
+> ​	[Performance](http://en.wikipedia.org/wiki/Computer_performance)	is characterized by the amount of useful work accomplished by a computer system compared to the time and 				     resources used.
+>
+> ​	性能：任务所花费的时间和资源
+
 
 Depending on the context, this may involve achieving one or more of the following:
 
