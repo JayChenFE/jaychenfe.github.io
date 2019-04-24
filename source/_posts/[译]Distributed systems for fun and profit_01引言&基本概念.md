@@ -84,7 +84,6 @@ The [fifth chapter](http://book.mixu.net/distsys/single-page.html#eventual) disc
 # 一.Distributed systems at a high level  分布式系统概览
 
 > Distributed programming is the art of solving the same problem that you can solve on a single computer using multiple computers.
->
 > 分布式编程就是使用多台计算机解决单机问题
 
 There are two basic tasks that any computer system needs to accomplish:
