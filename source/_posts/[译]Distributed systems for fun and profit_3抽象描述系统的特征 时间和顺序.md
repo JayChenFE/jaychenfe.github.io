@@ -260,7 +260,11 @@ Time can also be used to define boundary conditions for algorithms - specificall
 
 Earlier, we discussed the different assumptions about the rate of progress of time across a distributed system. Assuming that we cannot achieve accurate clock synchronization - or starting with the goal that our system should not be sensitive to issues with time synchronization, how can we order things?
 
+前面我们讨论了分布式系统中不同的时间假设。如果我们没法获得精确的时钟同步的话，那么如何保证分布式系统中事件有序呢？
+
 Lamport clocks and vector clocks are replacements for physical clocks which rely on counters and communication to determine the order of events across a distributed system. These clocks provide a counter that is comparable across different nodes.
+
+**Lamport clocks**和**矢量时钟**能够代替物理时钟来进行保证系统有序。通过**计数器**+**通信**来决定事件顺序
 
 *A Lamport clock* is simple. Each process maintains a counter using the following rules:
 
@@ -268,7 +272,15 @@ Lamport clocks and vector clocks are replacements for physical clocks which rely
 - Whenever a process sends a message, include the counter
 - When a message is received, set the counter to `max(local_counter, received_counter) + 1`
 
-Expressed as code:
+#### Lamport clock
+
+Lamport clock很简单，每一个进程都有一个计数器，服从下面的规则：
+
+- **一旦一个进程开始工作，计数器递增**
+- **任何进程发送的消息中，包含计数器的值**
+- **当一个消息被接收时，更新计数器的值为max（本地，接收）+1**
+
+Expressed as code: 用代码表示的话:
 
 ```js
 function LamportClock() {
@@ -293,9 +305,18 @@ A [Lamport clock](http://en.wikipedia.org/wiki/Lamport_timestamps) allows counte
 - `a` may have happened before `b` or
 - `a` may be incomparable with `b`
 
+Lamport clock允许使用计数器来比较事件发生的顺序，比如如果 `timestamp(a) < timestamp(b)`：
+
+- a可能在b之前发生
+- a可能b无法和b比较
+
 This is known as clock consistency condition: if one event comes before another, then that event's logical clock comes before the others. If `a` and `b` are from the same causal history, e.g. either both timestamp values were produced on the same process; or `b` is a response to the message sent in `a` then we know that `a` happened before `b`.
 
+这和时钟的一致性一样，如果一件事发生在另一件事之前，那么它的逻辑时钟也发生在这件事之前。如果事件a和事件b都是从同一个历史中演化而来的，那么如果a<b，a一定发生在b之前
+
 Intuitively, this is because a Lamport clock can only carry information about one timeline / history; hence, comparing Lamport timestamps from systems that never communicate with each other may cause concurrent events to appear to be ordered when they are not.
+
+使用Lamport时钟也有一个缺点，因为它只包含了一个时间线的计数信息，那么同步发生的事情在这个时钟下仍然可比，即表现出有序性，但本质上，他们是同步的，不应该表现出有序性
 
 Imagine a system that after an initial period divides into two independent subsystems which never communicate with each other.
 
@@ -310,6 +331,16 @@ However - and this is still a useful property - from the perspective of a single
 - When a message is received:
   - update each element in the vector to be `max(local, received)`
   - increment the logical clock value representing the current node in the vector
+
+#### vector clock矢量时钟
+
+矢量时钟是Lamport clock的一个衍生，它包含了一个含有N个节点计数器值的计数器列表 [t1,t2,...]，每一个节点递增他们自己的逻辑时钟（计数器的值），规则如下：
+
+- **一旦一个进程开始工作，矢量钟中的关于该进程节点上的计数器值递增**
+- **任何进程发送的消息中，包含矢量计数器列表**
+- **当一个消息被接收时：**
+  - 更新矢量
+  - 递增矢量中代表当前节点的逻辑时钟的计数器值
 
 Again, expressed as code:
 
@@ -350,9 +381,9 @@ VectorClock.prototype.merge = function(other) {
 };
 ```
 
-This illustration ([source](http://en.wikipedia.org/wiki/Vector_clock)) shows a vector clock:
+This illustration ([source](http://en.wikipedia.org/wiki/Vector_clock)) shows a vector clock : 下图也能表示矢量钟：
 
-![from http://en.wikipedia.org/wiki/Vector_clock](D:/git_home/download/distsysbook/input/images/vector_clock.svg.png)
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190429224307.png)
 
 Each of the three nodes (A, B, C) keeps track of the vector clock. As events occur, they are timestamped with the current value of the vector clock. Examining a vector clock such as `{ A: 2, B: 4, C: 1 }` lets us accurately identify the messages that (potentially) influenced that event.
 
@@ -360,54 +391,95 @@ The issue with vector clocks is mainly that they require one entry per node, whi
 
 We've looked at how order and causality can be tracked without physical clocks. Now, let's look at how time durations can be used for cutoff.
 
-## Failure detectors (time for cutoff)
+上图对ABC三个节点的矢量钟进行了一个追踪。可以发现当一个事件发生后，矢量钟对每个节点目前的情况打上了一个时间戳的标记，随着事件发生，计数器的值进行改变。从矢量值中可以对事件发生的顺序进行判断 
+
+**总结：**
+
+- **Lamport clock每个节点上维护一个计数器值，每次通信对这个值进行更新**
+- **vector clock每个节点上维护一个计数器列表，每次通信对这个列表进行更新**
+
+## Failure detectors (time for cutoff) 故障检测器
 
 As I stated earlier, the amount of time spent waiting can provide clues about whether a system is partitioned or merely experiencing high latency. In this case, we don't need to assume a global clock of perfect accuracy - it is simply enough that there is a reliable-enough local clock.
+
+前面说过，等待花费的时长能够用来作为一个判断系统到底是发生了分区故障，还是高延迟的一种线索。在这里，我们不需要假设有一个精确的全局时钟，仅仅有一个可信赖的本地时钟就足够了
 
 Given a program running on one node, how can it tell that a remote node has failed? In the absence of accurate information, we can infer that an unresponsive remote node has failed after some reasonable amount of time has passed.
 
 But what is a "reasonable amount"? This depends on the latency between the local and remote nodes. Rather than explicitly specifying algorithms with specific values (which would inevitably be wrong in some cases), it would be nicer to deal with a suitable abstraction.
 
+一个节点上运行一个程序，如果运行的信息延迟的时间到达一定的时长的话，我们就认为这个节点发生了故障。但是这个时长改如何定义呢？
+
 A failure detector is a way to abstract away the exact timing assumptions. Failure detectors are implemented using heartbeat messages and timers. Processes exchange heartbeat messages. If a message response is not received before the timeout occurs, then the process suspects the other process.
 
 A failure detector based on a timeout will carry the risk of being either overly aggressive (declaring a node to have failed) or being overly conservative (taking a long time to detect a crash). How accurate do failure detectors need to be for them to be usable?
+
+**故障检测器是一种抽象的方法：心跳信息+定时器**
+
+进程间交换心跳信息，如果一个进程在超时前没有收到响应信息，那么这个进程会怀疑其它进程
+
+一个基于超时而言的故障检测器通常要么会过度检测（轻易断言一个节点发生故障），要么检测会过于保守（花费很长的等待时间来判断故障）。那么一个如何使用故障检测器使得它发挥出好的作用呢？
 
 [Chandra et al.](http://www.google.com/search?q=Unreliable%20Failure%20Detectors%20for%20Reliable%20Distributed%20Systems) (1996) discuss failure detectors in the context of solving consensus - a problem that is particularly relevant since it underlies most replication problems where the replicas need to agree in environments with latency and network partitions.
 
 They characterize failure detectors using two properties, completeness and accuracy:
 
-<dl>
-  <dt>Strong completeness.</dt>
-  <dd>Every crashed process is eventually suspected by every correct process.</dd>
-  <dt>Weak completeness.</dt>
-  <dd>Every crashed process is eventually suspected by some correct process.</dd>
-  <dt>Strong accuracy.</dt>
-  <dd>No correct process is suspected ever.</dd>
-  <dt>Weak accuracy.</dt>
-  <dd>Some correct process is never suspected.</dd>
-</dl>
+>**Strong completeness.**
+>Every crashed process is eventually suspected by every correct process.
+>
+>**Weak completeness.**
+>Every crashed process is eventually suspected by some correct process.
+>
+>**Strong accuracy.**
+>No correct process is suspected ever.
+>
+>**Weak accuracy.**
+>Some correct process is never suspected.
+
+有人用两个属性（完整性、精确性）将故障检测器进行了描述：
+
+**强完整性**：每个故障的进程都会被任何正确的进程怀疑
+**弱完整性**：每个故障的进程会被一部分正确的进程怀疑
+**强精确性**：没有正确的进程会被怀疑
+**弱精确性**：一些正确的进程也会被怀疑
 
 Completeness is easier to achieve than accuracy; indeed, all failure detectors of importance achieve it - all you need to do is not to wait forever to suspect someone. Chandra et al. note that a failure detector with weak completeness can be transformed to one with strong completeness (by broadcasting information about suspected processes), allowing us to concentrate on the spectrum of accuracy properties.
 
+完整性比精确性更容易实现。并且一个弱完整性的故障检测器能够转换成强完整性的故障检测器（通过广播被怀疑的进程的消息）
+
 Avoiding incorrectly suspecting non-faulty processes is hard unless you are able to assume that there is a hard maximum on the message delay. That assumption can be made in a synchronous system model - and hence failure detectors can be strongly accurate in such a system. Under system models that do not impose hard bounds on message delay, failure detection can at best be eventually accurate.
+
+通常对一个没有发生故障的进程进行错误的怀疑是无法避免的，因为你不知道消息延迟的上限是多少。但是在同步系统中，这个消息延迟的上限是固定的，因此在同步系统中使用故障检测器是非常精确的。
 
 Chandra et al. show that even a very weak failure detector - the eventually weak failure detector ⋄W (eventually weak accuracy + weak completeness) - can be used to solve the consensus problem. The diagram below (from the paper) illustrates the relationship between system models and problem solvability:
 
-![From Chandra and Toueg. Unreliable failure detectors for reliable distributed systems. JACM 43(D:/git_home/download/distsysbook/input/images/chandra_failure_detectors.png):225–267, 1996.](images/chandra_failure_detectors.png)
+研究表明即使是一个弱故障检测器（最终故障检测器），也能用来解决一致性问题。下图阐述了系统模型和问题可解性之间的关系：
+
+![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190429225320.png)
 
 As you can see above, certain problems are not solvable without a failure detector in asynchronous systems. This is because without a failure detector (or strong assumptions about time bounds e.g. the synchronous system model), it is not possible to tell whether a remote node has crashed, or is simply experiencing high latency. That distinction is important for any system that aims for single-copy consistency: failed nodes can be ignored because they cannot cause divergence, but partitioned nodes cannot be safely ignored.
 
+从上图可以看到，异步系统中，不使用故障检测器是无法对明确的问题进行解决的。因为，如果没有故障检测器，你无法得知一个远方的节点是否发生故障，或是因为高延迟的存在。这个判断对于单拷贝一致性的系统来说非常重要：故障节点会被忽略，因为它们不会带来分歧，但是分区节点不能被忽略，因为可能会造成数据分歧
+
 How can one implement a failure detector? Conceptually, there isn't much to a simple failure detector, which simply detects failure when a timeout expires. The most interesting part relates to how the judgments are made about whether a remote node has failed.
+
+怎样实施一个故障检测器呢？事实上，不存在一个很简单的故障检测器，因为判断一个节点是否发生故障时很难的
 
 Ideally, we'd prefer the failure detector to be able to adjust to changing network conditions and to avoid hardcoding timeout values into it. For example, Cassandra uses an [accrual failure detector](https://www.google.com/search?q=The+Phi+accrual+failure+detector), which is a failure detector that outputs a suspicion level (a value between 0 and 1) rather than a binary "up" or "down" judgment. This allows the application using the failure detector to make its own decisions about the tradeoff between accurate detection and early detection.
 
-## Time, order and performance
+依赖超时设置的值来判断是否发生故障。Cassandra它使用的是一个精确的故障检测器，它给出的故障判断是一个猜测值（0-1间，概率值）而不是一个二进制的数（0、1），这样一来，系统应用能够根据自己的定义来判断节点是否发生故障，进行一个无误检测和超前检测的权衡
+
+## Time, order and performance 时间、顺序和性能
 
 Earlier, I alluded to having to pay the cost for order. What did I mean?
 
 If you're writing a distributed system, you presumably own more than one computer. The natural (and realistic) view of the world is a partial order, not a total order. You can transform a partial order into a total order, but this requires communication, waiting and imposes restrictions that limit how many computers can do work at any particular point in time.
 
+如果你在设计一个分布式系统，你肯定拥有不止一台的计算机。那么从直观的角度来看，顺序是分区有序的而并非全局有序。你能够通过通信的方式，使得分区有序转变成全局有序，但是这通常还需要等待以及受到任意同一时刻能够有多少节点进行同时工作的限制
+
 All clocks are mere approximations bound by either network latency (logical time) or by physics. Even keeping a simple integer counter in sync across multiple nodes is a challenge.
+
+就最简单的保持一个简单的整数计数器在分布节点上同步都很有挑战性
 
 While time and order are often discussed together, time itself is not such a useful property. Algorithms don't really care about time as much as they care about more abstract properties:
 
@@ -415,17 +487,36 @@ While time and order are often discussed together, time itself is not such a use
 - failure detection (e.g. approximations of upper bounds on message delivery)
 - consistent snapshots (e.g. the ability to examine the state of a system at some point in time; not discussed here)
 
+事实上，算法通常不在乎时间，而是在乎顺序：
+
+- 事件发生的原因顺序
+- 故障检测器
+- 一致快照
+
 Imposing a total order is possible, but expensive. It requires you to proceed at the common (lowest) speed. Often the easiest way to ensure that events are delivered in some defined order is to nominate a single (bottleneck) node through which all operations are passed.
+
+全局一致是可以实现的，但是代价很大，它要求所有的处理在相同的速度条件下。一个最简单的方法是：投票，选出一个经过了所有操作的节点出来
 
 Is time / order / synchronicity really necessary? It depends. In some use cases, we want each intermediate operation to move the system from one consistent state to another. For example, in many cases we want the responses from a database to represent all of the available information, and we want to avoid dealing with the issues that might occur if the system could return an inconsistent result.
 
+时间/顺序/同步真的有必要吗？这取决于你的案例。比如在一些用户案例中，我们想要每一次的操作都能让系统从一个一致性的转态转到另一个一致性的状态。举个例子：在数据库中，我们想要从数据库中找到能代表所有可用的信息，同时我们想避免处理系统返回不一致的结果所带来的问题。
+
 But in other cases, we might not need that much time / order / synchronization. For example, if you are running a long running computation, and don't really care about what the system does until the very end - then you don't really need much synchronization as long as you can guarantee that the answer is correct.
 
+但是在其他的一些例子中，我们可能不需要时间/顺序/同步。比如，我们想进行一个很长的计算操作，只要能保证最后的结果是正确的，我们并不关心这些运算是否同步发生
+
 Synchronization is often applied as a blunt tool across all operations, when only a subset of cases actually matter for the final outcome. When is order needed to guarantee correctness? The CALM theorem - which I will discuss in the last chapter - provides one answer.
+
+同步性通常是用来做为操作的限制工具的，仅仅当我们的结果只是收到一部分数据集的影响的时候才需要。顺序什么时候保证系统的可用性-这涉及到我们之后讨论的CALM理论
 
 In other cases, it is acceptable to give an answer that only represents the best known estimate - that is, is based on only a subset of the total information contained in the system. In particular, during a network partition one may need to answer queries with only a part of the system being accessible. In other use cases, the end user cannot really distinguish between a relatively recent answer that can be obtained cheaply and one that is guaranteed to be correct and is expensive to calculate. For example, is the Twitter follower count for some user X, or X+1? Or are movies A, B and C the absolutely best answers for some query? Doing a cheaper, mostly correct "best effort" can be acceptable.
 
 In the next two chapters we'll examine replication for fault-tolerant strongly consistent systems - systems which provide strong guarantees while being increasingly resilient to failures. These systems provide solutions for the first case: when you need to guarantee correctness and are willing to pay for it. Then, we'll discuss systems with weak consistency guarantees, which can remain available in the face of partitions, but that can only give you a "best effort" answer.
+
+还有另一些例子中，我们能够接受那些尽力而为的答案作为我们系统的最后结果。这会涉及到一致性问题
+
+- **强一致性：保证准确性但付出可用性低的代价**
+- **弱一致性：保证系统可用性，但要只能告诉你“best effort”(尽力了)**
 
 ------
 
