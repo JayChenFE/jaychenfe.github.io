@@ -1,5 +1,5 @@
 ---
-title: '[译]Distributed systems for fun and profit_3抽象描述系统的特征 时间和顺序'
+title: '[译]Distributed systems for fun and profit_3时间和顺序'
 date: 2019-04-23 17:32:04
 categories:
 - 微服务理论文章阅读学习
