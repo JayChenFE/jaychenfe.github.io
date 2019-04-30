@@ -548,6 +548,8 @@ Raft-Raft是最近（2013年）对该算法系列的一个补充。它被设计�
 
 In this chapter, we took a look at replication methods that enforce strong consistency. Starting with a contrast between synchronous work and asynchronous work, we worked our way up to algorithms that are tolerant of increasingly complex failures. Here are some of the key characteristics of each of the algorithms:
 
+在本章中，我们介绍强制实现强一致性的复制方法。从同步工作和异步工作之间的对比开始，我们了解能够容忍日益复杂的故障的算法。以下是每种算法的一些关键特性：
+
 #### Primary/Backup
 
 - Single, static master
@@ -555,22 +557,6 @@ In this chapter, we took a look at replication methods that enforce strong consi
 - No bounds on replication delay
 - Not partition tolerant
 - Manual/ad-hoc failover, not fault tolerant, "hot backup"
-
-#### 2PC
-
-- Unanimous vote: commit or abort
-- Static master
-- 2PC cannot survive simultaneous failure of the coordinator and a node during a commit
-- Not partition tolerant, tail latency sensitive
-
-#### Paxos
-
-- Majority vote
-- Dynamic master
-- Robust to n/2-1 simultaneous failures as part of protocol
-- Less sensitive to tail latency
-
-在本章中，我们介绍强制实现强一致性的复制方法。从同步工作和异步工作之间的对比开始，我们了解能够容忍日益复杂的故障的算法。以下是每种算法的一些关键特性：
 
 **主/备算法**
 
@@ -580,6 +566,13 @@ In this chapter, we took a look at replication methods that enforce strong consi
 - 不允许分区
 - 手动/故障转移，不容错，“热备份”
 
+#### 2PC
+
+- Unanimous vote: commit or abort
+- Static master
+- 2PC cannot survive simultaneous failure of the coordinator and a node during a commit
+- Not partition tolerant, tail latency sensitive
+
 **2PC**
 
 - 一致表决：同意或放弃
@@ -587,14 +580,19 @@ In this chapter, we took a look at replication methods that enforce strong consi
 - 2PC在提交过程中无法承受协调器和节点的同时失败。
 - 不允许分区，尾延迟敏感
 
+#### Paxos
+
+- Majority vote
+- Dynamic master
+- Robust to n/2-1 simultaneous failures as part of protocol
+- Less sensitive to tail latency
+
 **Paxos**
 
 - 多数投票机制
 - 动态主机
 - 作为协议的一部分，对N/2-1同时故障具有鲁棒性
 - 对尾延迟不太敏感
-
----
 
 ## Further reading
 
