@@ -385,7 +385,7 @@ Both Paxos and Raft make use of distinct node roles. In particular, they have a 
 
 Each period of normal operation in both Paxos and Raft is called an epoch ("term" in Raft). During each epoch only one node is the designated leader (a similar system is [used in Japan](http://en.wikipedia.org/wiki/Japanese_era_name) where era names change upon imperial succession).
 
-无论是Paxos还是Raft算法中，正常运行的每一个阶段都被称为一个训练周期（Raft中被称为‘term’）。在每一个周期中，只有一个节点被标记为领导节点
+无论是Paxos还是Raft算法中，正常运行的每一个阶段都被称为一个训练周期（Raft中被称为‘term’）。在每一个周期中，只有一个节点被标记为领导节点(Leader)
 
 ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190430175808.png)
 
@@ -469,7 +469,7 @@ To ensure that no competing proposals emerge between the time the proposer asks 
 
 Putting the pieces together, reaching a decision using Paxos requires two rounds of communication:
 
-把这些部分放在一起，使用Paxos算法做出决定需要两轮通讯：
+把这些部分放在一起，使用Paxos算法做出决定需要两轮通信：
 
 ```
 [ Proposer ] -> Prepare(n)                                [ Followers ]
