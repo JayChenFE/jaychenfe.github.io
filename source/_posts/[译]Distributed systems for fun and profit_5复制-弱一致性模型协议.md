@@ -13,24 +13,45 @@ top:
 
 Now that we've taken a look at protocols that can enforce single-copy consistency under an increasingly realistic set of supported failure cases, let's turn our attention at the world of options that opens up once we let go of the requirement of single-copy consistency.
 
+第四章中提到的各个算法都是为了保证single-copy，也就是强一致性。在这一章节里，我们关注第二种策略：处理“不同”。即我们允许出现不同（而且不同是正常的），我们要做的就是如何处理这些不同然后得出正确的结果。
+
 By and large, it is hard to come up with a single dimension that defines or characterizes the protocols that allow for replicas to diverge. Most such protocols are highly available, and the key issue is more whether or not the end users find the guarantees, abstractions and APIs useful for their purpose in spite of the fact that the replicas may diverge when node and/or network failures occur.
 
+总的来说，很难想出一个单一维度来定义或表述允许副本分歧的协议。 大多数此类协议都是度可用的，而且关键在于发生节点或网络故障时是否能为用户提供有用的保证，抽象和API使他们达到原本的目的。
+
 Why haven't weakly consistent systems been more popular?
+
+为什么弱一致系统没火起来?
 
 As I stated in the introduction, I think that much of distributed programming is about dealing with the implications of two consequences of distribution:
 
 - that information travels at the speed of light
 - that independent things fail independently
 
+如图我在介绍章节说的那样，**多数的分布式程序都是为了解决分布式导致的两个问题：**
+
+- **信息光速传播**
+- **独立事务独立失败**
+
 The implication that follows from the limitation on the speed at which information travels is that nodes experience the world in different, unique ways. Computation on a single node is easy, because everything happens in a predictable global total order. Computation on a distributed system is difficult, because there is no global total order.
+
+信息传播速度限制所带来的意义是节点以不同的，独特的方式体验世界。 单个节点上的计算很容易，因为一切都以可预测的全局顺序发生。 而分布式系统上的计算很困难，因为没有全局顺序。
 
 For the longest while (i.e. decades of research), we've solved this problem by introducing a global total order. I've discussed the many methods for achieving strong consistency by creating order (in a fault-tolerant manner) where there is no naturally occurring total order.
 
+在最长的时间里（即数十年的研究），我们通过引入全局顺序来解决这个问题。 我已经讨论了通过创建顺序（以容错方式）实现强一致性的许多方法，其中没有自然发生的总顺序。
+
 Of course, the problem is that enforcing order is expensive. This breaks down in particular with large scale internet systems, where a system needs to remain available. A system enforcing strong consistency doesn't behave like a distributed system: it behaves like a single system, which is bad for availability during a partition.
+
+但是很明显，问题在于执行顺序是代价很大。 特别是在大型互联网系统中，系统需要保持高可用状态。 强制一致性的系统的行为不太像分布式系统,而是类似于单个系统，这对分区可用性不利。
 
 Furthermore, for each operation, often a majority of the nodes must be contacted - and often not just once, but twice (as you saw in the discussion on 2PC). This is particularly painful in systems that need to be geographically distributed to provide adequate performance for a global user base.
 
+此外，对于每个操作，通常必须在大多数节点间通讯 - 通常不仅仅是一次，而是两次（正如您在2PC的讨论中看到的那样）。 在需要为全球用户群提供高性能服务的系统中，这尤其痛苦。
+
 So behaving like a single system by default is perhaps not desirable.
+
+因此，默认情况下表现得像单个系统可能并不理想
 
 Perhaps what we want is a system where we can write code that doesn't use expensive coordination, and yet returns a "usable" value. Instead of having a single truth, we will allow different replicas to diverge from each other - both to keep things efficient but also to tolerate partitions - and then try to find a way to deal with the divergence in some manner.
 
@@ -67,7 +88,6 @@ Let's imagine a system of three replicas, each of which is partitioned from the 
 
 [Clients]   - > [C]
 ```
-
 After some time, the partitions heal and the replica servers exchange information. They have received different updates from different clients and have diverged each other, so some sort of reconciliation needs to take place. What we would like to happen is that all of the replicas converge to the same result.
 
 ```
