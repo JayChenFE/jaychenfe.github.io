@@ -55,27 +55,49 @@ So behaving like a single system by default is perhaps not desirable.
 
 Perhaps what we want is a system where we can write code that doesn't use expensive coordination, and yet returns a "usable" value. Instead of having a single truth, we will allow different replicas to diverge from each other - both to keep things efficient but also to tolerate partitions - and then try to find a way to deal with the divergence in some manner.
 
+也许我们想要的是这样一个系统，可以编写不用编写复杂的资源调度代码，但仍然返回“可用”值。相比获取唯一的正确值, 我们更希望允许不同的副本彼此分离 -这 不仅保持了数据的有效性而且做到了了容忍分区 ,并且试图找到一种以某种方式处理分歧的方法。
+
 Eventual consistency expresses this idea: that nodes can for some time diverge from each other, but that eventually they will agree on the value.
+
+最终的一致性表达了这个想法：节点可以在一段时间内相互分离，但最终会达成一致值。
 
 Within the set of systems providing eventual consistency, there are two types of system designs:
 
+有两种类型的系统设计可以提供最终一致性：
+
 *Eventual consistency with probabilistic guarantees*. This type of system can detect conflicting writes at some later point, but does not guarantee that the results are equivalent to some correct sequential execution. In other words, conflicting updates will sometimes result in overwriting a newer value with an older one and some anomalies can be expected to occur during normal operation (or during partitions).
+
+*概率保证的最终一致性*。 这种类型的系统可以在稍后的某点检测到冲突的写入，但不保证结果等同于某些正确的顺序执行。 换句话说，冲突的更新有时会导致用较旧的值覆盖较新的值，并且在正常操作期间（或在分区期间）可能会发生一些异常。
 
 In recent years, the most influential system design is Amazon's Dynamo, which I will discuss as an example of a system that offers eventual consistency with probabilistic guarantees.
 
+近年来，最具影响力的系统设计是亚马逊的Dynamo，我将作为一个系统的例子进行讨论，该系统最终与概率保证保持一致。
+
 *Eventual consistency with strong guarantees*. This type of system guarantees that the results converge to a common value equivalent to some correct sequential execution. In other words, such systems do not produce any anomalous results; without any coordination you can build replicas of the same service, and those replicas can communicate in any pattern and receive the updates in any order, and they will eventually agree on the end result as long as they all see the same information.
+
+*强保证的最终一致性*。这种类型的系统保证结果收敛到相当于某些正确顺序执行的公共值。换句话说，这种系统不会产生任何异常结果;在没有任何协调的情况下，您可以构建相同服务的副本，并且这些副本可以以任何模式进行通信并以任何顺序接收更新，并且只要它们都看到相同的信息，它们最终将同意最终结果。
 
 CRDT's (convergent replicated data types) are data types that guarantee convergence to the same value in spite of network delays, partitions and message reordering. They are provably convergent, but the data types that can be implemented as CRDT's are limited.
 
+CRDT（会聚复制数据类型）是数据类型，可以保证在网络延迟，分区和消息重新排序的情况下收敛到相同的值。它们可以证明是收敛的，但可以作为CRDT实现的数据类型是有限的。
+
 The CALM (consistency as logical monotonicity) conjecture is an alternative expression of the same principle: it equates logical monotonicity with convergence. If we can conclude that something is logically monotonic, then it is also safe to run without coordination. Confluence analysis - in particular, as applied for the Bloom programming language - can be used to guide programmer decisions about when and where to use the coordination techniques from strongly consistent systems and when it is safe to execute without coordination.
 
-## Reconciling different operation orders
+CALM（作为逻辑单调性的一致性）猜想是相同原理的另一种表达：它将逻辑单调性与收敛等同起来。如果我们可以断定某些东西在逻辑上是单调的，那么在没有协调的情况下运行也是安全的。汇流分析 - 特别是应用于Bloom编程语言 - 可用于指导程序员决定何时何地使用来自强一致系统的协调技术，以及何时可以安全地执行而无需协调。
+
+## Reconciling different operation orders 协调不同操作顺序
 
 What does a system that does not enforce single-copy consistency look like?  Let's try to make this more concrete by looking at a few examples.
 
+不强制执行单拷贝一致性的系统是什么样的？ 让我们试着通过一些例子来说明这一点。
+
 Perhaps the most obvious characteristic of systems that do not enforce single-copy consistency is that they allow replicas to diverge from each other. This means that there is no strictly defined pattern of communication: replicas can be separated from each other and yet continue to be available and accept writes.
 
+也许不强制实现单拷贝一致性的系统最明显的特征是它们允许副本彼此分离。 这意味着没有严格定义的通信模式：副本可以彼此分离，但仍然可用并接受写入。
+
 Let's imagine a system of three replicas, each of which is partitioned from the others. For example, the replicas might be in different datacenters and for some reason unable to communicate. Each replica remains available during the partition, accepting both reads and writes from some set of clients:
+
+让我们设想一个由三个副本组成的系统，每个副本都与其他副本分开。 例如，副本可能位于不同的数据中心，并且由于某种原因无法进行通信。 每个副本在分区期间仍然可用，接受来自某些客户端的读取和写入：
 
 ```
 [Clients]   - > [A]
@@ -89,6 +111,7 @@ Let's imagine a system of three replicas, each of which is partitioned from the 
 [Clients]   - > [C]
 ```
 After some time, the partitions heal and the replica servers exchange information. They have received different updates from different clients and have diverged each other, so some sort of reconciliation needs to take place. What we would like to happen is that all of the replicas converge to the same result.
+一段时间后，分区会恢复，副本服务器会交换信息。 他们收到了来自不同客户的不同更新，并且相互分歧，因此需要进行某种协调。 我们希望发生的是所有副本都得到相同的结果。
 
 ```
 [A] \
@@ -99,6 +122,7 @@ After some time, the partitions heal and the replica servers exchange informatio
 ```
 
 Another way to think about systems with weak consistency guarantees is to imagine a set of clients sending messages to two replicas in some order. Because there is no coordination protocol that enforces a single total order, the messages can get delivered in different orders at the two replicas:
+考虑具有弱一致性保证的系统的另一种方法是想象一组客户端以某种顺序向两个副本发送消息。 由于没有强制执行单个总顺序的协调协议，因此可以在两个副本的不同订单中传递消息：
 
 ```
 [Clients]  --> [A]  1, 2, 3
@@ -106,6 +130,8 @@ Another way to think about systems with weak consistency guarantees is to imagin
 ```
 
 This is, in essence, the reason why we need coordination protocols. For example, assume that we are trying to concatenate a string and the operations in messages 1, 2 and 3 are:
+
+
 
 ```
 1: { operation: concat('Hello ') }
@@ -115,6 +141,8 @@ This is, in essence, the reason why we need coordination protocols. For example,
 
 Then, without coordination, A will produce "Hello World!", and B will produce "World!Hello ".
 
+然后，在没有协调的情况下，A将产生“Hello World！”，B将产生“World！Hello”。
+
 ```
 A: concat(concat(concat('', 'Hello '), 'World'), '!') = 'Hello World!'
 B: concat(concat(concat('', 'World'), '!'), 'Hello ') = 'World!Hello '
@@ -122,7 +150,11 @@ B: concat(concat(concat('', 'World'), '!'), 'Hello ') = 'World!Hello '
 
 This is, of course, incorrect. Again, what we'd like to happen is that the replicas converge to the same result.
 
+这当然是不正确的。 同样，我们想要发生的是分区收敛到相同的结果。
+
 Keeping these two examples in mind, let's look at Amazon's Dynamo first to establish a baseline, and then discuss a number of novel approaches to building systems with weak consistency guarantees, such as CRDT's and the CALM theorem.
+
+记住这两个例子，让我们首先看看亚马逊的Dynamo建立基线，然后讨论一些新的方法来构建具有弱一致性保证的系统，例如CRDT和CALM定理。
 
 ## Amazon's Dynamo
 
