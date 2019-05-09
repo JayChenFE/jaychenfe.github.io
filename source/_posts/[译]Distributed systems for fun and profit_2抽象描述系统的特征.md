@@ -1,5 +1,5 @@
 ---
-title: '[译]Distributed systems for fun and profit_2抽象描述系统的特征'
+title: [译]Distributed systems for fun and profit_2抽象描述系统的特征
 date: 2019-04-22 17:32:04
 categories:
 - 微服务理论文章阅读学习

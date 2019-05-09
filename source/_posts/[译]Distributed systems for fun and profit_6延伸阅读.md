@@ -1,5 +1,5 @@
 ---
-title: '[译]Distributed systems for fun and profit_6延伸阅读'
+title: [译]Distributed systems for fun and profit_6延伸阅读
 date: 2019-04-30 22:10:51
 categories:
 - 微服务理论文章阅读学习
