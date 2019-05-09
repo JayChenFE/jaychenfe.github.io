@@ -1,24 +1,3 @@
----
-title: 策略模式
-date: 2019-05-09 22:18:36
-categories: [设计模式]
-tags:
-top:
----
-
-[TOC]
-
-
-
-# 原理
-
-# 示例
-
-## 人员排序(python实现)
-
-有一 Person 类，有年龄（age）、体重（weight）、身高（height）三个属性。现要对 Person 的一组对象进行排序，但并没有确定根据什么规则来排序，有时需要根据年龄进行排序，有时需要根据身高进行排序，有时可能是根据身高和体重的综合情况来排序，还有可能……
-
-```python
 class Person:
     "人类"
 
@@ -73,11 +52,11 @@ class SortPerson:
                     personList[j + 1] = tmp
             j += 1
         i += 1
-```
 
-测试代码:
 
-```python
+# 测试代码
+
+
 def testSortPerson():
     personList = [
         Person("Tony", 2, 54.5, 0.82),
@@ -98,54 +77,13 @@ def testSortPerson():
     print("根据身高进行排序后的结果：")
     for person in personList:
         person.showMysef()
-```
-输出结果:
-```shell
-根据年龄进行排序后的结果：
-Tony 2 years old, 54.5kg, 0.82m.
-Helen 16 years old, 45.7kg, 1.6m.
-Eric 23 years old, 62.0kg, 1.78m.
-Jack 31 years old, 74.5kg, 1.8m.
-Nick 54 years old, 44.5kg, 1.59m.
 
-根据身高进行排序后的结果：
-Tony 2 years old, 54.5kg, 0.82m.
-Nick 54 years old, 44.5kg, 1.59m.
-Helen 16 years old, 45.7kg, 1.6m.
-Eric 23 years old, 62.0kg, 1.78m.
-Jack 31 years old, 74.5kg, 1.8m.
-```
 
-类图表示如下：
+# 权重排序
+class CompareByHeightAndWeight(ICompare):
+    "根据身高和体重的综合情况来排序(身高和体重的权重分别是0.6和0.4)"
 
-![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190509224250.png)
-
-python本身其实也可以实现
-
-```python
-from operator import itemgetter,attrgetter
-
-def testPersonListInPython():
-    "用Python的方式对Person进行排序"
-
-    personList = [
-        Person("Tony", 2, 54.5, 0.82),
-        Person("Jack", 31, 74.5, 1.80),
-        Person("Nick", 54, 44.5, 1.59),
-        Person("Eric", 23, 62.0, 1.78),
-        Person("Helen", 16, 45.7, 1.60)
-    ]
-
-    # 使用使用operator模块根据年龄进行排序
-    print("根据年龄进行排序后的结果：")
-    sortedPerons = sorted(personList, key = attrgetter('age'))
-    for person in sortedPerons:
-        person.showMysef()
-    print()
-
-    print("根据身高进行排序后的结果：")
-    sortedPerons1 = sorted(personList, key=attrgetter('height'))
-    for person in sortedPerons1:
-        person.showMysef()
-```
-
+    def comparable(self, person1, person2):
+        value1 = person1.height * 0.6 + person1.weight * 0.4
+        value2 = person2.height * 0.6 + person2.weight * 0.4
+        return value1 - value2
