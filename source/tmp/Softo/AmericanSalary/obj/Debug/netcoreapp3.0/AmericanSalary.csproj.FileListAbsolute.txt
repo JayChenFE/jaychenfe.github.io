@@ -1,0 +1,12 @@
+C:\Users\diamo\source\repos\Softo\AmericanSalary\bin\Debug\netcoreapp3.0\AmericanSalary.exe
+C:\Users\diamo\source\repos\Softo\AmericanSalary\bin\Debug\netcoreapp3.0\AmericanSalary.deps.json
+C:\Users\diamo\source\repos\Softo\AmericanSalary\bin\Debug\netcoreapp3.0\AmericanSalary.runtimeconfig.json
+C:\Users\diamo\source\repos\Softo\AmericanSalary\bin\Debug\netcoreapp3.0\AmericanSalary.runtimeconfig.dev.json
+C:\Users\diamo\source\repos\Softo\AmericanSalary\bin\Debug\netcoreapp3.0\AmericanSalary.dll
+C:\Users\diamo\source\repos\Softo\AmericanSalary\bin\Debug\netcoreapp3.0\AmericanSalary.pdb
+C:\Users\diamo\source\repos\Softo\AmericanSalary\obj\Debug\netcoreapp3.0\AmericanSalary.csprojAssemblyReference.cache
+C:\Users\diamo\source\repos\Softo\AmericanSalary\obj\Debug\netcoreapp3.0\AmericanSalary.csproj.CoreCompileInputs.cache
+C:\Users\diamo\source\repos\Softo\AmericanSalary\obj\Debug\netcoreapp3.0\AmericanSalary.AssemblyInfoInputs.cache
+C:\Users\diamo\source\repos\Softo\AmericanSalary\obj\Debug\netcoreapp3.0\AmericanSalary.AssemblyInfo.cs
+C:\Users\diamo\source\repos\Softo\AmericanSalary\obj\Debug\netcoreapp3.0\AmericanSalary.dll
+C:\Users\diamo\source\repos\Softo\AmericanSalary\obj\Debug\netcoreapp3.0\AmericanSalary.pdb

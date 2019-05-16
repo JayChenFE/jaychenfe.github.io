@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChineseSalary", "ChineseSalary\ChineseSalary.csproj", "{99F96846-C30F-444F-84C1-05077A3AB53D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmericanSalary", "AmericanSalary\AmericanSalary.csproj", "{DE7D39F2-31E8-4D35-8CD0-C982A1F6B07E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfaceSalary", "InterfaceSalary\InterfaceSalary.csproj", "{CE43709B-9A8F-4707-B7D6-F33E2C6F3595}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractFactory", "AbstractFactory\AbstractFactory.csproj", "{3E239415-B76D-452E-8717-7D4094FEA8BB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactorySalary", "FactorySalary\FactorySalary.csproj", "{F04C2CDC-5ABD-489E-A0F3-ACC32FCE7FBA}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{99F96846-C30F-444F-84C1-05077A3AB53D}.Debug.ActiveCfg = Debug|.NET
+		{99F96846-C30F-444F-84C1-05077A3AB53D}.Debug.Build.0 = Debug|.NET
+		{99F96846-C30F-444F-84C1-05077A3AB53D}.Release.ActiveCfg = Release|.NET
+		{99F96846-C30F-444F-84C1-05077A3AB53D}.Release.Build.0 = Release|.NET
+		{DE7D39F2-31E8-4D35-8CD0-C982A1F6B07E}.Debug.ActiveCfg = Debug|.NET
+		{DE7D39F2-31E8-4D35-8CD0-C982A1F6B07E}.Debug.Build.0 = Debug|.NET
+		{DE7D39F2-31E8-4D35-8CD0-C982A1F6B07E}.Release.ActiveCfg = Release|.NET
+		{DE7D39F2-31E8-4D35-8CD0-C982A1F6B07E}.Release.Build.0 = Release|.NET
+		{CE43709B-9A8F-4707-B7D6-F33E2C6F3595}.Debug.ActiveCfg = Debug|.NET
+		{CE43709B-9A8F-4707-B7D6-F33E2C6F3595}.Debug.Build.0 = Debug|.NET
+		{CE43709B-9A8F-4707-B7D6-F33E2C6F3595}.Release.ActiveCfg = Release|.NET
+		{CE43709B-9A8F-4707-B7D6-F33E2C6F3595}.Release.Build.0 = Release|.NET
+		{3E239415-B76D-452E-8717-7D4094FEA8BB}.Debug.ActiveCfg = Debug|.NET
+		{3E239415-B76D-452E-8717-7D4094FEA8BB}.Debug.Build.0 = Debug|.NET
+		{3E239415-B76D-452E-8717-7D4094FEA8BB}.Release.ActiveCfg = Release|.NET
+		{3E239415-B76D-452E-8717-7D4094FEA8BB}.Release.Build.0 = Release|.NET
+		{F04C2CDC-5ABD-489E-A0F3-ACC32FCE7FBA}.Debug.ActiveCfg = Debug|.NET
+		{F04C2CDC-5ABD-489E-A0F3-ACC32FCE7FBA}.Debug.Build.0 = Debug|.NET
+		{F04C2CDC-5ABD-489E-A0F3-ACC32FCE7FBA}.Release.ActiveCfg = Release|.NET
+		{F04C2CDC-5ABD-489E-A0F3-ACC32FCE7FBA}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

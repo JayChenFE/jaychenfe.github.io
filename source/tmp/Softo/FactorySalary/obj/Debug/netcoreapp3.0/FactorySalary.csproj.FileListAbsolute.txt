@@ -1,0 +1,12 @@
+C:\Users\diamo\source\repos\Softo\FactorySalary\bin\Debug\netcoreapp3.0\FactorySalary.exe
+C:\Users\diamo\source\repos\Softo\FactorySalary\bin\Debug\netcoreapp3.0\FactorySalary.deps.json
+C:\Users\diamo\source\repos\Softo\FactorySalary\bin\Debug\netcoreapp3.0\FactorySalary.runtimeconfig.json
+C:\Users\diamo\source\repos\Softo\FactorySalary\bin\Debug\netcoreapp3.0\FactorySalary.runtimeconfig.dev.json
+C:\Users\diamo\source\repos\Softo\FactorySalary\bin\Debug\netcoreapp3.0\FactorySalary.dll
+C:\Users\diamo\source\repos\Softo\FactorySalary\bin\Debug\netcoreapp3.0\FactorySalary.pdb
+C:\Users\diamo\source\repos\Softo\FactorySalary\obj\Debug\netcoreapp3.0\FactorySalary.csprojAssemblyReference.cache
+C:\Users\diamo\source\repos\Softo\FactorySalary\obj\Debug\netcoreapp3.0\FactorySalary.csproj.CoreCompileInputs.cache
+C:\Users\diamo\source\repos\Softo\FactorySalary\obj\Debug\netcoreapp3.0\FactorySalary.AssemblyInfoInputs.cache
+C:\Users\diamo\source\repos\Softo\FactorySalary\obj\Debug\netcoreapp3.0\FactorySalary.AssemblyInfo.cs
+C:\Users\diamo\source\repos\Softo\FactorySalary\obj\Debug\netcoreapp3.0\FactorySalary.dll
+C:\Users\diamo\source\repos\Softo\FactorySalary\obj\Debug\netcoreapp3.0\FactorySalary.pdb
