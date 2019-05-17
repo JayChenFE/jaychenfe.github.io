@@ -1,8 +1,7 @@
 ---
 title: [译]Distributed systems for fun and profit_0引言&1基本概念
 date: 2019-04-21 17:32:04
-categories:
-- 微服务理论文章阅读学习
+categories: [微服务理论文章阅读学习]
 tags:
 top:
 ---

@@ -1,8 +1,7 @@
 ---
 title: [译]Distributed systems for fun and profit_5复制 弱一致性模型协议
 date: 2019-04-30 22:05:02
-categories:
-- 微服务理论文章阅读学习
+categories: [微服务理论文章阅读学习]
 tags:
 top:
 ---
