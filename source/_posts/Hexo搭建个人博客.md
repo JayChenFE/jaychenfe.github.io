@@ -634,7 +634,7 @@ $content-desktop-largest = 75%;
 
 可以使用`hexo new "文章名"`生成新的文章查看效果,文章的标签和分类实例如下
 
-```markd
+```markdown
 ---
 title: Hexo搭建个人博客
 date: 2018-10-21 17:54:09
@@ -863,8 +863,84 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
      {% endif %}
     ```
 
+## 代码块添加复制功能
 
+1. 下载 [clipboard.js](https://raw.githubusercontent.com/zenorocha/clipboard.js/master/dist/clipboard.min.js),并保存到`.\themes\next\source\js\src`
 
+2. 在1的目录下创建`clipboard-use.js`，文件内容如下：
+
+   ```js
+   /*页面载入完成后，创建复制按钮*/
+   !function (e, t, a) { 
+     /* code */
+     var initCopyCode = function(){
+       var copyHtml = '';
+       copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+       copyHtml += '  <i class="fa fa-globe"></i><span>copy</span>';
+       copyHtml += '</button>';
+       $(".highlight .code pre").before(copyHtml);
+       new ClipboardJS('.btn-copy', {
+           target: function(trigger) {
+               return trigger.nextElementSibling;
+           }
+       });
+     }
+     initCopyCode();
+   }(window, document);
+   ```
+
+3. 在`.\themes\next\source\css\_custom\custom.styl`样式文件中添加下面代码：
+
+   ```css
+   //代码块复制按钮
+   .highlight{
+     //方便copy代码按钮（btn-copy）的定位
+     position: relative;
+   }
+   .btn-copy {
+       display: inline-block;
+       cursor: pointer;
+       background-color: #eee;
+       background-image: linear-gradient(#fcfcfc,#eee);
+       border: 1px solid #d5d5d5;
+       border-radius: 3px;
+       -webkit-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+       -webkit-appearance: none;
+       font-size: 13px;
+       font-weight: 700;
+       line-height: 20px;
+       color: #333;
+       -webkit-transition: opacity .3s ease-in-out;
+       -o-transition: opacity .3s ease-in-out;
+       transition: opacity .3s ease-in-out;
+       padding: 2px 6px;
+       position: absolute;
+       right: 5px;
+       top: 5px;
+       opacity: 0;
+   }
+   .btn-copy span {
+       margin-left: 5px;
+   }
+   .highlight:hover .btn-copy{
+     opacity: 1;
+   }
+   ```
+   
+4.  添加引用
+
+   在`.\themes\next\layout\_layout.swig`文件中，添加引用（注：在 swig 末尾或 body 结束标签（`</body>`）之前添加）：
+
+   ```js
+   <!-- 代码块复制功能 -->
+   <script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+   <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+   ```
+
+   
 
 # 发布
 
@@ -882,7 +958,6 @@ hexo支持多款评论插件,经过对比之后使用`gitalk`
      repo: git@github.com:jay/jay.github.io.git
      branch: master
    ```
-
    将发布到master分支
 
 3. 使用`hexo generate --deploy`发布,可以简写成`hexo g -d`
