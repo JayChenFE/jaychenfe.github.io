@@ -635,7 +635,7 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 
 这部分内容告诉我们怎样联系上面所讲的内容创建一个简单的GUI，Windows窗体。在这个应用程序里面，我从`System.Windows.Forms.Form` 类中继承创建了一个简单的窗体，它没有包含任何控件，但是我修改了一些它的属性，例如BackColor,Text和WindowState。代码一步一步的比较简单。大家一起来看一下我结束这篇文章之前的最后一段代码。
 
-```
+```cs
    1: .namespace MyForm
    2: {
    3:   .class public TestForm extends 
@@ -660,7 +660,7 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 
 这是整个应用程序的入口函数，首先（在`MyForm命名空间里面创建类TestForm后`），我们定义了一个IContainer的局部变量（字段）。注意在定义这种字段之前，我们加上了关键字class 。然后在主函数里，我们用`newobj指令创建了一个TestForm 类的对象。然后我们调用Application.Run 方法去运行这个应用程序。如果你把它与高级语言相比，你就会发现，它和我们现在用的手法是一样的。现在我们来看看我们类（TestForm）的构造函数。`
 
-```
+```cs
    1: .method public specialname rtspecialname instance 
    2:        void  .ctor() cil managed
    3:    {     
@@ -713,7 +713,7 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 
 尽管创建窗体的代码已经完成了，但是我们在这里也定义了一个Dispose事件（窗体的析构函数），通过这个事件我们可以移除不需要的对象以此来清理内存。如果你对Dispose事件的代码感兴趣，那么看一下几行代码。
 
-```
+```cs
    1: .method family virtual instance void Dispose(bool disposing) cil managed
    2:   {
    3:     .maxstack  2
