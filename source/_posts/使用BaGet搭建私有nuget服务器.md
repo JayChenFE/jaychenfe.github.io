@@ -15,12 +15,12 @@ https://medium.com/@onurvatan/net-core-custom-nuget-server-baget-on-docker-b763a
 
 # 缘起
 
-在微服务中,有公用的业务类库,如果用共享代码的方式引入,每个使用的人会带来版本维护上的诸多麻烦.如果发到官方`nuget`上有两个问题
+在微服务中,有公用的业务类库,如果用共享代码的方式引入,每个使用的人会带来版本维护上的诸多麻烦.如果发到官方`nuget`上,有两个问题
 
 - 代码太菜T_T
 - 公司内部业务私密问题
 
-为此我们需要搭建一个私有的`nuget`服务器. 虽然微软官方有[nuget-server](https://docs.microsoft.com/zh-cn/nuget/hosting-packages/nuget-server)这种实现方式,但是还是有些麻烦,查看了[官方推荐的第三方实现列表](https://docs.microsoft.com/zh-cn/nuget/hosting-packages/overview)后,决定使用[BaGet](https://github.com/loic-sharma/BaGet)
+为此我们需要搭建一个私有的`nuget`服务器. 虽然微软官方有[nuget-server](https://docs.microsoft.com/zh-cn/nuget/hosting-packages/nuget-server)这种实现方式,但是还是有些麻烦.在查看了[官方推荐的第三方实现列表](https://docs.microsoft.com/zh-cn/nuget/hosting-packages/overview)后,决定使用[BaGet](https://github.com/loic-sharma/BaGet)
 
 # 步骤
 
@@ -28,9 +28,7 @@ https://medium.com/@onurvatan/net-core-custom-nuget-server-baget-on-docker-b763a
 
 ## 配置环境
 
-在任务目录中新建`baget_nuget`文件夹,用来存放相关内容,在其中建立子文件夹`baget-data`和`baget.env`文件,文件
-
-内容为
+在任务目录中新建`baget_nuget`文件夹,用来存放相关内容,并在其中建立子文件夹`baget-data`和`baget.env`文件,文件内容为
 
 ```txt
 ApiKey=你的ApiKey
@@ -41,8 +39,6 @@ Database__ConnectionString=Data Source=/var/baget/baget.db
 Search__Type=Database
 AllowPackageOverwrites=True
 ```
-
-
 
 `BaGet`的后端使用.net core,前端使用react.`baget.env`文件存储了`BaGet`配置所需的环境变量,其中`ApiKey`是发布类库时需要用到的key
 
@@ -58,11 +54,11 @@ docker run --rm --name nuget-server -p 5555:80 --env-file baget.env -v "$(pwd)/b
 
 ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190815231318.png)
 
-如果有图形见面应该就可以看见如下的内容了
+如果有图形界面,应该就可以看见如下的内容了
 
 ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190815232246.png)
 
-没有图形界面在命令行中用`curl http://localhost:5555`测试一下,出现html内容文本即可
+如果没有图形界面在命令行中用`curl http://localhost:5555`测试一下,出现html内容文本即可
 
 测试ok后进入下一步
 
@@ -72,7 +68,7 @@ docker run --rm --name nuget-server -p 5555:80 --env-file baget.env -v "$(pwd)/b
 
 因为公司只有一个入口所以需要配置nginx映射
 
-公司访问的域名是`www.xxxx.com`,我们需要实现在云的CDN在配置好二级域名,这里我们使用`nuget.xxx.com`
+公司访问的域名是`www.xxxx.com`,我们需要事先在云的CDN在配置好二级域名,这里我们使用`nuget.xxx.com`
 
 nginx配置为
 
