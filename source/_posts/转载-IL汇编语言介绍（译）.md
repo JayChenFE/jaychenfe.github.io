@@ -56,27 +56,27 @@ IL本身是以二进制格式存储的，所以我们不可能阅读。但是和
 那么我们用一个简单的例子来开始我们对这种语言的学习，在屏幕（控制台）上打印一个简单的字符串。在学习一种新语言的时候都有一种传统，就是创建一个hello world的程序，那么我们今天也这样做，只不过我们把打印的字符串改变了。
 
 ```cs
-   1: //Test.IL
-   2: //A simple programme which prints a string on the console
-   3:  
-   4: .assembly extern mscorlib {}
-   5:  
-   6: .assembly Test
-   7: {
-   8:     .ver 1:0:1:0
-   9: }
-  10: .module test.exe
-  11:  
-  12: .method static void main() cil managed
-  13: {
-  14:     .maxstack 1
-  15:     .entrypoint
-  16:     
-  17:     ldstr "I am from the IL Assembly Language..."
-  18:     
-  19:     call void [mscorlib]System.Console::WriteLine (string)
-  20:     ret
-  21: }
+//Test.IL
+//A simple programme which prints a string on the console
+ 
+.assembly extern mscorlib {}
+ 
+.assembly Test
+{
+    .ver 1:0:1:0
+}
+.module test.exe
+ 
+.method static void main() cil managed
+{
+    .maxstack 1
+    .entrypoint
+    
+    ldstr "I am from the IL Assembly Language..."
+    
+    call void [mscorlib]System.Console::WriteLine (string)
+    ret
+}
 ```
 
 图1.1 用IL汇编语言写的一个简单的测试程序
@@ -84,7 +84,7 @@ IL本身是以二进制格式存储的，所以我们不可能阅读。但是和
 把上面的代码（图1.1 ）写到一个简单的文本编辑器中，如记事本中，然后把它保存为Test.il。我们先来编译运行这段代码，待会我们会详细的来看这段代码。要编译些段代码，输入以下的命令提示符
 
 ```cs
-   1: ILAsm Test.il  (See the screen shot below)
+ ILAsm Test.il  (See the screen shot below)
 ```
 
 ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190806212117.png)
@@ -113,31 +113,31 @@ IL本身是以二进制格式存储的，所以我们不可能阅读。但是和
 我们来看另外一个例子，它可以让我们对评估堆栈的概念有一个更清晰的认识。
 
 ```cs
-   1: //Add.il
-   2: //Add Two Numbers
-   3:  
-   4: .assembly extern mscorlib {}
-   5:  
-   6: .assembly Add
-   7: {
-   8:     .ver 1:0:1:0
-   9: }
-  10: .module add.exe
-  11:  
-  12: .method static void main() cil managed
-  13: {
-  14:     .maxstack 2
-  15:     .entrypoint
-  16:     
-  17:     ldstr "The sum of 50 and 30 is = "
-  18:     call void [mscorlib]System.Console::Write (string)
-  19:     
-  20:     ldc.i4.s 50
-  21:     ldc.i4 30    
-  22:     add
-  23:     call void [mscorlib]System.Console::Write (int32)
-  24:     ret
-  25: }
+//Add.il
+//Add Two Numbers
+ 
+.assembly extern mscorlib {}
+ 
+.assembly Add
+{
+    .ver 1:0:1:0
+}
+.module add.exe
+ 
+.method static void main() cil managed
+{
+    .maxstack 2
+    .entrypoint
+    
+    ldstr "The sum of 50 and 30 is = "
+    call void [mscorlib]System.Console::Write (string)
+    
+    ldc.i4.s 50
+    ldc.i4 30    
+    add
+    call void [mscorlib]System.Console::Write (int32)
+    ret
+}
 ```
 
 图1.3两数相加
@@ -161,18 +161,18 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 我们也记得一些在IL汇编语言中的数据类型比如.i4, .i4.s, .u4 等等我们在上面的例子中用到过的。上面图表列出的数据类型都是被IL汇编语言所识别的，而且在表中也提到了哪些是符合ＣＬＳ规范，哪些是不符合的。所以把这些类型都记在脑海里。我们可以以下列形式调用任何函数：
 
 ```cs
-   1: call int32 SomeFunction (string, int32, float64<code lang=msil>)
+call int32 SomeFunction (string, int32, float64<code lang=msil>)
 ```
 
 它的意思是函数`SomeFunction` 返回一个`int32` (`System.Int32`)的类型, 传入其它三种类型`string` (`System.String`), `int32` (`System.Int32`) and `float64`(`System.Double`) 的参数. 注意这些都是CLR和IL汇编语言中的基本数据类型. 如果我们对非基本类型(自定义类型)是怎样处理的感兴趣，我们可以如下写：
 
 ```cs
-   1: //In C#
-   2: ColorTranslator.FromHtml(htmlColor)        
-   3: //In ILAsm
-   4: call instance string [System.Drawing]
-   5:     System.Drawing.ColorTranslator::ToHtml(valuetype 
-   6:     [System.Drawing]System.Drawing.Color)
+   //In C#
+   ColorTranslator.FromHtml(htmlColor)        
+   //In ILAsm
+   call instance string [System.Drawing]
+   System.Drawing.ColorTranslator::ToHtml(valuetype 
+   [System.Drawing]System.Drawing.Color)
 ```
 
 你可能注意到，我们显示的声明了参数的类型。我们也定义了这个类型所在的命令空间，而且用一个关键字标识了我们将要引用的是一个非基本的数据类型。
@@ -184,15 +184,15 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 变量是每个程序语言中最主要的一部分，因此IL汇编语言也提供了一种我们声明和使用变量的方法。尽管没有高级语言(VB .NET, C#) 中的那样简单。在IL汇编语言中.locals 指令是用来定义变量的，这条指令一般是写在函数的最开始部分的，尽管你可以把变量声明放在任何地方，当然肯定要在使用前。下面是一个例子来演示怎样定义变量，给变量赋值，以及使用变量把它打印出来。
 
 ```cs
-   1: .locals init (int32, string)
-   2: ldc.i4 34
-   3: stloc.0
-   4: ldstr "Some Text for Local Variable"
-   5: stloc.1
-   6: ldloc.0
-   7: call void [mscorlib]System.Console::WriteLine(int32)
-   8: ldloc.1
-   9: call void [mscorlib]System.Console::WriteLine(string)
+ .locals init (int32, string)
+ ldc.i4 34
+ stloc.0
+ ldstr "Some Text for Local Variable"
+ stloc.1
+ ldloc.0
+ call void [mscorlib]System.Console::WriteLine(int32)
+ ldloc.1
+ call void [mscorlib]System.Console::WriteLine(string)
 ```
 
 图1.5 局部变量
@@ -214,48 +214,48 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 判断和条件也是程序语言中不可缺少的部分，在低级语言中，例如本地汇编语言，判断是用jumps (or branch)，在IL汇编语言中，也是这样的，我们来看一下下面的代码片断。
 
 ```cs
-   1: br JumpOver         //Or use the br.s instead of br
-   2: //Other code here which will be skipped after getting br statement.
-   3: //
-   4: JumpOver:
-   5: //The statements here will be executed        
+  br JumpOver         //Or use the br.s instead of br
+  //Other code here which will be skipped after getting br statement.
+  //
+  JumpOver:
+  //The statements here will be executed        
 ```
 
 把上面的语句与任何高级语言中的goto语句进行比较，goto语句是把控制流程转到写在goto语句后面的标签处。但是在这里，br代替了goto。如果你确定你要跳转的目标与跳转语句在-128到+127字节之间，那么你可以使用br.s，因为br.s会用int8来代替int32来代表跳转偏移量。上面方法中的跳转是无条件的跳转，因为在跳转语句之前没有判断条件，所以每次执行时程序都会直接跳转到JumpOver标签处。下面我们来看一个代码片段，使用条件跳转的，只有满足条件的才能进行跳转。
 
 ```cs
-   1: //Branching.il
-   2: method static void main() cil managed
-   3:  
-   4:    .maxstack 2
-   5:    .entrypoint
-   6:    //Takes First values from the User
-   7:    ldstr "Enter First Number"
-   8:    call void [mscorlib]System.Console::WriteLine (string)
-   9:    
-  10:    call  string [mscorlib]System.Console::ReadLine ()
-  11:    call int32 [mscorlib]System.Int32::Parse(string)
-  12:    
-  13:    //Takes Second values from the User
-  14:    ldstr "Enter Second Number"
-  15:    call void [mscorlib]System.Console::WriteLine (string)
-  16:    
-  17:    call  string [mscorlib]System.Console::ReadLine ()
-  18:    call int32 [mscorlib]System.Int32::Parse(string
-  19:    )
-  20:    
-  21:    ble Smaller
-  22:        ldstr "Second Number is smaller than first."    
-  23:        call void [mscorlib]System.Console::WriteLine (string)
-  24:    
-  25:    br Exit
-  26:    
-  27: smaller:
-  28:    ldstr "First number is smaller than second."    
-  29:    call void [mscorlib]System.Console::WriteLine (string)
-  30: exit:    
-  31:    ret
-  32:  
+ //Branching.il
+ method static void main() cil managed
+  
+    .maxstack 2
+    .entrypoint
+    //Takes First values from the User
+    ldstr "Enter First Number"
+    call void [mscorlib]System.Console::WriteLine (string)
+    
+    call  string [mscorlib]System.Console::ReadLine ()
+    call int32 [mscorlib]System.Int32::Parse(string)
+    
+    //Takes Second values from the User
+    ldstr "Enter Second Number"
+    call void [mscorlib]System.Console::WriteLine (string)
+    
+    call  string [mscorlib]System.Console::ReadLine ()
+    call int32 [mscorlib]System.Int32::Parse(string
+    )
+    
+    ble Smaller
+        ldstr "Second Number is smaller than first."    
+        call void [mscorlib]System.Console::WriteLine (string)
+    
+    br Exit
+    
+ smaller:
+    ldstr "First number is smaller than second."    
+    call void [mscorlib]System.Console::WriteLine (string)
+ exit:    
+    ret
+  
 ```
 
 图1.6只有主函数
@@ -269,35 +269,35 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 在程序语言中比较基础的另外一部分就是循环.循环就是一遍遍执行重复的一段代码.它包括一些跳转分支,由循环里面的索引变量(判断是否满足条件)决定是否跳转.同上面一样,你需要看一下代码,然后花一点时间去理解循环是怎样工作的.
 
 ```cs
-   1: .method static void main() cil managed 
-   2:  
-   3:    //Define two local
-   4:    variables .locals init (int32, int32)
-   5:    .maxstack 2
-   6:    .entrypoint    
-   7:    ldc.i4 4
-   8:  
-   9:    stloc.0        //Upper    limit of the Loop, total 5 
-  10:    ldc.i4 0 
-  11:    stloc.1        //Initialize the Starting of loop 
-  12:  
-  13: Start:     
-  14:    //Check if the Counter exceeds
-  15:    ldloc.1 
-  16:    ldloc.0 
-  17:    bgt Exit //If Second variable exceeds the first variable, then exit
-  18:    
-  19:    ldloc.1
-  20:    call void [mscorlib]System.Console::WriteLine(int32)
-  21:    
-  22:    //Increase the Counter
-  23:    ldc.i4 1
-  24:    ldloc.1
-  25:    add
-  26:    stloc.1
-  27:    br Start
-  28: Exit:    
-  29:    ret
+.method static void main() cil managed 
+ 
+   //Define two local
+   variables .locals init (int32, int32)
+   .maxstack 2
+   .entrypoint    
+   ldc.i4 4
+ 
+   stloc.0        //Upper    limit of the Loop, total 5 
+   ldc.i4 0 
+   stloc.1        //Initialize the Starting of loop 
+ 
+Start:     
+   //Check if the Counter exceeds
+   ldloc.1 
+   ldloc.0 
+   bgt Exit //If Second variable exceeds the first variable, then exit
+   
+   ldloc.1
+   call void [mscorlib]System.Console::WriteLine(int32)
+   
+   //Increase the Counter
+   ldc.i4 1
+   ldloc.1
+   add
+   stloc.1
+   br Start
+Exit:    
+   ret
 ```
 
 图1.7 只有主函数
@@ -305,8 +305,8 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 在高级语言中,例如C#,上面的代码会写成下面的形式:
 
 ```cs
-   1: for (temp=0; temp <5; temp++)
-   2:             System.Console.WriteLine (temp)
+   for (temp=0; temp <5; temp++)
+               System.Console.WriteLine (temp)
 
 ```
 
@@ -317,50 +317,50 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 上面我们学习了，判断（条件和分支），循环，变量声明。现在我们来讨论在IL汇编语言中怎么去创建方法。IL汇编语言中创建方法与Ｃ＃和Ｃ＋＋中创建函数基本一样，只是有一点点改变，我希望到现在你们也能够猜到。所以下面我们先来看一段代码片断，然后我们来讨论写的这些代码。
 
 ```cs
-   1: //Methods.il
-   2: //Creating Methods
-   3:  
-   4: .assembly extern mscorlib {}
-   5:  
-   6: .assembly Methods
-   7: {
-   8:     .ver 1:0:1:0
-   9: }
-  10: .module Methods.exe
-  11:  
-  12: .method static void main() cil managed
-  13: {
-  14:     .maxstack 2
-  15:     .entrypoint
-  16:     
-  17:     ldc.i4 10
-  18:     ldc.i4 20
-  19:     call int32 DoSum(int32, int32)
-  20:     call void PrintSum(int32)
-  21:     ret
-  22: }
-  23:  
-  24: .method public static int32 DoSum (int32 , int32 ) cil managed
-  25: {
-  26:     .maxstack 2    
-  27:     
-  28:     ldarg.0
-  29:     ldarg.1
-  30:     add
-  31:     
-  32:     ret
-  33: }
-  34: .method public static void PrintSum(int32) cil managed
-  35: {
-  36:     .maxstack 2
-  37:     ldstr "The Result is : "
-  38:     call void [mscorlib]System.Console::Write(string)
-  39:     
-  40:     ldarg.0
-  41:     call void [mscorlib]System.Console::Write(int32)
-  42:     
-  43:     ret
-  44: }
+//Methods.il
+//Creating Methods
+ 
+.assembly extern mscorlib {}
+ 
+.assembly Methods
+{
+    .ver 1:0:1:0
+}
+.module Methods.exe
+ 
+.method static void main() cil managed
+{
+    .maxstack 2
+    .entrypoint
+    
+    ldc.i4 10
+    ldc.i4 20
+    call int32 DoSum(int32, int32)
+    call void PrintSum(int32)
+    ret
+}
+ 
+.method public static int32 DoSum (int32 , int32 ) cil managed
+{
+    .maxstack 2    
+    
+    ldarg.0
+    ldarg.1
+    add
+    
+    ret
+}
+.method public static void PrintSum(int32) cil managed
+{
+    .maxstack 2
+    ldstr "The Result is : "
+    call void [mscorlib]System.Console::Write(string)
+    
+    ldarg.0
+    call void [mscorlib]System.Console::Write(int32)
+    
+    ret
+}
 ```
 
 图１.７定义及调用方法
@@ -376,45 +376,45 @@ main函数中的一部分与例1是一样的，只是模块的名称改变了。
 IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高级语言中支持引用传递参数，而这些高级语言的代码又会转换成IL代码。而我们讨论的IL汇编语言就是产生IL代码的。当我们用引用传递参数的时候，会把参数在内存中的存储地址传递给相应的方法而不是像用值传递参数时，把值的副本传递给方法。我们用一个例子来看看IL汇编语言中是怎样用引用传递参数的。
 
 ```cs
-   1: .method static void main() cil managed
-   2: {
-   3:     .maxstack 2
-   4:     .entrypoint
-   5:     .locals init (int32, int32)
-   6:     
-   7:     ldc.i4 10
-   8:     stloc.0
-   9:     ldc.i4 20
-  10:     stloc.1
-  11:     
-  12:     ldloca 0          //Loads the address of first local variable 
-  13:     ldloc.1 //Loads the value of Second Local Variable
-  14:     call void DoSum(int32 &, int32 )
-  15:     ldloc.0
-  16:     //Load First variable again, but value this time, not address
-  17:     call void [mscorlib]System.Console::WriteLine(int32)
-  18:     ret 
-  19: } 
-  20: .method    public static void DoSum (int32 &, int32 ) cil managed 
-  21: { 
-  22:     .maxstack 2 
-  23:     .locals    init (int32)    
-  24:     //Resolve the address,    and copy value to local variable 
-  25:     ldarg.0 
-  26:     ldind.i4 
-  27:     stloc.0
-  28:     ldloc.0
-  29:     //Perform the Sum
-  30:     ldarg.1
-  31:     add
-  32:     stloc.0
-  33:  
-  34:     ldarg.0
-  35:     ldloc.0
-  36:     stind.i4
-  37:     
-  38:     ret
-  39: }
+ .method static void main() cil managed
+ {
+     .maxstack 2
+     .entrypoint
+     .locals init (int32, int32)
+     
+     ldc.i4 10
+     stloc.0
+     ldc.i4 20
+     stloc.1
+     
+     ldloca 0          //Loads the address of first local variable 
+     ldloc.1 //Loads the value of Second Local Variable
+     call void DoSum(int32 &, int32 )
+     ldloc.0
+     //Load First variable again, but value this time, not address
+     call void [mscorlib]System.Console::WriteLine(int32)
+     ret 
+ } 
+ .method    public static void DoSum (int32 &, int32 ) cil managed 
+ { 
+     .maxstack 2 
+     .locals    init (int32)    
+     //Resolve the address,    and copy value to local variable 
+     ldarg.0 
+     ldind.i4 
+     stloc.0
+     ldloc.0
+     //Perform the Sum
+     ldarg.1
+     add
+     stloc.0
+  
+     ldarg.0
+     ldloc.0
+     stind.i4
+     
+     ret
+ }
 ```
 
 图１.８用引用传递参数
@@ -428,33 +428,33 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 当然，在IL汇编语言中肯定可以创建你自己的类和命名空间。实际上，就像其它任何高级语言一样，在IL汇编语言中创建自己的类以及命名空间是非常容易的。不信吗？那我们接下来看一看。
 
 ```cs
-   1: //Classes.il
-   2: //Creating 
-   3: Classes
-   4: .assembly extern
-   5:  
-   6: mscorlib {} .assembly Classes
-   7:  
-   8: { .ver 1:0:1:0    } 
-   9: .module Classes.exe
-  10: .namespace HangamaHouse
-  11:  
-  12: { 
-  13:     .class public ansi auto Myclass extends [mscorlib]System.Object
-  14:     {
-  15:         .method public static void main() cil managed
-  16:         {
-  17:             .maxstack 1
-  18:             .entrypoint
-  19:         
-  20:             ldstr "Hello World From HangamaHouse.MyClass::main()"
-  21:             call void [mscorlib]System.Console::WriteLine(string)
-  22:             
-  23:             ret
-  24:         
-  25:         }
-  26:     }    
-  27: }
+//Classes.il
+//Creating 
+Classes
+.assembly extern
+ 
+mscorlib {} .assembly Classes
+ 
+{ .ver 1:0:1:0    } 
+.module Classes.exe
+.namespace HangamaHouse
+ 
+{ 
+    .class public ansi auto Myclass extends [mscorlib]System.Object
+    {
+        .method public static void main() cil managed
+        {
+            .maxstack 1
+            .entrypoint
+        
+            ldstr "Hello World From HangamaHouse.MyClass::main()"
+            call void [mscorlib]System.Console::WriteLine(string)
+            
+            ret
+        
+        }
+    }    
+}
 ```
 
 图1.9创建自己的命名空间和类
@@ -483,31 +483,31 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 我们来在IL汇编语言中创建我们自己的一个类库。这个简单的类库只包含一个公有的方法，这个方法接受一个变量并且返回这个变量的平方。简单的比较容易理解，我们来看代码：
 
 ```cs
-   1: .assembly extern mscorlib {}
-   2: .assembly MathLib
-   3: {
-   4:     .ver 1:0:1:0
-   5: }
-   6:  
-   7: .module MathLib.dll
-   8:  
-   9: .namespace HangamaHouse
-  10: {    
-  11:     .class public ansi auto MathClass extends [mscorlib]System.Object
-  12:     {
-  13:         
-  14:         .method public int32 GetSquare(int32) cil managed
-  15:         {
-  16:             .maxstack 3
-  17:             ldarg.0        //Load the Object's 'this' pointer on the stack
-  18:             ldarg.1
-  19:             ldarg.1
-  20:             mul
-  21:             ret        
-  22:  
-  23:         }
-  24:     }
-  25: }
+ .assembly extern mscorlib {}
+ .assembly MathLib
+ {
+     .ver 1:0:1:0
+ }
+  
+ .module MathLib.dll
+  
+ .namespace HangamaHouse
+ {    
+     .class public ansi auto MathClass extends [mscorlib]System.Object
+     {
+         
+         .method public int32 GetSquare(int32) cil managed
+         {
+             .maxstack 3
+             ldarg.0        //Load the Object's 'this' pointer on the stack
+             ldarg.1
+             ldarg.1
+             mul
+             ret        
+  
+         }
+     }
+ }
 ```
 
 图1.11求数学平方的类库
@@ -516,28 +516,29 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 
 上面的代码看起来很简单，它定义了一个命名空间HangamaHouse，然后在命名空间里面定义了一个MathClass类，这个类和上面的代码（图1.10）中定义的类一样继承于System命名空间里面的Object类。在这个类里面我们定义了一个需要传入一个int32类型参数的方法GetSquare。 我们把`maxstack的大小定义为3，然后加载第0个参数。接下来我们重复的加载两次第二个参数。等等，我们在这里只接受了一个参数，但是我们却加载了参数0和参数1（总共两个参数）。这怎么可能？确实可以，实际上第一个参数(ldarg.0)是这个对象的this指针的引用，因为每个对象的实例都会把自己在内存中的地址也传进来。所以实际上我们的参数是从索引1处开始的。我们加载第一个参数两次去为了后面执行mul指令把这两个数相乘。最后的结果将会放在栈的顶部，然后在我们调用ret指令的时候，返回给调用这个方法的地方去。`
 
-```cs
 这个类库编译没有问题，我们来看看一个使用这个类库的例子
-   1: .assembly extern mscorlib {}
-   2: .assembly extern MathLib {.ver 1:0:1:0}
-   3: //
-   4: //rest code here
-   5: //
-   6: .method static void    Main() cil managed
-   7: {
-   8:     .maxstack 2
-   9:     .entrypoint
-  10:     .locals init (valuetype [MathLib]HangamaHouse.MathClass mclass) 
-  11:             
-  12:     ldloca mclass
-  13:     ldc.i4 5
-  14:     call instance int32 [MathLib]HangamaHouse.MathClass::GetSquare(int32)
-  15:     ldstr "The Square of 5 Returned : "
-  16:     call void [mscorlib]System.Console::Write(string)
-  17:     call void [mscorlib]System.Console::WriteLine(int32)
-  18:  
-  19:     ret
-  20: }
+
+```cs
+ .assembly extern mscorlib {}
+ .assembly extern MathLib {.ver 1:0:1:0}
+ //
+ //rest code here
+ //
+ .method static void    Main() cil managed
+ {
+     .maxstack 2
+     .entrypoint
+     .locals init (valuetype [MathLib]HangamaHouse.MathClass mclass) 
+             
+     ldloca mclass
+     ldc.i4 5
+     call instance int32 [MathLib]HangamaHouse.MathClass::GetSquare(int32)
+     ldstr "The Square of 5 Returned : "
+     call void [mscorlib]System.Console::Write(string)
+     call void [mscorlib]System.Console::WriteLine(int32)
+  
+     ret
+ }
 ```
 
 ​    图1.12使用类库中的MathClass类
@@ -553,21 +554,21 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 构造函数在高级语言中是在创建对象时会调用的一个方法，但是在低级语言中，像IL汇编语言，你需要人工的去调用它，它是不返回任何东西的一个方法。下面的示例代码演示了怎样创建构造函数。我只是把需要的代码拿出来了，这篇文章的源代码里面包括了这一部分的所有代码。在阅读这一部分的时候，一定要集中注意力，因为这一部分将会教给你很多东西。
 
 ```cs
-   1: .class public MathClass extends [mscorlib]System.ValueType
-   2: {        
-   3:     .field private int32 mValue
-   4:     //Other code goes here
-   5:  
-   6:     .method public specialname rtspecialname 
-   7:         instance void .ctor() cil managed
-   8:     {        
-   9:             
-  10:         ldarg.0
-  11:         ldc.i4.s    15
-  12:         stfld int32 HangamaHouse.MathClass::mValue
-  13:         ret
-  14:     }
-  15:     //Other code goes here.
+.class public MathClass extends [mscorlib]System.ValueType
+{        
+    .field private int32 mValue
+    //Other code goes here
+ 
+    .method public specialname rtspecialname 
+        instance void .ctor() cil managed
+    {        
+            
+        ldarg.0
+        ldc.i4.s    15
+        stfld int32 HangamaHouse.MathClass::mValue
+        ret
+    }
+    //Other code goes here.
 ```
 
 图1.13 MathLib类的构造函数
@@ -581,14 +582,14 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 不像高级语言那样，在IL汇编语言中，构造函数不是自动调用的，而是需要你显示的调用它，下面的一个代码片断演示了怎样调用一个构造函数去初始化类中的变量。
 
 ```cs
-   1: .method public static void Main() cil managed
-   2: {
-   3:     .maxstack 2
-   4:     .entrypoint
-   5:     .locals init (valuetype [MathLib]HangamaHouse.MathClass mclass) 
-   6:             
-   7:     ldloca mclass            
-   8:     call instance void [MathLib]HangamaHouse.MathClass::.ctor()
+ .method public static void Main() cil managed
+ {
+     .maxstack 2
+     .entrypoint
+     .locals init (valuetype [MathLib]HangamaHouse.MathClass mclass) 
+             
+     ldloca mclass            
+     call instance void [MathLib]HangamaHouse.MathClass::.ctor()
 ```
 
 上面的代码创建一个MathClass类型的局部变量mclass，这个类型是在HangamaHouse命名空间里面的。然后我们加载这个对象变量的地址到材里面去，然后调用构造函数（.ctro方法），如果你仔细观察，你就会发现它和我们在IL汇编语言中调用其它普通方法一样，没有区别，同样的，你可以定义重载的构造函数当你在定义.ctor方法的时候，让它接受几个参数。然后像我们调用默认构造函数一样去调用它。
@@ -596,26 +597,26 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 现在来讨论属性，其实属性实质上也是方法，看一下它的特性，我们就会完全明白。
 
 ```cs
-   1: .method  specialname public instance int32 get_Value() cil managed
-   2: {
-   3:     ldarg.0
-   4:     ldfld int32 HangamaHouse.MathClass::mValue
-   5:     ret
-   6: }
-   7: .method specialname public instance void set_Value(int32 ) cil managed
-   8: {
-   9:     ldarg.0
-  10:     ldarg.1
-  11:     stfld int32 HangamaHouse.MathClass::mValue
-  12:     
-  13:     ret
-  14: }        
-  15: //Define the property, Value
-  16: .property int32 Value()
-  17: {
-  18:     .get instance int32 get_Value()
-  19:     .set instance void set_Value(int32 )
-  20: }
+.method  specialname public instance int32 get_Value() cil managed
+{
+    ldarg.0
+    ldfld int32 HangamaHouse.MathClass::mValue
+    ret
+}
+.method specialname public instance void set_Value(int32 ) cil managed
+{
+    ldarg.0
+    ldarg.1
+    stfld int32 HangamaHouse.MathClass::mValue
+    
+    ret
+}        
+//Define the property, Value
+.property int32 Value()
+{
+    .get instance int32 get_Value()
+    .set instance void set_Value(int32 )
+}
 ```
 
 图1.15属性
@@ -623,17 +624,17 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 你可以看一下上面的代码，你会肯定的说，这和方法的代码一样。但是你在这可以看到另外一个东西，那就是.property 指令，在里面它定义了两个东西，一个是属性get，一个是属性set。说明这两个方法属于属性的一部分。我们可以说这两个方法在上面都定义了，一个是`get_Value` 方法一个是`set_Value方法。这些方法就像在文章中出现的一些普通方法，调用属性很简单，因为它们就像方法一样。`
 
 ```cs
-   1: .maxstack 2 .locals
-   2: init (valuetype [MathLib]HangamaHouse.MathClass tclass) 
-   3:  
-   4: ldloca tclass
-   5: ldc.i4 25 
-   6: call instance void [MathLib]HangamaHouse.MathClass::set_Value(int32) 
-   7: ldloca tclass 
-   8: call instance int32 [MathLib]HangamaHouse.MathClass::get_Value()
-   9: ldstr "Propert Value Set to : " 
-  10: call void [mscorlib]System.Console::Write(string) 
-  11: call void [mscorlib]System.Console::WriteLine(int32)
+   .maxstack 2 .locals
+   init (valuetype [MathLib]HangamaHouse.MathClass tclass) 
+    
+   ldloca tclass
+   ldc.i4 25 
+   call instance void [MathLib]HangamaHouse.MathClass::set_Value(int32) 
+   ldloca tclass 
+   call instance int32 [MathLib]HangamaHouse.MathClass::get_Value()
+   ldstr "Propert Value Set to : " 
+   call void [mscorlib]System.Console::Write(string) 
+   call void [mscorlib]System.Console::WriteLine(int32)
 ```
 
 图1.16 使用属性，GetSquare方法也被调用了
@@ -647,24 +648,24 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 这部分内容告诉我们怎样联系上面所讲的内容创建一个简单的GUI，Windows窗体。在这个应用程序里面，我从`System.Windows.Forms.Form` 类中继承创建了一个简单的窗体，它没有包含任何控件，但是我修改了一些它的属性，例如BackColor,Text和WindowState。代码一步一步的比较简单。大家一起来看一下我结束这篇文章之前的最后一段代码。
 
 ```cs
-   1: .namespace MyForm
-   2: {
-   3:   .class public TestForm extends 
-   4:        [System.Windows.Forms]System.Windows.Forms.Form
-   5:   {
-   6:     .field private class [System]System.ComponentModel.IContainer components
-   7:     .method public static void Main() cil managed
-   8:     {
-   9:       .entrypoint
-  10:       .maxstack  1
-  11:             
-  12:       //Create New Object of TestForm Class and Call the Constructor     
-  13:       newobj     instance void MyForm.TestForm::.ctor()
-  14:       call       void [System.Windows.Forms]
-  15:           System.Windows.Forms.Application::Run(
-  16:           class [System.Windows.Forms]System.Windows.Forms.Form)
-  17:       ret
-  18:     }
+.namespace MyForm
+{
+  .class public TestForm extends 
+       [System.Windows.Forms]System.Windows.Forms.Form
+  {
+    .field private class [System]System.ComponentModel.IContainer components
+    .method public static void Main() cil managed
+    {
+      .entrypoint
+      .maxstack  1
+            
+      //Create New Object of TestForm Class and Call the Constructor     
+      newobj     instance void MyForm.TestForm::.ctor()
+      call       void [System.Windows.Forms]
+          System.Windows.Forms.Application::Run(
+          class [System.Windows.Forms]System.Windows.Forms.Form)
+      ret
+    }
 ```
 
 图1.17Windows Form的入口函数
@@ -672,75 +673,77 @@ IL也支持引用传递参数，这是理所当然，因为．ＮＥＴ下的高
 这是整个应用程序的入口函数，首先（在`MyForm命名空间里面创建类TestForm后`），我们定义了一个IContainer的局部变量（字段）。注意在定义这种字段之前，我们加上了关键字class 。然后在主函数里，我们用`newobj指令创建了一个TestForm 类的对象。然后我们调用Application.Run 方法去运行这个应用程序。如果你把它与高级语言相比，你就会发现，它和我们现在用的手法是一样的。现在我们来看看我们类（TestForm）的构造函数。`
 
 ```cs
-   1: .method public specialname rtspecialname instance 
-   2:        void  .ctor() cil managed
-   3:    {     
-   4:      .maxstack  4
-   5:            
-   6:      ldarg.0
-   7:     //Call Base Class Constructor
-   8:      call       instance void [System.Windows.Forms]
-   9:                        System.Windows.Forms.Form::.ctor()
-  10:      
-  11:      //Initialize the Components
-  12:      ldarg.0
-  13:      newobj   instance void [System]System.ComponentModel.Container::.ctor()
-  14:      stfld    class [System]System.ComponentModel.IContainer 
-  15:                        MyForm.TestForm::components
-  16:  
-  17:      //Set the Title of the Window (Form)
-  18:      ldarg.0
-  19:      ldstr      "This is the Title of the Form...."
-  20:      call   instance void [System.Windows.Forms]
-  21:                       System.Windows.Forms.Control::set_Text(string)
-  22:      
-  23:      //Set the Back Color of the Form
-  24:      ldarg.0
-  25:      ldc.i4 0xff
-  26:      ldc.i4 0
-  27:      ldc.i4 0
-  28:      call valuetype [System.Drawing]System.Drawing.Color 
-  29:                     [System.Drawing]System.Drawing.Color::FromArgb(
-  30:                     int32, int32, int32)
-  31:  
-  32:      call   instance void [System.Windows.Forms]
-  33:                     System.Windows.Forms.Control::set_BackColor(
-  34:                     valuetype [System.Drawing]System.Drawing.Color)
-  35:      
-  36:      
-  37:      //Maximize the Form using WindowState Property
-  38:      ldarg.0
-  39:      ldc.i4 2        //2 for Maximize
-  40:      call instance void [System.Windows.Forms]
-  41:                     System.Windows.Forms.Form::set_WindowState(
-  42:                     valuetype [System.Windows.Forms]
-  43:                     System.Windows.Forms.FormWindowState)
-  44:      ret
-  45:    }
-图1.18TestForm中的.ctor方法（构造函数）
+ .method public specialname rtspecialname instance 
+        void  .ctor() cil managed
+    {     
+      .maxstack  4
+            
+      ldarg.0
+     //Call Base Class Constructor
+      call       instance void [System.Windows.Forms]
+                        System.Windows.Forms.Form::.ctor()
+      
+      //Initialize the Components
+      ldarg.0
+      newobj   instance void [System]System.ComponentModel.Container::.ctor()
+      stfld    class [System]System.ComponentModel.IContainer 
+                        MyForm.TestForm::components
+  
+      //Set the Title of the Window (Form)
+      ldarg.0
+      ldstr      "This is the Title of the Form...."
+      call   instance void [System.Windows.Forms]
+                       System.Windows.Forms.Control::set_Text(string)
+      
+      //Set the Back Color of the Form
+      ldarg.0
+      ldc.i4 0xff
+      ldc.i4 0
+      ldc.i4 0
+      call valuetype [System.Drawing]System.Drawing.Color 
+                     [System.Drawing]System.Drawing.Color::FromArgb(
+                     int32, int32, int32)
+  
+      call   instance void [System.Windows.Forms]
+                     System.Windows.Forms.Control::set_BackColor(
+                     valuetype [System.Drawing]System.Drawing.Color)
+      
+      
+      //Maximize the Form using WindowState Property
+      ldarg.0
+      ldc.i4 2        //2 for Maximize
+      call instance void [System.Windows.Forms]
+                     System.Windows.Forms.Form::set_WindowState(
+                     valuetype [System.Windows.Forms]
+                     System.Windows.Forms.FormWindowState)
+      ret
+    }
+
 ```
+
+图1.18TestForm中的.ctor方法（构造函数）
 
 非常简单，我们只是调用了基类的.ctor方法（构造函数）。然后我们创建一个Container 类的对象，把它当作我们的一个组件对象（类中的字段），窗体初始化到此就完成了。接下来我们为我们的新窗体设置一些属性。首先设置窗体的标题（Text属性）。我们加载一个字符串到栈里面去，然后调用Control类的 set_Text方法（因为Text属性是从Control继承而来的），设置了Text属性后，我们开始去设置BackColor属性。我们调用FromArgb方法从红，绿，蓝中获取颜色值。我们首先加载了三个值到栈里面然后调用Color.FromArgb方法去得到一个Color类的对象，然后把这个Color值赋给BackColor属性。我们跟前面设置Text属性一样的方式来设置BackColor属性。最后我们把`WindowState` 属性设置为Maximized（最大化），用同样的方式。你可能注意到了我们加载了一个常量到栈里面去，这个常量是一个`FormWindowState` 的枚举值，每个枚举变量都已经提前定义好了值。
 
 尽管创建窗体的代码已经完成了，但是我们在这里也定义了一个Dispose事件（窗体的析构函数），通过这个事件我们可以移除不需要的对象以此来清理内存。如果你对Dispose事件的代码感兴趣，那么看一下几行代码。
 
 ```cs
-   1: .method family virtual instance void Dispose(bool disposing) cil managed
-   2:   {
-   3:     .maxstack  2
-   4:  
-   5:     ldarg.0
-   6:     ldfld      class [System]System.ComponentModel.IContainer 
-   7:                  MyForm.TestForm::components
-   8:     callvirt   instance void [mscorlib]System.IDisposable::Dispose()
-   9:       
-  10:       //Call Base Class's Dispose Event
-  11:     ldarg.0
-  12:     ldarg.1
-  13:     call       instance void [System.Windows.Forms]
-  14:                   System.Windows.Forms.Form::Dispose(bool)
-  15:     ret
-  16:   }
+ .method family virtual instance void Dispose(bool disposing) cil managed
+   {
+     .maxstack  2
+  
+     ldarg.0
+     ldfld      class [System]System.ComponentModel.IContainer 
+                  MyForm.TestForm::components
+     callvirt   instance void [mscorlib]System.IDisposable::Dispose()
+       
+       //Call Base Class's Dispose Event
+     ldarg.0
+     ldarg.1
+     call       instance void [System.Windows.Forms]
+                   System.Windows.Forms.Form::Dispose(bool)
+     ret
+   }
 ```
 
 这个Dispose方法是重载的，所以它被声明为虚方法。我们只需要加载这个对象的引用（this），加载一个组件(component)字段，然后通过IDisposable调用Dispose方法，然后调用我们窗体的Dispose方法就可以了。
