@@ -1,7 +1,7 @@
 ---
 title: 转载-IL汇编语言介绍（译）
 date: 2019-08-06 21:34:47
-categories: [硬核C#]
+categories: [硬核C Sharp]
 tags:
 top:
 ---
