@@ -152,4 +152,4 @@ host和mysql密码和上一步相同
 
 ![](https://raw.githubusercontent.com/JayChenFE/pic/master/20190828215721.png)
 
-至此,在windows中连接wsl2中的docker中的mysl成功
+至此,在windows中连接wsl2中的docker中的mysql成功
