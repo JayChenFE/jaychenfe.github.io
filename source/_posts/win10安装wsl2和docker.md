@@ -17,6 +17,7 @@ https://zhuanlan.zhihu.com/p/69121280
 
 - WSL2需要Windows build 18917 更新,WSL不需要.但是最好**首先**将操作系统更新到需要的版本,**而不是**先安装WSL再更新
 - **不要**安装不在windows商店的Linux发行版(包括github上的各种centos以及centos官方docker镜像,centos目前不是windows商店的Linux发行版之一)
+- windows升级过程可能会有多个更新,每次更新都检查C盘,预留10G以上的硬盘空间
 
 # 安装过程
 
