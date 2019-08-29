@@ -130,7 +130,7 @@ $ sudo service docker start
 
 ### 5.3在docker中安装mysql
 
-在https://hub.docker.com/_/mysql找到合适的mysql镜像版本,这里使用mysql5.7.27
+在 https://hub.docker.com/_/mysql   找到合适的mysql镜像版本,这里使用mysql5.7.27
 
 运行如下命令
 
