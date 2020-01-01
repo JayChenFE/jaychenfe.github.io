@@ -1,5 +1,5 @@
 ---
-title: SpringBoot启动引导-原理概述及自动装配
+title: SpringBoot启动引导-原理概述及包扫描
 date: 2019-12-31 16:42:43
 categories:
 tags:
@@ -34,7 +34,7 @@ public class Application {
 }
 ```
 尝试注释掉`@SpringBootApplication`注解并启动
-```java
+```shell
 org.springframework.context.ApplicationContextException: Unable to start web server; nested exception is org.springframework.context.ApplicationContextException: Unable to start ServletWebServerApplicationContext due to missing ServletWebServerFactory bean.
 	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.onRefresh(ServletWebServerApplicationContext.java:156) ~[spring-boot-2.2.2.RELEASE.jar:2.2.2.RELEASE]
 	...
