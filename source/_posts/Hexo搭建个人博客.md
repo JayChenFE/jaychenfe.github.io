@@ -11,7 +11,7 @@ tags:
 
 
 
-本文介绍如何使用`Hexo`搭建个人博客并托管到`GithubPages`的过程,使用`Next(6.x版本)的Gemini`主题,持续集成工具为`travis ci`
+本文介绍如何使用`Hexo`搭建个人博客并托管到`GithubPages`的过程,使用了`Next(6.x版本)的Gemini`主题,持续集成工具为`travis ci`
 
 需要提前安装好git和node.js,并熟悉github的基本操作,访问部分工具需要科学上网
 
