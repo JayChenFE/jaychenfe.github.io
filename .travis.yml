@@ -1,11 +1,10 @@
 language: node_js
-env:
-  - TRAVIS_NODE_VERSION="10.9.0"
+# nodejs版本
+node_js: 
+    - '10'
 
 # S: Build Lifecycle
 install:
-  - nvm install TRAVIS_NODE_VERSION
-  - nvm alias default TRAVIS_NODE_VERSION
   - npm install
 
 #before_script:
