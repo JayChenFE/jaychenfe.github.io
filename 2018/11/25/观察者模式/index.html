@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[TOC] 示例股票变化(C#实现)监控某一个公司(Microsoft)的股票价格变化，可以有多种方式，通知的对象可以是投资者，或者是发送到移动设备，还有电子邮件等 一开始我们先不考虑Observer模式，通过一步步地重构，最终重构为Observer模式  现在有这样两个类：Microsoft和Investor，如下图所示：    123456789101112131415161718192021">
+<meta property="og:type" content="article">
+<meta property="og:title" content="观察观察者模式">
+<meta property="og:url" content="https://jaychenfe.github.io/2018/11/25/观察者模式/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="[TOC] 示例股票变化(C#实现)监控某一个公司(Microsoft)的股票价格变化，可以有多种方式，通知的对象可以是投资者，或者是发送到移动设备，还有电子邮件等 一开始我们先不考虑Observer模式，通过一步步地重构，最终重构为Observer模式  现在有这样两个类：Microsoft和Investor，如下图所示：    123456789101112131415161718192021">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/015_Observer_s1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/016_Observer_s2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/017_Observer_s3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/018_Observer_s4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/013_fishing_result.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/014_Observer_py.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="观察观察者模式">
+<meta name="twitter:description" content="[TOC] 示例股票变化(C#实现)监控某一个公司(Microsoft)的股票价格变化，可以有多种方式，通知的对象可以是投资者，或者是发送到移动设备，还有电子邮件等 一开始我们先不考虑Observer模式，通过一步步地重构，最终重构为Observer模式  现在有这样两个类：Microsoft和Investor，如下图所示：    123456789101112131415161718192021">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/015_Observer_s1.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2018/11/25/观察者模式/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>观察观察者模式 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2018/11/25/观察者模式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">观察观察者模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-25 19:45:41" itemprop="dateCreated datePublished" datetime="2018-11-25T19:45:41+00:00">2018-11-25</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="股票变化-C-实现"><a href="#股票变化-C-实现" class="headerlink" title="股票变化(C#实现)"></a>股票变化(C#实现)</h2><p>监控某一个公司(Microsoft)的股票价格变化，可以有多种方式，通知的对象可以是投资者，或者是发送到移动设备，还有电子邮件等</p>
+<p>一开始我们先不考虑<code>Observer</code>模式，通过一步步地重构，最终重构为<code>Observer</code>模式 </p>
+<p>现在有这样两个类：<code>Microsoft</code>和<code>Investor</code>，如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/015_Observer_s1.png" alt=""> </p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Microsoft</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Investor.SendData(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Investor Investor &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String Symbol &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> Price &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Investor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">string</span> _name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Investor</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>._name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Microsoft ms</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>, _name, ms.Symbol, ms.Price);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端:</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Investor investor = <span class="keyword">new</span> Investor(<span class="string">"Jom"</span>);</span><br><span class="line"></span><br><span class="line">        Microsoft ms = <span class="keyword">new</span> Microsoft</span><br><span class="line">        &#123;</span><br><span class="line">            Investor = investor,</span><br><span class="line"></span><br><span class="line">            Symbol = <span class="string">"Microsoft"</span>,</span><br><span class="line"></span><br><span class="line">            Price = <span class="number">120.00</span></span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        ms.Update();</span><br><span class="line"></span><br><span class="line">        Console.ReadLine();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行后结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Notified Jom of Microsoft&apos;s change to ￥120</span><br></pre></td></tr></table></figure>
+<p>可以看到，这段代码运行并没有问题，也确实实现了我们最初的设想的功能，把Microsoft的股票价格变化通知到了Jom投资者那儿。</p>
+<p>但是这里面出现了如下几个问题：</p>
+<ul>
+<li><p>Microsoft和Investor之间形成了一种双向的依赖关系，即Microsoft调用了Investor的方法，而Investor调用了Microsoft类的属性。如果有其中一个类变化，有可能会引起另一个的变化。</p>
+</li>
+<li><p>当出现一种的通知对象，比如说是移动设备Mobile：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Mobile</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">string</span> _no;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Mobile</span>(<span class="params"><span class="keyword">string</span> no</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">this</span>._no = no;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Microsoft ms</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>, _no, ms.Symbol, ms.Price);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这时候对应的Microsoft的类就应该改变为如下代码，在Microsoft类中增加Mobile，同时修改Update()方法使其可以通知到移动设备：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Microsoft</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          Investor.SendData(<span class="keyword">this</span>);</span><br><span class="line">          Mobile.SendData(<span class="keyword">this</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">public</span> Mobile Mobile &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">      <span class="keyword">public</span> Investor Investor &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">public</span> String Symbol &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">double</span> Price &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>显然这样的设计极大的违背了“开放-封闭”原则，这不是我们所想要的。</p>
+<p>对此做进一步的抽象，既然出现了多个通知对象，我们就为<strong>这些对象之间抽象出一个接口，用它来取消Microsoft和具体的通知对象之间依赖</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/016_Observer_s2.png" alt=""></p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IObserver</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Microsoft ms</span>)</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Microsoft</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          Investor.SendData(<span class="keyword">this</span>);</span><br><span class="line">          <span class="comment">//Mobile.SendData(this);</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//public Mobile Mobile &#123; get; set; &#125;</span></span><br><span class="line">      <span class="keyword">public</span> IObserver Investor &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">public</span> String Symbol &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">double</span> Price &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Investor</span>: <span class="title">IObserver</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">string</span> _name;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">Investor</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">this</span>._name = name;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Microsoft ms</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          Console.WriteLine(<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>, _name, ms.Symbol, ms.Price);</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Mobile</span></span><br><span class="line"></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">string</span> _no;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">Mobile</span>(<span class="params"><span class="keyword">string</span> no</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">this</span>._no = no;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Microsoft ms</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          Console.WriteLine(<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>, _no, ms.Symbol, ms.Price);</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们在降低两者的依赖性上已经迈进了一小步，正在朝着弱依赖性这个方向变化。在Microsoft类中已经不再依赖于具体的Investor，而是依赖于接口IObserver。</p>
+<p>但同时我们看到，再新出现一个移动设备这样的通知对象，Microsoft类仍然需要改变，对此我们再做如下重构，在Microsoft中维护一个IObserver列表，同时提供相应的维护方法。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/017_Observer_s3.png" alt=""></p>
+<p>此时的实现</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Microsoft</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">foreach</span> (IObserver observer <span class="keyword">in</span> observers)</span><br><span class="line">          &#123;</span><br><span class="line">              observer.SendData(<span class="keyword">this</span>);</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddObserver</span>(<span class="params">IObserver observer</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          observers.Add(observer);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RemoveObserver</span>(<span class="params">IObserver observer</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          observers.Remove(observer);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">private</span> List&lt;IObserver&gt; observers = <span class="keyword">new</span> List&lt;IObserver&gt;();</span><br><span class="line">      </span><br><span class="line">    	<span class="keyword">public</span> IObserver Investor &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">public</span> String Symbol &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">double</span> Price &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>客户端</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            IObserver investor1 = <span class="keyword">new</span> Investor(<span class="string">"Tom"</span>);</span><br><span class="line"></span><br><span class="line">            IObserver investor2 = <span class="keyword">new</span> Investor(<span class="string">"Jerry"</span>);</span><br><span class="line"></span><br><span class="line">            Microsoft ms = <span class="keyword">new</span> Microsoft</span><br><span class="line">            &#123;</span><br><span class="line">                Symbol = <span class="string">"Microsoft"</span>,</span><br><span class="line"></span><br><span class="line">                Price = <span class="number">120.00</span></span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            ms.AddObserver(investor1);</span><br><span class="line"></span><br><span class="line">            ms.AddObserver(investor2);</span><br><span class="line"></span><br><span class="line">            ms.Update();</span><br><span class="line"></span><br><span class="line">            Console.ReadLine();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>走到这一步，已经有了Observer模式的影子了，Microsoft类不再依赖于具体的Investor，而是依赖于抽象的IOberver。</p>
+<p>存在着的一个问题是Investor仍然依赖于具体的公司Microsoft，况且公司还会有很多IBM，Google等，解决这样的问题很简单，只需要再对Microsoft类做一次抽象。如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/018_Observer_s4.png" alt=""></p>
+<p>此时的实现</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IObserver</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Stock stock</span>)</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Stock</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">private</span> List&lt;IObserver&gt; observers = <span class="keyword">new</span> List&lt;IObserver&gt;();</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">Stock</span>(<span class="params">String symbol, <span class="keyword">double</span> price</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           <span class="keyword">this</span>.Symbol = symbol;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">this</span>.Price = price;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           <span class="keyword">foreach</span> (IObserver ob <span class="keyword">in</span> observers)</span><br><span class="line"></span><br><span class="line">           &#123;</span><br><span class="line">               ob.SendData(<span class="keyword">this</span>);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddObserver</span>(<span class="params">IObserver observer</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           observers.Add(observer);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RemoveObserver</span>(<span class="params">IObserver observer</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           observers.Remove(observer);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">public</span> String Symbol &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">double</span> Price &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Microsoft</span> : <span class="title">Stock</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">Microsoft</span>(<span class="params">String symbol, <span class="keyword">double</span> price</span>) : <span class="title">base</span>(<span class="params">symbol, price</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123; &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Investor</span> : <span class="title">IObserver</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">string</span> _name;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">Investor</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           <span class="keyword">this</span>._name = name;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span>(<span class="params">Stock stock</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           Console.WriteLine(<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>, </span><br><span class="line">           _name, stock.Symbol, stock.Price);</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>客户端:</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           Stock ms = <span class="keyword">new</span> Microsoft(<span class="string">"Microsoft"</span>, <span class="number">120.00</span>);</span><br><span class="line"></span><br><span class="line">           ms.AddObserver(<span class="keyword">new</span> Investor(<span class="string">"Tom"</span>));</span><br><span class="line"></span><br><span class="line">           ms.AddObserver(<span class="keyword">new</span> Investor(<span class="string">"Jerry"</span>));</span><br><span class="line"></span><br><span class="line">           ms.Update();</span><br><span class="line"></span><br><span class="line">           Console.ReadLine();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>到这里我们可以看到，通过不断的重构，不断地抽象，我们由一开始的很糟糕的设计，逐渐重构为使用Observer模式的这样一个方案。</p>
+<p>在这个例子里面，IOberser充当了观察者的角色，而Stock则扮演了主题对象角色，在任何时候，只要调用了Stock的Update()方法，它就会通知它的所有观察者对象。</p>
+<p>同时可以看到，通过Observer模式，取消了直接依赖，变为间接依赖，这样大大提供了系统的可维护性和可扩展性。</p>
+<p><strong>.NET中的观察者模式</strong></p>
+<p>利用事件和委托来实现Observer模式我认为更加的简单和优雅，也是一种更好的解决方案。</p>
+<p>因为在上面的示例中我们可以看到，虽然取消了直接耦合，但是又引入了不必要的约束（暂且这么说吧）。即那些子类必须都继承于主题父类，还有观察者接口等。</p>
+<p>上面的例子简单的用事件和委托实现如下:</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span> (<span class="params"><span class="keyword">string</span>[] args</span>)</span> &#123;</span><br><span class="line">        Stock stock = <span class="keyword">new</span> Stock (<span class="string">"Microsoft"</span>, <span class="number">120.00</span>);</span><br><span class="line"></span><br><span class="line">        Investor investor = <span class="keyword">new</span> Investor (<span class="string">"Tom"</span>);</span><br><span class="line"></span><br><span class="line">        stock.NotifyEvent += <span class="keyword">new</span> NotifyEventHandler (investor.SendData);</span><br><span class="line"></span><br><span class="line">        stock.Update ();</span><br><span class="line"></span><br><span class="line">        Console.ReadLine ();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">void</span> <span class="title">NotifyEventHandler</span> (<span class="params"><span class="keyword">object</span> sender</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Stock</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> NotifyEventHandler NotifyEvent;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String _symbol;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> _price;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Stock</span> (<span class="params">String symbol, <span class="keyword">double</span> price</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">this</span>._symbol = symbol;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">this</span>._price = price;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        OnNotifyChange ();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnNotifyChange</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (NotifyEvent != <span class="literal">null</span>) &#123;</span><br><span class="line">            NotifyEvent (<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String Symbol &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="keyword">return</span> _symbol; &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">double</span> Price &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="keyword">return</span> _price; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Investor</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">string</span> _name;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Investor</span> (<span class="params"><span class="keyword">string</span> name</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>._name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span> (<span class="params"><span class="keyword">object</span> obj</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (obj <span class="keyword">is</span> Stock) &#123;</span><br><span class="line">            Stock stock = (Stock) obj;</span><br><span class="line">            Console.WriteLine (<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>,</span><br><span class="line">                               _name, stock.Symbol, stock.Price);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把无返回值委托换成action</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            Stock1 stock = <span class="keyword">new</span> Stock1(<span class="string">"Microsoft"</span>, <span class="number">120.00</span>);</span><br><span class="line"></span><br><span class="line">            Investor1 investor = <span class="keyword">new</span> Investor1(<span class="string">"Tom"</span>);</span><br><span class="line"></span><br><span class="line">            stock.NotifyEvent += investor.SendData;</span><br><span class="line"></span><br><span class="line">            stock.Update();</span><br><span class="line"></span><br><span class="line">            Console.ReadLine();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// public delegate void NotifyEventHandler(object sender);</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//public Action&lt;object&gt; NotifyEventHandler;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Stock1</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">event</span> Action&lt;<span class="keyword">object</span>&gt; NotifyEvent;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Stock1</span>(<span class="params"><span class="keyword">string</span> symbol, <span class="keyword">double</span> price</span>)</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">this</span>.Symbol = symbol;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">this</span>.Price = price;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            OnNotifyChange();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnNotifyChange</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            NotifyEvent?.Invoke(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">string</span> Symbol &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">double</span> Price &#123; <span class="keyword">get</span>; &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Investor1</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">string</span> _name;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Investor1</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">this</span>._name = name;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SendData</span>(<span class="params"><span class="keyword">object</span> obj</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (obj <span class="keyword">is</span> Stock1 stock)</span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(<span class="string">"Notified &#123;0&#125; of &#123;1&#125;'s "</span> + <span class="string">"change to &#123;2:C&#125;"</span>,</span><br><span class="line">                                   _name, stock.Symbol, stock.Price);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="钓鱼-C-实现"><a href="#钓鱼-C-实现" class="headerlink" title="钓鱼(C#实现)"></a>钓鱼(C#实现)</h2><p>鱼竿是被观察者，<br>铃铛是通知工具，<br>垂钓者是观察者。</p>
+<p>鱼儿咬钩，鱼竿通过铃铛通知垂钓者收钩。</p>
+<p>先来定义鱼的品类枚举：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> FishType</span><br><span class="line">&#123;</span><br><span class="line">    鲫鱼,</span><br><span class="line">    鲤鱼,</span><br><span class="line">    黑鱼,</span><br><span class="line">    青鱼,</span><br><span class="line">    草鱼,</span><br><span class="line">    鲈鱼</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来申明一个钓鱼工具的抽象类，维护订阅者列表，并负责循环通知订阅者。</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 钓鱼工具抽象类</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 用来维护订阅者列表，并通知订阅者</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">FishingTool</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">readonly</span> List&lt;ISubscriber&gt; _subscribers;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="title">FishingTool</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            _subscribers = <span class="keyword">new</span> List&lt;ISubscriber&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddSubscriber</span>(<span class="params">ISubscriber subscriber</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (!_subscribers.Contains(subscriber))</span><br><span class="line">                _subscribers.Add(subscriber);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RemoveSubscriber</span>(<span class="params">ISubscriber subscriber</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">if</span> (_subscribers.Contains(subscriber))</span><br><span class="line">                _subscribers.Remove(subscriber);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span>(<span class="params">FishType type</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">foreach</span> (<span class="keyword">var</span> subscriber <span class="keyword">in</span> _subscribers)</span><br><span class="line">                subscriber.Update(type);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>鱼竿的实现，这里用随机数模拟鱼儿咬钩：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 鱼竿</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FishingRod</span> : <span class="title">FishingTool</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Fishing</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"开始下钩！"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//用随机数模拟鱼咬钩，若随机数为偶数，则为鱼咬钩</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">new</span> Random().Next() % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> type = (FishType)<span class="keyword">new</span> Random().Next(<span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">            Console.WriteLine(<span class="string">"铃铛：叮叮叮，鱼儿咬钩了"</span>);</span><br><span class="line">            Notify(type);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义简单的观察者接口：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">   <span class="comment"><span class="doctag">///</span> 订阅者（观察者）接口</span></span><br><span class="line">   <span class="comment"><span class="doctag">///</span> 由具体的订阅者实现Update()方法</span></span><br><span class="line">   <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">ISubscriber</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">void</span> <span class="title">Update</span>(<span class="params">FishType type</span>)</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>垂钓者实现观察者接口，并定义了<code>Name</code>，<code>FishCount</code> 属性：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">   <span class="comment"><span class="doctag">///</span> 垂钓者实现观察者接口</span></span><br><span class="line">   <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FishingMan</span> : <span class="title">ISubscriber</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">FishingMan</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           Name = name;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">string</span> Name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">       <span class="keyword">public</span> <span class="keyword">int</span> FishCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params">FishType type</span>)</span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           FishCount++;</span><br><span class="line">           Console.WriteLine(<span class="string">"&#123;0&#125;：钓到一条[&#123;2&#125;]，已经钓到&#123;1&#125;条鱼了！"</span>, Name, FishCount, type);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>测试:</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">"简单实现的观察者模式："</span>);</span><br><span class="line">            Console.WriteLine(<span class="string">"======================="</span>);</span><br><span class="line">            <span class="comment">//1、初始化鱼竿</span></span><br><span class="line">            <span class="keyword">var</span> fishingRod = <span class="keyword">new</span> FishingRod();</span><br><span class="line"></span><br><span class="line">            <span class="comment">//2、声明垂钓者</span></span><br><span class="line">            <span class="keyword">var</span> fisher1 = <span class="keyword">new</span> FishingMan(<span class="string">"fisher1"</span>);</span><br><span class="line">            <span class="keyword">var</span> fisher2 = <span class="keyword">new</span> FishingMan(<span class="string">"fisher2"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//3、将垂钓者观察鱼竿</span></span><br><span class="line">            fishingRod.AddSubscriber(fisher1);</span><br><span class="line">            fishingRod.AddSubscriber(fisher2);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//4、循环钓鱼</span></span><br><span class="line">            <span class="keyword">while</span> (fisher1.FishCount &lt; <span class="number">5</span> || fisher2.FishCount &lt; <span class="number">5</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                fishingRod.Fishing();</span><br><span class="line">                Console.WriteLine(<span class="string">"-------------------"</span>);</span><br><span class="line">                <span class="comment">//睡眠0.5s</span></span><br><span class="line">                Thread.Sleep(<span class="number">500</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/013_fishing_result.png" alt=""></p>
+<h3 id="用委托实现"><a href="#用委托实现" class="headerlink" title="用委托实现"></a>用委托实现</h3><p>有了委托，我们就不再需要定义专门的抽象被观察者对象了，直接实现鱼竿：</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 鱼竿</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">FishingRod</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">delegate</span> <span class="keyword">void</span> <span class="title">FishingHandler</span>(<span class="params">FishType type</span>)</span>; <span class="comment">//声明委托</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">event</span> FishingHandler FishingEvent; <span class="comment">//声明事件</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Fishing</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">"开始下钩！"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//用随机数模拟鱼咬钩，若随机数为偶数，则为鱼咬钩</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">new</span> Random().Next() % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> a = <span class="keyword">new</span> Random(<span class="number">10</span>).Next();</span><br><span class="line">                <span class="keyword">var</span> type = (FishType)<span class="keyword">new</span> Random().Next(<span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">                Console.WriteLine(<span class="string">"铃铛：叮叮叮，鱼儿咬钩了"</span>);</span><br><span class="line">                FishingEvent?.Invoke(type);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>因为被观察者定义了委托，我们也没必要定义专门的观察者接口，只需要在具体的观察者中实现对应的委托即可。</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 垂钓者(观察者)</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span>  <span class="keyword">class</span> <span class="title">FishingMan</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FishingMan</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> Name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> FishCount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Update</span>(<span class="params">FishType type</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        FishCount++;</span><br><span class="line">        Console.WriteLine(<span class="string">"&#123;0&#125;：钓到一条[&#123;2&#125;]，已经钓到&#123;1&#125;条鱼了！"</span>, Name, FishCount, type);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端:</p>
+ <figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>       &#123;</span><br><span class="line">           Console.WriteLine(<span class="string">"委托实现的观察者模式："</span>);</span><br><span class="line">           Console.WriteLine(<span class="string">"======================="</span>);</span><br><span class="line">           <span class="comment">//1、初始化鱼竿</span></span><br><span class="line">           <span class="keyword">var</span> fishingRod = <span class="keyword">new</span> FishingRod();</span><br><span class="line"></span><br><span class="line">           <span class="comment">//2、声明垂钓者</span></span><br><span class="line">           <span class="keyword">var</span> fisher = <span class="keyword">new</span> FishingMan(<span class="string">"fisher1"</span>);</span><br><span class="line"></span><br><span class="line">           <span class="comment">//3、注册观察者</span></span><br><span class="line">           fishingRod.FishingEvent += fisher.Update;</span><br><span class="line"></span><br><span class="line">           <span class="comment">//4、循环钓鱼</span></span><br><span class="line">           <span class="keyword">while</span> (fisher.FishCount &lt; <span class="number">5</span>)</span><br><span class="line">           &#123;</span><br><span class="line">               fishingRod.Fishing();</span><br><span class="line">               Console.WriteLine(<span class="string">"-------------------"</span>);</span><br><span class="line">               <span class="comment">//睡眠0.5s</span></span><br><span class="line">               Thread.Sleep(<span class="number">500</span>);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="进制转换器-python实现"><a href="#进制转换器-python实现" class="headerlink" title="进制转换器(python实现)"></a>进制转换器(python实现)</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"""http://code.activestate.com/recipes/131499-observer-pattern/"""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Subject</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._observers = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attach</span><span class="params">(self, observer)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> observer <span class="keyword">in</span> self._observers:</span><br><span class="line">            self._observers.append(observer)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">detach</span><span class="params">(self, observer)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            self._observers.remove(observer)</span><br><span class="line">        <span class="keyword">except</span> ValueError:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">notify</span><span class="params">(self, modifier=None)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> observer <span class="keyword">in</span> self._observers:</span><br><span class="line">            <span class="keyword">if</span> modifier != observer:</span><br><span class="line">                observer.update(self)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Example usage</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Data</span><span class="params">(Subject)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name=<span class="string">''</span>)</span>:</span></span><br><span class="line">        Subject.__init__(self)</span><br><span class="line">        self.name = name</span><br><span class="line">        self._data = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">data</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._data</span><br><span class="line"></span><br><span class="line"><span class="meta">    @data.setter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">data</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self._data = value</span><br><span class="line">        self.notify()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HexViewer</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(self, subject)</span>:</span></span><br><span class="line">        print(<span class="string">'HexViewer: Subject %s has data 0x%x'</span> %</span><br><span class="line">              (subject.name, subject.data))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DecimalViewer</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(self, subject)</span>:</span></span><br><span class="line">        print(<span class="string">'DecimalViewer: Subject %s has data %d'</span> %</span><br><span class="line">              (subject.name, subject.data))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Example usage...</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    data1 = Data(<span class="string">'Data 1'</span>)</span><br><span class="line">    data2 = Data(<span class="string">'Data 2'</span>)</span><br><span class="line">    view1 = DecimalViewer()</span><br><span class="line">    view2 = HexViewer()</span><br><span class="line">    data1.attach(view1)</span><br><span class="line">    data1.attach(view2)</span><br><span class="line">    data2.attach(view2)</span><br><span class="line">    data2.attach(view1)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">"\nDetachSetting Data 1 = 10"</span>)</span><br><span class="line">    data1.data = <span class="number">10</span></span><br><span class="line">	</span><br><span class="line">    print(<span class="string">"\nSetting Data 2 = 15"</span>)</span><br><span class="line">    data2.data = <span class="number">15</span></span><br><span class="line">	</span><br><span class="line">    print(<span class="string">"\nSetting Data 1 = 3"</span>)</span><br><span class="line">    data1.data = <span class="number">3</span></span><br><span class="line">	</span><br><span class="line">    print(<span class="string">"\nSetting Data 2 = 5"</span>)</span><br><span class="line">    data2.data = <span class="number">5</span></span><br><span class="line">	</span><br><span class="line">    print(<span class="string">"\nDetach HexViewer from data1 and data2."</span>)</span><br><span class="line">    data1.detach(view2)</span><br><span class="line">    data2.detach(view2)</span><br><span class="line">    print(<span class="string">"\nSetting Data 1 = 10"</span>)</span><br><span class="line">    data1.data = <span class="number">10</span></span><br><span class="line">	</span><br><span class="line">    print(<span class="string">"\nSetting Data 2 = 15"</span>)</span><br><span class="line">    data2.data = <span class="number">15</span></span><br><span class="line">	</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/design_pattern/014_Observer_py.png" alt=""></p>
+<h2 id="登录网站模块-JavaScript实现"><a href="#登录网站模块-JavaScript实现" class="headerlink" title="登录网站模块(JavaScript实现)"></a>登录网站模块(JavaScript实现)</h2><p>JavaScript中的订阅-发布模式和别的语言(比如Java)中的实现还是有区别的.</p>
+<p>在Java中,通常会把订阅者对象自身当成引用传入发布者对象中,同时订阅者对象还需提供一个名为诸如<code>update</code> 的方法,供发布者对象在合适的时候调用</p>
+<p><strong>在JavaScript中,用注册回调函数的形式来代替传统的发布-订阅模式,显得更加优雅和简单</strong></p>
+<p>注:在这里的回调其实就相当于例1中的事件委托<code>stock.NotifyEvent += new NotifyEventHandler (investor.SendData);</code>.NET使用事件封装了发布订阅模式,语法糖更易用,但是不可能达到解释型语言的灵活性</p>
+<p>假如我们正在开发一个商城网站,网站里有<code>header</code>头部,<code>nav</code> 导航,消息列表,购物车等模块.这几个模块渲染有一个共同的前提条件,就是必须先用<code>ajax</code> 异步请求获取用户的登录信息</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">login.succ(<span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  header.setAvatar(data.avatar); <span class="comment">//设置header模块的头像</span></span><br><span class="line">  nav.setAvatar(data.avatar);<span class="comment">//设置导航模块的头像</span></span><br><span class="line">  message.refresh()<span class="comment">//刷新消息列表</span></span><br><span class="line">  cart.refresh()<span class="comment">//刷新购物车列表</span></span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>header,nav等各个模块和用户信息产生了强耦合,方法名也不能随意再改变</p>
+<p>等到有一天,项目中增加了一个收货地址管理的模块,则必须在原来的逻辑中增加</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">address.refresh()</span><br></pre></td></tr></table></figure>
+<p>用发布订阅模式重写之后,登录模块不用关心业务模块究竟做什么,也不想了解内部细节</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(<span class="string">'http://xxx.com?login'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">data</span>) </span>&#123;</span><br><span class="line">  login.trigger(<span class="string">'loginSucc'</span>, data);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> header = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="comment">// header模块</span></span><br><span class="line">  login.listen(<span class="string">'loginSucc'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    header.setAvatar(data.avatar);</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">return</span> setAvatar:<span class="function"><span class="keyword">function</span>(<span class="params">avatar</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'设置header模块的头像'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> nav = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="comment">// header模块</span></span><br><span class="line">  login.listen(<span class="string">'loginSucc'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    nav.setAvatar(data.avatar);</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">return</span> setAvatar:<span class="function"><span class="keyword">function</span>(<span class="params">avatar</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'设置nav模块的头像'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>我们可以随时更改<code>setAvatar</code> 方法名</p>
+<p>如果某天需求增加了刷新收货列表的行为,只需要增加监听消息的方法即可</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> address = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123; <span class="comment">//address模块</span></span><br><span class="line">  login.listen(<span class="string">'loginSucc'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    address.refresh();</span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">return</span> refresh: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'刷新收货地址列表'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<h2 id="事件管理器-JavaScript实现"><a href="#事件管理器-JavaScript实现" class="headerlink" title="事件管理器(JavaScript实现)"></a>事件管理器(JavaScript实现)</h2><p>使用发布订阅模式写一个事件管理器，可以实现如下方式调用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">EventManager.on(<span class="string">'text:change'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'text:change...  now val is '</span> + val);  </span><br><span class="line">&#125;);</span><br><span class="line">EventManager.trigger(<span class="string">'text:change'</span>, <span class="string">'饥人谷'</span>);</span><br><span class="line">EventManager.off(<span class="string">'text:change'</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ES5</span></span><br><span class="line"><span class="keyword">var</span> EventManager = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> events = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">on</span>(<span class="params">evt, handler</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> handler !== <span class="string">'function'</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'handler is not a function!'</span>);</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    events[evt] = events[evt] || [];</span><br><span class="line">    events[evt].push(handler);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">trigger</span>(<span class="params">evt, args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!events[evt]) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    events[evt].forEach(<span class="function"><span class="keyword">function</span>(<span class="params">handler</span>) </span>&#123;</span><br><span class="line">      handler(args);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">off</span>(<span class="params">evt</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">delete</span> events[evt];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    on: on,</span><br><span class="line">    trigger: trigger,</span><br><span class="line">    off: off</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//ES6</span></span><br><span class="line"><span class="keyword">const</span> EventManager = <span class="function">(<span class="params">((</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> events = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">on</span>(<span class="params">evt, handler</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> handler !== <span class="string">'function'</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'handler is not a function!'</span>);</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    events[evt] = events[evt] || [];</span><br><span class="line">    events[evt].push(handler);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">trigger</span>(<span class="params">evt, args</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!events[evt]) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    events[evt].forEach(<span class="function"><span class="params">handler</span> =&gt;</span> &#123;</span><br><span class="line">      handler(args);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">off</span>(<span class="params">evt</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">delete</span> events[evt];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    on,</span><br><span class="line">    trigger,</span><br><span class="line">    off</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;))();</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用</span></span><br><span class="line">EventManager.on(<span class="string">'text:change'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'text:change...  now val is '</span> + val);  </span><br><span class="line">&#125;);</span><br><span class="line">EventManager.trigger(<span class="string">'text:change'</span>, <span class="string">'饥人谷'</span>);</span><br><span class="line">EventManager.off(<span class="string">'text:change'</span>);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/17/Java-OOP/" rel="next" title="Java OOP">
+                <i class="fa fa-chevron-left"></i> Java OOP
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/25/迭代器模式/" rel="prev" title="迭代器模式">
+                迭代器模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#示例"><span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#股票变化-C-实现"><span class="nav-text">股票变化(C#实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#钓鱼-C-实现"><span class="nav-text">钓鱼(C#实现)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用委托实现"><span class="nav-text">用委托实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#进制转换器-python实现"><span class="nav-text">进制转换器(python实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录网站模块-JavaScript实现"><span class="nav-text">登录网站模块(JavaScript实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件管理器-JavaScript实现"><span class="nav-text">事件管理器(JavaScript实现)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="三.Time and order 时间和顺序What is order and why is it important? What do you mean “what is order”? I mean, why are we so obsessed with order in the first place? Why do we care whether A happened before B?">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译]Distributed systems for fun and profit_3时间和顺序">
+<meta property="og:url" content="https://jaychenfe.github.io/2019/04/23/[译]Distributed systems for fun and profit_3时间和顺序/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="三.Time and order 时间和顺序What is order and why is it important? What do you mean “what is order”? I mean, why are we so obsessed with order in the first place? Why do we care whether A happened before B?">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190425230612.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190425231027.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190429224307.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190429225320.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[译]Distributed systems for fun and profit_3时间和顺序">
+<meta name="twitter:description" content="三.Time and order 时间和顺序What is order and why is it important? What do you mean “what is order”? I mean, why are we so obsessed with order in the first place? Why do we care whether A happened before B?">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190425230612.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2019/04/23/[译]Distributed systems for fun and profit_3时间和顺序/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>[译]Distributed systems for fun and profit_3时间和顺序 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2019/04/23/[译]Distributed systems for fun and profit_3时间和顺序/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[译]Distributed systems for fun and profit_3时间和顺序
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-23 17:32:04" itemprop="dateCreated datePublished" datetime="2019-04-23T17:32:04+00:00">2019-04-23</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/微服务理论文章阅读学习/" itemprop="url" rel="index"><span itemprop="name">微服务理论文章阅读学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="三-Time-and-order-时间和顺序"><a href="#三-Time-and-order-时间和顺序" class="headerlink" title="三.Time and order 时间和顺序"></a>三.Time and order 时间和顺序</h1><p>What is order and why is it important?</p>
+<p>What do you mean “what is order”?</p>
+<p>I mean, why are we so obsessed with order in the first place? Why do we care whether A happened before B? Why don’t we care about some other property, like “color”?</p>
+<p>Well, my crazy friend, let’s go back to the definition of distributed systems to answer that.</p>
+<p>As you may remember, I described distributed programming as the art of solving the same problem that you can solve on a single computer using multiple computers.</p>
+<p>This is, in fact, at the core of the obsession with order. Any system that can only do one thing at a time will create a total order of operations. Like people passing through a single door, every operation will have a well-defined predecessor and successor. That’s basically the programming model that we’ve worked very hard to preserve.</p>
+<p>分布式系统的目标是能够让多台机器像单机一样处理问题。在这里面需要关注的核心是<strong>顺序</strong>。任何系统在同一时刻都只能做一件事情，这样就会产生一系列有顺序的操作。</p>
+<p>The traditional model is: a single program, one process, one memory space running on one CPU. The operating system abstracts away the fact that there might be multiple CPUs and multiple programs, and that the memory on the computer is actually shared among many programs. I’m not saying that threaded programming and event-oriented programming don’t exist; it’s just that they are special abstractions on top of the “one/one/one” model. Programs are written to be executed in an ordered fashion: you start from the top, and then go down towards the bottom.</p>
+<p>传统的模型是：单一程序利用一个CPU运行在一个进程和一个内存空间中。而分布式模型通常处理多个CPU和多个程序以及程序之间的内存通常需要共享。这个时候即使程序运行在多台机器之间，我们希望它也能像单机一样，同样顺序执行程序</p>
+<p>Order as a property has received so much attention because the easiest way to define “correctness” is to say “it works like it would on a single machine”. And that usually means that a) we run the same operations and b) that we run them in the same order - even if there are multiple machines.</p>
+<p>The nice thing about distributed systems that preserve order (as defined for a single system) is that they are generic. You don’t need to care about what the operations are, because they will be executed exactly like on a single machine. This is great because you know that you can use the same system no matter what the operations are.</p>
+<p>In reality, a distributed program runs on multiple nodes; with multiple CPUs and multiple streams of operations coming in. You can still assign a total order, but it requires either accurate clocks or some form of communication. You could timestamp each operation using a completely accurate clock then use that to figure out the total order. Or you might have some kind of communication system that makes it possible to assign sequential numbers as in a total order.</p>
+<p>分布式系统的好处在于一个定义好的顺序是通用的。你不需要担心它是如何操作的，无论你进行什么样的操作，你都可以使用这个系统。</p>
+<p>分布式系统程序运行在多个节点之间。你需要分配一个全局顺序，需要精确的时钟与一些通信方式。你可以对每一个操作贴上一个时间戳，来保证它们全局有序，或者也可以采用某种通信方式（例如计数器），来确保它们全局有序</p>
+<p>操作顺序包括：全局有序、偏序</p>
+<h2 id="Total-and-partial-order-全局有序和偏序"><a href="#Total-and-partial-order-全局有序和偏序" class="headerlink" title="Total and partial order  全局有序和偏序"></a>Total and partial order  全局有序和偏序</h2><p>The natural state in a distributed system is <a href="http://en.wikipedia.org/wiki/Partially_ordered_set" target="_blank" rel="noopener">partial order</a>. Neither the network nor independent nodes make any guarantees about relative order; but at each node, you can observe a local order.</p>
+<p>A <a href="http://en.wikipedia.org/wiki/Total_order" target="_blank" rel="noopener">total order</a> is a binary relation that defines an order for every element in some set.</p>
+<ul>
+<li><strong>全局有序：数据集中每一个元素顺序的一种二进制关系</strong></li>
+<li><strong>偏序：分布式系统中最自然的状态就是偏序。独立节点与网络不能保证相关顺序，但在每个节点中，自身有本地顺序</strong></li>
+</ul>
+<p>Two distinct elements are <strong>comparable</strong> when one of them is greater than the other. In a partially ordered set, some pairs of elements are not comparable and hence a partial order doesn’t specify the exact order of every item.</p>
+<p>两个明确的元素之间能够进行相互大小比较，但是在一个分区有序数据集中，不同区的元素之间是没法进行比较的，因为它们只在自己的分区中有序</p>
+<p>Both total order and partial order are <a href="http://en.wikipedia.org/wiki/Transitive_relation" target="_blank" rel="noopener">transitive</a> and <a href="http://en.wikipedia.org/wiki/Antisymmetric_relation" target="_blank" rel="noopener">antisymmetric</a>. The following statements hold in both a total order and a partial order for all a, b and c in X:</p>
+<p>无论是全局有序还是偏序，都遵从传递性（transitive）和反对称性（antisymmetric）。下面的描述表达了顺序具有的性质：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">If a ≤ b and b ≤ a then a = b (antisymmetry);</span><br><span class="line">If a ≤ b and b ≤ c then a ≤ c (transitivity);</span><br></pre></td></tr></table></figure>
+<p>However, a total order is <a href="http://en.wikipedia.org/wiki/Total_relation" target="_blank" rel="noopener">total</a>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a ≤ b or b ≤ a (totality) for all a, b in X</span><br></pre></td></tr></table></figure>
+<p>while a partial order is only <a href="http://en.wikipedia.org/wiki/Reflexive_relation" target="_blank" rel="noopener">reflexive</a>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a ≤ a (reflexivity) for all a in X</span><br></pre></td></tr></table></figure>
+<p>Note that totality implies reflexivity; so a partial order is a weaker variant of total order.<br>For some elements in a partial order, the totality property does not hold - in other words, some of the elements are not comparable.</p>
+<p>偏序（分区有序？可以这样理解吗）的性质比全局顺序的性质要弱，因为有些元素他们是没法进行比较的</p>
+<p>Git branches are an example of a partial order. As you probably know, the git revision control system allows you to create multiple branches from a single base branch - e.g. from a master branch. Each branch represents a history of source code changes derived based on a common ancestor:</p>
+<p><strong>Git分支就是偏序的一个实例</strong>。我们都知道git的版本控制能够让你从一个单一的基本分支中创造出多个分支。例如，从主分支中进行后续创建。每一个分支代表原始代码从最初到后面的变化历程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ branch A (1,2,0)]  [ master (3,0,0) ]  [ branch B (1,0,2) ]</span><br><span class="line">[ branch A (1,1,0)]  [ master (2,0,0) ]  [ branch B (1,0,1) ]</span><br><span class="line">                  \  [ master (1,0,0) ]  /</span><br></pre></td></tr></table></figure>
+<p>The branches A and B were derived from a common ancestor, but there is no definite order between them: they represent different histories and cannot be reduced to a single linear history without additional work (merging). You could, of course, put all the commits in some arbitrary order (say, sorting them first by ancestry and then breaking ties by sorting A before B or B before A) - but that would lose information by forcing a total order where none existed.</p>
+<p>这里分支A和B都来自于同一个祖先，但是它们两者之间的顺序是没有定义的：两者表示的是不同的历史版本，并且如若不经过其它额外操作，类似于merging，是无法将它们两者归到同一线性改变的版本中。当然你可以自己进行一些操作，定义提交的顺序，但如果自定义AB之间的顺序，会强制出现一个本来就不存在的total order</p>
+<p>In a system consisting of one node, a total order emerges by necessity: instructions are executed and messages are processed in a specific, observable order in a single program. We’ve come to rely on this total order - it makes executions of programs predictable. This order can be maintained on a distributed system, but at a cost: communication is expensive, and time synchronization is difficult and fragile.</p>
+<p>在一个有单一节点构成的系统中，全局有序是必要的，这使得程序的执行结果具有可预测性。这样的顺序也能在分布式系统中维持，但昂贵的通信成本以及时间同步的困难和脆弱性使得其代价十分昂贵</p>
+<h1 id="What-is-time-时间"><a href="#What-is-time-时间" class="headerlink" title="What is time? 时间"></a>What is time? 时间</h1><p>Time is a source of order - it allows us to define the order of operations - which coincidentally also has an interpretation that people can understand (a second, a minute, a day and so on).</p>
+<p>没有时间就没有顺序。时间能让我们确定操作的顺序，同时也能被更好的理解</p>
+<p>In some sense, time is just like any other integer counter. It just happens to be important enough that most computers have a dedicated time sensor, also known as a clock. It’s so important that we’ve figured out how to synthesize an approximation of the same counter using some imperfect physical system (from wax candles to cesium atoms). By “synthesize”, I mean that we can approximate the value of the integer counter in physically distant places via some physical property without communicating it directly.</p>
+<p>从某种角度而言，时间像计数器一样，能够让大多数的运算有自己专用的时间传感器。对于同步系统而言，我们能有一个不用互相通信就存在的精确的计数器</p>
+<p>Timestamps really are a shorthand value for representing the state of the world from the start of the universe to the current moment - if something occurred at a particular timestamp, then it was potentially influenced by everything that happened before it. This idea can be generalized into a causal clock that explicitly tracks causes (dependencies) rather than simply assuming that everything that preceded a timestamp was relevant. Of course, the usual assumption is that we should only worry about the state of the specific system rather than the whole world.</p>
+<p>时间戳是表达事物所处状态的一个简单的速记值。如果一件事发生在某一时刻，那么它受到发生在它之前的事件的影响。这个想法可以概括为一个因果时钟，它明确地跟踪原因（依赖性），而不是简单地假设时间戳之前的所有内容都是相关的。当然，通常的假设是，我们只应该担心特定系统的状态，而不是整个世界。</p>
+<p>Assuming that time progresses at the same rate everywhere - and that is a big assumption which I’ll return to in a moment - time and timestamps have several useful interpretations when used in a program. The three interpretations are:</p>
+<ul>
+<li>Order</li>
+<li>Duration</li>
+<li>Interpretation</li>
+</ul>
+<p>假设时间在任何地方都以相同的速度进行——这是一个很大的假设，我稍后将回到这个假设——时间和时间戳在程序中使用时有几个有用的解释。这三种解释是：</p>
+<ul>
+<li><strong>顺序</strong></li>
+<li><strong>持续时间</strong></li>
+<li><strong>表现形式</strong></li>
+</ul>
+<p><em>Order</em>. When I say that time is a source of order, what I mean is that:</p>
+<ul>
+<li>we can attach timestamps to unordered events to order them</li>
+<li>we can use timestamps to enforce a specific ordering of operations or the delivery of messages (for example, by delaying an operation if it arrives out of order)</li>
+<li>we can use the value of a timestamp to determine whether something happened chronologically before something else</li>
+</ul>
+<p><strong>顺序</strong>：一系列事件发生的顺序</p>
+<ul>
+<li>我们能通过事件发生的时间戳来确定事件发生的顺序</li>
+<li>我们能够利用时间戳来定义一系列操作的顺序，或者传递信息（例如，如果一个操作发生故障，则延迟它）</li>
+<li>通过时间戳能够确定一件事是否发生在另一件事前</li>
+</ul>
+<p><em>Interpretation</em> - time as a universally comparable value. The absolute value of a timestamp can be interpreted as a date, which is useful for people. Given a timestamp of when a downtime started from a log file, you can tell that it was last Saturday, when there was a <a href="https://twitter.com/AWSFail/statuses/218915147060752384" target="_blank" rel="noopener">thunderstorm</a>.</p>
+<p><strong>表现形式</strong>：时间是一个可以进行全局比较的值。时间的表现形式可以有多种，比如日期、星期几等等</p>
+<p><em>Duration</em> - durations measured in time have some relation to the real world. Algorithms generally don’t care about the absolute value of a clock or its interpretation as a date, but they might use durations to make some judgment calls. In particular, the amount of time spent waiting can provide clues about whether a system is partitioned or merely experiencing high latency.</p>
+<p><strong>持续时间</strong>：通过时间段长短可以来判断系统是发生分区还是发生了高延迟</p>
+<p>By their nature, the components of distributed systems do not behave in a predictable manner. They do not guarantee any specific order, rate of advance, or lack of delay. Each node does have some local order - as execution is (roughly) sequential - but these local orders are independent of each other.</p>
+<p>Imposing (or assuming) order is one way to reduce the space of possible executions and possible occurrences. Humans have a hard time reasoning about things when things can happen in any order - there just are too many permutations to consider.</p>
+<p>强制（或假定）顺序是减少可能执行和发生的空间的一种方法。当事情可以以任何顺序发生时，有太多的排列需要考虑，因而很难对事情进行推理。</p>
+<h2 id="Does-time-progress-at-the-same-rate-everywhere-各个分布式节点中时间相同吗？"><a href="#Does-time-progress-at-the-same-rate-everywhere-各个分布式节点中时间相同吗？" class="headerlink" title="Does time progress at the same rate everywhere?各个分布式节点中时间相同吗？"></a>Does time progress at the same rate everywhere?各个分布式节点中时间相同吗？</h2><p>We all have an intuitive concept of time based on our own experience as individuals. Unfortunately, that intuitive notion of time makes it easier to picture total order rather than partial order. It’s easier to picture a sequence in which things happen one after another, rather than concurrently. It is easier to reason about a single order of messages than to reason about messages arriving in different orders and with different delays.</p>
+<p>依据个人经验，我们都有一个直观的时间概念。但直观的时间概念使我们更容易描绘出总顺序而不是部分顺序。更容易想象事情发生的顺序，一个接一个，而不是同时发生。对一个消息顺序进行推理要比对以不同顺序和不同延迟到达的消息进行推理容易得多。（<strong>通常一串连续发生的事件比同时发生要更容易理解</strong>）</p>
+<p>However, when implementing distributing systems we want to avoid making strong assumptions about time and order, because the stronger the assumptions, the more fragile a system is to issues with the “time sensor” - or the onboard clock. Furthermore, imposing an order carries a cost. The more temporal nondeterminism that we can tolerate, the more we can take advantage of distributed computation.</p>
+<p>然而，在实施分布式系统时，我们希望避免对时间和顺序做出强有力的假设，因为假设越强，系统就越容易受到“时间传感器”或时钟的问题的影响。此外，执行命令也会带来成本。我们越能容忍时间上的不确定性，就越能利用分布式计算。（<strong>分布式系统中关于“时间传感器”的定义和假设相较而言没那么刻板。对时间的不确定性容忍度约稿，对于系统的分布式计算更有利</strong>）</p>
+<p>There are three common answers to the question “does time progress at the same rate everywhere?”. These are:</p>
+<ul>
+<li>“Global clock”: yes</li>
+<li>“Local clock”: no, but</li>
+<li>“No clock”: no!</li>
+</ul>
+<p>对于分布式节点中的时间是否同步，使用不同的时钟假设是不同的：</p>
+<ul>
+<li><strong>全局时钟：相同 （同步系统模型）</strong></li>
+<li><strong>本地时钟：不同，但是本地有序 （部分同步系统模型）</strong></li>
+<li><strong>不使用时钟：不同 （异步系统模型，用逻辑时钟来确定顺序）</strong></li>
+</ul>
+<p>These correspond roughly to the three timing assumptions that I mentioned in the second chapter: the synchronous system model has a global clock, the partially synchronous model has a local clock, and in the asynchronous system model one cannot use clocks at all. Let’s look at these in more detail.</p>
+<h3 id="Time-with-a-“global-clock”-assumption-全局时钟"><a href="#Time-with-a-“global-clock”-assumption-全局时钟" class="headerlink" title="Time with a “global-clock” assumption 全局时钟"></a>Time with a “global-clock” assumption 全局时钟</h3><p>The global clock assumption is that there is a global clock of perfect accuracy, and that everyone has access to that clock. This is the way we tend to think about time, because in human interactions small differences in time don’t really matter.</p>
+<p>全局时钟：有一个全局精确的时钟，并且每个节点都能接触到</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190425230612.png" alt=""></p>
+<p>The global clock is basically a source of total order (exact order of every operation on all nodes even if those nodes have never communicated).</p>
+<p>However, this is an idealized view of the world: in reality, clock synchronization is only possible to a limited degree of accuracy. This is limited by the lack of accuracy of clocks in commodity computers, by latency if a clock synchronization protocol such as <a href="http://en.wikipedia.org/wiki/Network_Time_Protocol" target="_blank" rel="noopener">NTP</a> is used and fundamentally by <a href="http://en.wikipedia.org/wiki/Time_dilation" target="_blank" rel="noopener">the nature of spacetime</a>.</p>
+<p>Assuming that clocks on distributed nodes are perfectly synchronized means assuming that clocks start at the same value and never drift apart. It’s a nice assumption because you can use timestamps freely to determine a global total order - bound by clock drift rather than latency - but this is a <a href="http://queue.acm.org/detail.cfm?id=1773943" target="_blank" rel="noopener">nontrivial</a> operational challenge and a potential source of anomalies. There are many different scenarios where a simple failure - such as a user accidentally changing the local time on a machine, or an out-of-date machine joining a cluster, or synchronized clocks drifting at slightly different rates and so on that can cause hard-to-trace anomalies.</p>
+<p>Nevertheless, there are some real-world systems that make this assumption. Facebook’s <a href="http://en.wikipedia.org/wiki/Apache_Cassandra" target="_blank" rel="noopener">Cassandra</a> is an example of a system that assumes clocks are synchronized. It uses timestamps to resolve conflicts between writes - the write with the newer timestamp wins. This means that if clocks drift, new data may be ignored or overwritten by old data; again, this is an operational challenge (and from what I’ve heard, one that people are acutely aware of). Another interesting example is Google’s <a href="http://research.google.com/archive/spanner.html" target="_blank" rel="noopener">Spanner</a>: the paper describes their TrueTime API, which synchronizes time but also estimates worst-case clock drift.</p>
+<p>全局时钟的存在使在任何节点上的操作都按照一定的顺序执行，即便这些节点之间不发生通信交互</p>
+<p>但在现实世界中，时钟同步只能存在于能容忍一定程度上的不精确的系统中。因为由于空间分布的原因而存在的延迟。</p>
+<p>假设时钟在分布式节点中完美同步的话，说明时间都是从同一个值开始计时，并且永远不会不一样。这样一来的话使用时间戳的话就能完美的保证全局顺序。但是通常会有异常现象存在，但针对这些异常，也会有相应的处理方案</p>
+<p>然而，现实中有一些系统使用的是全局时钟假设。比如Facebook的Cassandra系统。它使用时间戳来解决写的冲突，最新的版本胜出。另一个例子Google的Spanner，它的时钟也是同步的，但同时考虑了最坏情况下的时钟漂移</p>
+<h3 id="Time-with-a-“Local-clock”-assumption-本地时钟"><a href="#Time-with-a-“Local-clock”-assumption-本地时钟" class="headerlink" title="Time with a “Local-clock” assumption  本地时钟"></a>Time with a “Local-clock” assumption  本地时钟</h3><p>The second, and perhaps more plausible assumption is that each machine has its own clock, but there is no global clock. It means that you cannot use the local clock in order to determine whether a remote timestamp occurred before or after a local timestamp; in other words, you cannot meaningfully compare timestamps from two different machines.</p>
+<p>更合理的情况是，每一个机器上有自己的时钟，但是不存在全局时钟。即你能通过本地时间戳来确定本地事件发生顺序，但是不能对不同机器间的时间戳进行比较</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190425231027.png" alt=""></p>
+<p>The local clock assumption corresponds more closely to the real world. It assigns a partial order: events on each system are ordered but events cannot be ordered across systems by only using a clock.</p>
+<p>本地时钟的假设最符合真实世界的情况。它表明时间在每一个独立的分区上能够有序，但是在所有的系统中仅仅靠时钟来并不能保证事件的顺序</p>
+<p>However, you can use timestamps to order events on a single machine; and you can use timeouts on a single machine as long as you are careful not to allow the clock to jump around. Of course, on a machine controlled by an end-user this is probably assuming too much: for example, a user might accidentally change their date to a different value while looking up a date using the operating system’s date control.</p>
+<h3 id="Time-with-a-“No-clock”-assumption-无时钟"><a href="#Time-with-a-“No-clock”-assumption-无时钟" class="headerlink" title="Time with a “No-clock” assumption 无时钟"></a>Time with a “No-clock” assumption 无时钟</h3><p>Finally, there is the notion of logical time. Here, we don’t use clocks at all and instead track causality in some other way. Remember, a timestamp is simply a shorthand for the state of the world up to that point - so we can use counters and communication to determine whether something happened before, after or concurrently with something else.</p>
+<p>这里存在一个逻辑时间的概念。不在使用时钟来追寻时间发生的因果顺序，而是通过另一种其它的方式-<strong>计数器和通信</strong></p>
+<p>This way, we can determine the order of events between different machines, but cannot say anything about intervals and cannot use timeouts (since we assume that there is no “time sensor”). This is a partial order: events can be ordered on a single system using a counter and no communication, but ordering events across systems requires a message exchange.</p>
+<p>通过这种方式，我们能对不同机器上发生的事件的顺序进行比较，但是没法使用关于时间间隔以及超时设置的变量了（即不存在时间传感器了）。这从某种角度而言也是一种局部有序的情况：时间在单系统中能够使用计数器并且不用进行通信来保证事件顺序，但是在多系统之间就需要进行信息交换</p>
+<p>One of the most cited papers in distributed systems is Lamport’s paper on <a href="http://research.microsoft.com/users/lamport/pubs/time-clocks.pdf" target="_blank" rel="noopener">time, clocks and the ordering of events</a>. Vector clocks, a generalization of that concept (which I will cover in more detail), are a way to track causality without using clocks. Cassandra’s cousins Riak (Basho) and Voldemort (Linkedin) use vector clocks rather than assuming that nodes have access to a global clock of perfect accuracy. This allows those systems to avoid the clock accuracy issues mentioned earlier.</p>
+<p>When clocks are not used, the maximum precision at which events can be ordered across distant machines is bound by communication latency.</p>
+<p><strong>矢量钟就是一种不利用真正的时间来进行时间顺序因果追寻的方式</strong>。后面会进行详细介绍</p>
+<h2 id="How-is-time-used-in-a-distributed-system-分布式系统中时间的作用"><a href="#How-is-time-used-in-a-distributed-system-分布式系统中时间的作用" class="headerlink" title="How is time used in a distributed system?分布式系统中时间的作用"></a>How is time used in a distributed system?分布式系统中时间的作用</h2><p>What is the benefit of time?</p>
+<ol>
+<li>Time can define order across a system (without communication)</li>
+<li>Time can define boundary conditions for algorithms</li>
+</ol>
+<p><strong>时间的作用：</strong></p>
+<ul>
+<li><strong>能够定义系统中事件的顺序（不需要通信）</strong></li>
+<li><strong>能够定义算法的边界条件（故障检测器）</strong></li>
+</ul>
+<p>The order of events is important in distributed systems, because many properties of distributed systems are defined in terms of the order of operations/events:</p>
+<ul>
+<li>where correctness depends on (agreement on) correct event ordering, for example serializability in a distributed database</li>
+<li>order can be used as a tie breaker when resource contention occurs, for example if there are two orders for a widget, fulfill the first and cancel the second one</li>
+</ul>
+<p>在分布式系统中，确定事件发生的顺序是很重要的，因为许多操作是需要顺序进行的</p>
+<ul>
+<li><strong>系统的正确性取决于正确的时间顺序</strong></li>
+<li><strong>当资源发生竞争时，顺序能够作为评判标准</strong></li>
+</ul>
+<p>A global clock would allow operations on two different machines to be ordered without the two machines communicating directly. Without a global clock, we need to communicate in order to determine order.</p>
+<p>一个全局时钟能够允许两个机器上的操作有序进行并且不需要通信。但一旦没有全局时钟，我们就需要进行通信来确定不同机器上操作的顺序</p>
+<p>Time can also be used to define boundary conditions for algorithms - specifically, to distinguish between “high latency” and “server or network link is down”. This is a very important use case; in most real-world systems timeouts are used to determine whether a remote machine has failed, or whether it is simply experiencing high network latency. Algorithms that make this determination are called failure detectors; and I will discuss them fairly soon.</p>
+<p>时间也可以用来定义算法的边界条件，比如，判定系统到底是发生了“高延迟”还是出现了“服务或者网络的宕机”。用来做这个判断的算法被称为是故障检测器，后面会进行讨论</p>
+<h2 id="Vector-clocks-time-for-causal-order-矢量时钟"><a href="#Vector-clocks-time-for-causal-order-矢量时钟" class="headerlink" title="Vector clocks (time for causal order) 矢量时钟"></a>Vector clocks (time for causal order) 矢量时钟</h2><p>Earlier, we discussed the different assumptions about the rate of progress of time across a distributed system. Assuming that we cannot achieve accurate clock synchronization - or starting with the goal that our system should not be sensitive to issues with time synchronization, how can we order things?</p>
+<p>前面我们讨论了分布式系统中不同的时间假设。如果我们没法获得精确的时钟同步的话，那么如何保证分布式系统中事件有序呢？</p>
+<p>Lamport clocks and vector clocks are replacements for physical clocks which rely on counters and communication to determine the order of events across a distributed system. These clocks provide a counter that is comparable across different nodes.</p>
+<p><strong>Lamport clocks</strong>和<strong>矢量时钟</strong>能够代替物理时钟来进行保证系统有序。通过<strong>计数器</strong>+<strong>通信</strong>来决定事件顺序</p>
+<p><em>A Lamport clock</em> is simple. Each process maintains a counter using the following rules:</p>
+<ul>
+<li>Whenever a process does work, increment the counter</li>
+<li>Whenever a process sends a message, include the counter</li>
+<li>When a message is received, set the counter to <code>max(local_counter, received_counter) + 1</code></li>
+</ul>
+<h4 id="Lamport-clock"><a href="#Lamport-clock" class="headerlink" title="Lamport clock"></a>Lamport clock</h4><p>Lamport clock很简单，每一个进程都有一个计数器，服从下面的规则：</p>
+<ul>
+<li><strong>一旦一个进程开始工作，计数器递增</strong></li>
+<li><strong>任何进程发送的消息中，包含计数器的值</strong></li>
+<li><strong>当一个消息被接收时，更新计数器的值为max（本地，接收）+1</strong></li>
+</ul>
+<p>Expressed as code: 用代码表示的话:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">LamportClock</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.value = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">LamportClock.prototype.get = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">LamportClock.prototype.increment = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.value++;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">LamportClock.prototype.merge = <span class="function"><span class="keyword">function</span>(<span class="params">other</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.value = <span class="built_in">Math</span>.max(<span class="keyword">this</span>.value, other.value) + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>A <a href="http://en.wikipedia.org/wiki/Lamport_timestamps" target="_blank" rel="noopener">Lamport clock</a> allows counters to be compared across systems, with a caveat: Lamport clocks define a partial order. If <code>timestamp(a) &lt; timestamp(b)</code>:</p>
+<ul>
+<li><code>a</code> may have happened before <code>b</code> or</li>
+<li><code>a</code> may be incomparable with <code>b</code></li>
+</ul>
+<p>Lamport clock允许使用计数器来比较事件发生的顺序，比如如果 <code>timestamp(a) &lt; timestamp(b)</code>：</p>
+<ul>
+<li>a可能在b之前发生</li>
+<li>a可能b无法和b比较</li>
+</ul>
+<p>This is known as clock consistency condition: if one event comes before another, then that event’s logical clock comes before the others. If <code>a</code> and <code>b</code> are from the same causal history, e.g. either both timestamp values were produced on the same process; or <code>b</code> is a response to the message sent in <code>a</code> then we know that <code>a</code> happened before <code>b</code>.</p>
+<p>这和时钟的一致性一样，如果一件事发生在另一件事之前，那么它的逻辑时钟也发生在这件事之前。如果事件a和事件b都是从同一个历史中演化而来的，那么如果a&lt;b，a一定发生在b之前</p>
+<p>Intuitively, this is because a Lamport clock can only carry information about one timeline / history; hence, comparing Lamport timestamps from systems that never communicate with each other may cause concurrent events to appear to be ordered when they are not.</p>
+<p>使用Lamport时钟也有一个缺点，因为它只包含了一个时间线的计数信息，那么同步发生的事情在这个时钟下仍然可比，即表现出有序性，但本质上，他们是同步的，不应该表现出有序性</p>
+<p>Imagine a system that after an initial period divides into two independent subsystems which never communicate with each other.</p>
+<p>For all events in each independent system, if a happened before b, then <code>ts(a) &lt; ts(b)</code>; but if you take two events from the different independent systems (e.g. events that are not causally related) then you cannot say anything meaningful about their relative order.  While each part of the system has assigned timestamps to events, those timestamps have no relation to each other. Two events may appear to be ordered even though they are unrelated.</p>
+<p>However - and this is still a useful property - from the perspective of a single machine, any message sent with <code>ts(a)</code> will receive a response with <code>ts(b)</code> which is <code>&gt; ts(a)</code>.</p>
+<p><em>A vector clock</em> is an extension of Lamport clock, which maintains an array <code>[ t1, t2, ... ]</code> of N logical clocks - one per each node. Rather than incrementing a common counter, each node increments its own logical clock in the vector by one on each internal event. Hence the update rules are:</p>
+<ul>
+<li>Whenever a process does work, increment the logical clock value of the node in the vector</li>
+<li>Whenever a process sends a message, include the full vector of logical clocks</li>
+<li>When a message is received:<ul>
+<li>update each element in the vector to be <code>max(local, received)</code></li>
+<li>increment the logical clock value representing the current node in the vector</li>
+</ul>
+</li>
+</ul>
+<h4 id="vector-clock矢量时钟"><a href="#vector-clock矢量时钟" class="headerlink" title="vector clock矢量时钟"></a>vector clock矢量时钟</h4><p>矢量时钟是Lamport clock的一个衍生，它包含了一个含有N个节点计数器值的计数器列表 [t1,t2,…]，每一个节点递增他们自己的逻辑时钟（计数器的值），规则如下：</p>
+<ul>
+<li><strong>一旦一个进程开始工作，矢量钟中的关于该进程节点上的计数器值递增</strong></li>
+<li><strong>任何进程发送的消息中，包含矢量计数器列表</strong></li>
+<li><strong>当一个消息被接收时：</strong><ul>
+<li>更新矢量</li>
+<li>递增矢量中代表当前节点的逻辑时钟的计数器值</li>
+</ul>
+</li>
+</ul>
+<p>Again, expressed as code:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">VectorClock</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// expressed as a hash keyed by node id: e.g. &#123; node1: 1, node2: 3 &#125;</span></span><br><span class="line">  <span class="keyword">this</span>.value = value || &#123;&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">VectorClock.prototype.get = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">VectorClock.prototype.increment = <span class="function"><span class="keyword">function</span>(<span class="params">nodeId</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">typeof</span> <span class="keyword">this</span>.value[nodeId] == <span class="string">'undefined'</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.value[nodeId] = <span class="number">1</span>;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.value[nodeId]++;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">VectorClock.prototype.merge = <span class="function"><span class="keyword">function</span>(<span class="params">other</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> result = &#123;&#125;, last,</span><br><span class="line">      a = <span class="keyword">this</span>.value,</span><br><span class="line">      b = other.value;</span><br><span class="line">  <span class="comment">// This filters out duplicate keys in the hash</span></span><br><span class="line">  (<span class="built_in">Object</span>.keys(a)</span><br><span class="line">    .concat(b))</span><br><span class="line">    .sort()</span><br><span class="line">    .filter(<span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">var</span> isDuplicate = (key == last);</span><br><span class="line">      last = key;</span><br><span class="line">      <span class="keyword">return</span> !isDuplicate;</span><br><span class="line">    &#125;).forEach(<span class="function"><span class="keyword">function</span>(<span class="params">key</span>) </span>&#123;</span><br><span class="line">      result[key] = <span class="built_in">Math</span>.max(a[key] || <span class="number">0</span>, b[key] || <span class="number">0</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  <span class="keyword">this</span>.value = result;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>This illustration (<a href="http://en.wikipedia.org/wiki/Vector_clock" target="_blank" rel="noopener">source</a>) shows a vector clock : 下图也能表示矢量钟：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190429224307.png" alt=""></p>
+<p>Each of the three nodes (A, B, C) keeps track of the vector clock. As events occur, they are timestamped with the current value of the vector clock. Examining a vector clock such as <code>{ A: 2, B: 4, C: 1 }</code> lets us accurately identify the messages that (potentially) influenced that event.</p>
+<p>The issue with vector clocks is mainly that they require one entry per node, which means that they can potentially become very large for large systems. A variety of techniques have been applied to reduce the size of vector clocks (either by performing periodic garbage collection, or by reducing accuracy by limiting the size).</p>
+<p>We’ve looked at how order and causality can be tracked without physical clocks. Now, let’s look at how time durations can be used for cutoff.</p>
+<p>上图对ABC三个节点的矢量钟进行了一个追踪。可以发现当一个事件发生后，矢量钟对每个节点目前的情况打上了一个时间戳的标记，随着事件发生，计数器的值进行改变。从矢量值中可以对事件发生的顺序进行判断 </p>
+<p><strong>总结：</strong></p>
+<ul>
+<li><strong>Lamport clock每个节点上维护一个计数器值，每次通信对这个值进行更新</strong></li>
+<li><strong>vector clock每个节点上维护一个计数器列表，每次通信对这个列表进行更新</strong></li>
+</ul>
+<h2 id="Failure-detectors-time-for-cutoff-故障检测器"><a href="#Failure-detectors-time-for-cutoff-故障检测器" class="headerlink" title="Failure detectors (time for cutoff) 故障检测器"></a>Failure detectors (time for cutoff) 故障检测器</h2><p>As I stated earlier, the amount of time spent waiting can provide clues about whether a system is partitioned or merely experiencing high latency. In this case, we don’t need to assume a global clock of perfect accuracy - it is simply enough that there is a reliable-enough local clock.</p>
+<p>前面说过，等待花费的时长能够用来作为一个判断系统到底是发生了分区故障，还是高延迟的一种线索。在这里，我们不需要假设有一个精确的全局时钟，仅仅有一个可信赖的本地时钟就足够了</p>
+<p>Given a program running on one node, how can it tell that a remote node has failed? In the absence of accurate information, we can infer that an unresponsive remote node has failed after some reasonable amount of time has passed.</p>
+<p>But what is a “reasonable amount”? This depends on the latency between the local and remote nodes. Rather than explicitly specifying algorithms with specific values (which would inevitably be wrong in some cases), it would be nicer to deal with a suitable abstraction.</p>
+<p>一个节点上运行一个程序，如果运行的信息延迟的时间到达一定的时长的话，我们就认为这个节点发生了故障。但是这个时长改如何定义呢？</p>
+<p>A failure detector is a way to abstract away the exact timing assumptions. Failure detectors are implemented using heartbeat messages and timers. Processes exchange heartbeat messages. If a message response is not received before the timeout occurs, then the process suspects the other process.</p>
+<p>A failure detector based on a timeout will carry the risk of being either overly aggressive (declaring a node to have failed) or being overly conservative (taking a long time to detect a crash). How accurate do failure detectors need to be for them to be usable?</p>
+<p><strong>故障检测器是一种抽象的方法：心跳信息+定时器</strong></p>
+<p>进程间交换心跳信息，如果一个进程在超时前没有收到响应信息，那么这个进程会怀疑其它进程</p>
+<p>一个基于超时而言的故障检测器通常要么会过度检测（轻易断言一个节点发生故障），要么检测会过于保守（花费很长的等待时间来判断故障）。那么一个如何使用故障检测器使得它发挥出好的作用呢？</p>
+<p><a href="http://www.google.com/search?q=Unreliable%20Failure%20Detectors%20for%20Reliable%20Distributed%20Systems" target="_blank" rel="noopener">Chandra et al.</a> (1996) discuss failure detectors in the context of solving consensus - a problem that is particularly relevant since it underlies most replication problems where the replicas need to agree in environments with latency and network partitions.</p>
+<p>They characterize failure detectors using two properties, completeness and accuracy:</p>
+<blockquote>
+<p><strong>Strong completeness.</strong><br>Every crashed process is eventually suspected by every correct process.</p>
+<p><strong>Weak completeness.</strong><br>Every crashed process is eventually suspected by some correct process.</p>
+<p><strong>Strong accuracy.</strong><br>No correct process is suspected ever.</p>
+<p><strong>Weak accuracy.</strong><br>Some correct process is never suspected.</p>
+</blockquote>
+<p>有人用两个属性（完整性、精确性）将故障检测器进行了描述：</p>
+<p><strong>强完整性</strong>：每个故障的进程都会被任何正确的进程怀疑<br><strong>弱完整性</strong>：每个故障的进程会被一部分正确的进程怀疑<br><strong>强精确性</strong>：没有正确的进程会被怀疑<br><strong>弱精确性</strong>：一些正确的进程也会被怀疑</p>
+<p>Completeness is easier to achieve than accuracy; indeed, all failure detectors of importance achieve it - all you need to do is not to wait forever to suspect someone. Chandra et al. note that a failure detector with weak completeness can be transformed to one with strong completeness (by broadcasting information about suspected processes), allowing us to concentrate on the spectrum of accuracy properties.</p>
+<p>完整性比精确性更容易实现。并且一个弱完整性的故障检测器能够转换成强完整性的故障检测器（通过广播被怀疑的进程的消息）</p>
+<p>Avoiding incorrectly suspecting non-faulty processes is hard unless you are able to assume that there is a hard maximum on the message delay. That assumption can be made in a synchronous system model - and hence failure detectors can be strongly accurate in such a system. Under system models that do not impose hard bounds on message delay, failure detection can at best be eventually accurate.</p>
+<p>通常对一个没有发生故障的进程进行错误的怀疑是无法避免的，因为你不知道消息延迟的上限是多少。但是在同步系统中，这个消息延迟的上限是固定的，因此在同步系统中使用故障检测器是非常精确的。</p>
+<p>Chandra et al. show that even a very weak failure detector - the eventually weak failure detector ⋄W (eventually weak accuracy + weak completeness) - can be used to solve the consensus problem. The diagram below (from the paper) illustrates the relationship between system models and problem solvability:</p>
+<p>研究表明即使是一个弱故障检测器（最终故障检测器），也能用来解决一致性问题。下图阐述了系统模型和问题可解性之间的关系：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190429225320.png" alt=""></p>
+<p>As you can see above, certain problems are not solvable without a failure detector in asynchronous systems. This is because without a failure detector (or strong assumptions about time bounds e.g. the synchronous system model), it is not possible to tell whether a remote node has crashed, or is simply experiencing high latency. That distinction is important for any system that aims for single-copy consistency: failed nodes can be ignored because they cannot cause divergence, but partitioned nodes cannot be safely ignored.</p>
+<p>从上图可以看到，异步系统中，不使用故障检测器是无法对明确的问题进行解决的。因为，如果没有故障检测器，你无法得知一个远方的节点是否发生故障，或是因为高延迟的存在。这个判断对于单拷贝一致性的系统来说非常重要：故障节点会被忽略，因为它们不会带来分歧，但是分区节点不能被忽略，因为可能会造成数据分歧</p>
+<p>How can one implement a failure detector? Conceptually, there isn’t much to a simple failure detector, which simply detects failure when a timeout expires. The most interesting part relates to how the judgments are made about whether a remote node has failed.</p>
+<p>怎样实施一个故障检测器呢？事实上，不存在一个很简单的故障检测器，因为判断一个节点是否发生故障时很难的</p>
+<p>Ideally, we’d prefer the failure detector to be able to adjust to changing network conditions and to avoid hardcoding timeout values into it. For example, Cassandra uses an <a href="https://www.google.com/search?q=The+Phi+accrual+failure+detector" target="_blank" rel="noopener">accrual failure detector</a>, which is a failure detector that outputs a suspicion level (a value between 0 and 1) rather than a binary “up” or “down” judgment. This allows the application using the failure detector to make its own decisions about the tradeoff between accurate detection and early detection.</p>
+<p>依赖超时设置的值来判断是否发生故障。Cassandra它使用的是一个精确的故障检测器，它给出的故障判断是一个猜测值（0-1间，概率值）而不是一个二进制的数（0、1），这样一来，系统应用能够根据自己的定义来判断节点是否发生故障，进行一个无误检测和超前检测的权衡</p>
+<h2 id="Time-order-and-performance-时间、顺序和性能"><a href="#Time-order-and-performance-时间、顺序和性能" class="headerlink" title="Time, order and performance 时间、顺序和性能"></a>Time, order and performance 时间、顺序和性能</h2><p>Earlier, I alluded to having to pay the cost for order. What did I mean?</p>
+<p>If you’re writing a distributed system, you presumably own more than one computer. The natural (and realistic) view of the world is a partial order, not a total order. You can transform a partial order into a total order, but this requires communication, waiting and imposes restrictions that limit how many computers can do work at any particular point in time.</p>
+<p>如果你在设计一个分布式系统，你肯定拥有不止一台的计算机。那么从直观的角度来看，顺序是分区有序的而并非全局有序。你能够通过通信的方式，使得分区有序转变成全局有序，但是这通常还需要等待以及受到任意同一时刻能够有多少节点进行同时工作的限制</p>
+<p>All clocks are mere approximations bound by either network latency (logical time) or by physics. Even keeping a simple integer counter in sync across multiple nodes is a challenge.</p>
+<p>就最简单的保持一个简单的整数计数器在分布节点上同步都很有挑战性</p>
+<p>While time and order are often discussed together, time itself is not such a useful property. Algorithms don’t really care about time as much as they care about more abstract properties:</p>
+<ul>
+<li>the causal ordering of events</li>
+<li>failure detection (e.g. approximations of upper bounds on message delivery)</li>
+<li>consistent snapshots (e.g. the ability to examine the state of a system at some point in time; not discussed here)</li>
+</ul>
+<p>事实上，算法通常不在乎时间，而是在乎顺序：</p>
+<ul>
+<li>事件发生的原因顺序</li>
+<li>故障检测器</li>
+<li>一致快照</li>
+</ul>
+<p>Imposing a total order is possible, but expensive. It requires you to proceed at the common (lowest) speed. Often the easiest way to ensure that events are delivered in some defined order is to nominate a single (bottleneck) node through which all operations are passed.</p>
+<p>全局一致是可以实现的，但是代价很大，它要求所有的处理在相同的速度条件下。一个最简单的方法是：投票，选出一个经过了所有操作的节点出来</p>
+<p>Is time / order / synchronicity really necessary? It depends. In some use cases, we want each intermediate operation to move the system from one consistent state to another. For example, in many cases we want the responses from a database to represent all of the available information, and we want to avoid dealing with the issues that might occur if the system could return an inconsistent result.</p>
+<p>时间/顺序/同步真的有必要吗？这取决于你的案例。比如在一些用户案例中，我们想要每一次的操作都能让系统从一个一致性的转态转到另一个一致性的状态。举个例子：在数据库中，我们想要从数据库中找到能代表所有可用的信息，同时我们想避免处理系统返回不一致的结果所带来的问题。</p>
+<p>But in other cases, we might not need that much time / order / synchronization. For example, if you are running a long running computation, and don’t really care about what the system does until the very end - then you don’t really need much synchronization as long as you can guarantee that the answer is correct.</p>
+<p>但是在其他的一些例子中，我们可能不需要时间/顺序/同步。比如，我们想进行一个很长的计算操作，只要能保证最后的结果是正确的，我们并不关心这些运算是否同步发生</p>
+<p>Synchronization is often applied as a blunt tool across all operations, when only a subset of cases actually matter for the final outcome. When is order needed to guarantee correctness? The CALM theorem - which I will discuss in the last chapter - provides one answer.</p>
+<p>同步性通常是用来做为操作的限制工具的，仅仅当我们的结果只是收到一部分数据集的影响的时候才需要。顺序什么时候保证系统的可用性-这涉及到我们之后讨论的CALM理论</p>
+<p>In other cases, it is acceptable to give an answer that only represents the best known estimate - that is, is based on only a subset of the total information contained in the system. In particular, during a network partition one may need to answer queries with only a part of the system being accessible. In other use cases, the end user cannot really distinguish between a relatively recent answer that can be obtained cheaply and one that is guaranteed to be correct and is expensive to calculate. For example, is the Twitter follower count for some user X, or X+1? Or are movies A, B and C the absolutely best answers for some query? Doing a cheaper, mostly correct “best effort” can be acceptable.</p>
+<p>In the next two chapters we’ll examine replication for fault-tolerant strongly consistent systems - systems which provide strong guarantees while being increasingly resilient to failures. These systems provide solutions for the first case: when you need to guarantee correctness and are willing to pay for it. Then, we’ll discuss systems with weak consistency guarantees, which can remain available in the face of partitions, but that can only give you a “best effort” answer.</p>
+<p>还有另一些例子中，我们能够接受那些尽力而为的答案作为我们系统的最后结果。这会涉及到一致性问题</p>
+<ul>
+<li><strong>强一致性：保证准确性但付出可用性低的代价</strong></li>
+<li><strong>弱一致性：保证系统可用性，但要只能告诉你“best effort”(尽力了)</strong></li>
+</ul>
+<hr>
+<h2 id="Further-reading"><a href="#Further-reading" class="headerlink" title="Further reading"></a>Further reading</h2><h3 id="Lamport-clocks-vector-clocks"><a href="#Lamport-clocks-vector-clocks" class="headerlink" title="Lamport clocks, vector clocks"></a>Lamport clocks, vector clocks</h3><ul>
+<li><a href="http://research.microsoft.com/users/lamport/pubs/time-clocks.pdf" target="_blank" rel="noopener">Time, Clocks and Ordering of Events in a Distributed System</a> - Leslie Lamport, 1978</li>
+</ul>
+<h3 id="Failure-detection"><a href="#Failure-detection" class="headerlink" title="Failure detection"></a>Failure detection</h3><ul>
+<li><a href="http://scholar.google.com/scholar?q=Unreliable+Failure+Detectors+for+Reliable+Distributed+Systems" target="_blank" rel="noopener">Unreliable failure detectors and reliable distributed systems</a> - Chandra and Toueg</li>
+<li><a href="http://www.cs.cornell.edu/people/egs/sqrt-s/doc/TR2006-2025.pdf" target="_blank" rel="noopener">Latency- and Bandwidth-Minimizing Optimal Failure Detectors</a> - So &amp; Sirer, 2007</li>
+<li><a href="http://scholar.google.com/scholar?q=The+failure+detector+abstraction" target="_blank" rel="noopener">The failure detector abstraction</a>, Freiling, Guerraoui &amp; Kuznetsov, 2011</li>
+</ul>
+<h3 id="Snapshots"><a href="#Snapshots" class="headerlink" title="Snapshots"></a>Snapshots</h3><ul>
+<li><a href="http://scholar.google.com/scholar?q=Consistent+global+states+of+distributed+systems%3A+Fundamental+concepts+and+mechanisms" target="_blank" rel="noopener">Consistent global states of distributed systems: Fundamental concepts and mechanisms</a>, Ozalp Babaogly and Keith Marzullo, 1993</li>
+<li><a href="http://scholar.google.com/scholar?q=Distributed+snapshots%3A+Determining+global+states+of+distributed+systems" target="_blank" rel="noopener">Distributed snapshots: Determining global states of distributed systems</a>, K. Mani Chandy and Leslie Lamport, 1985</li>
+</ul>
+<h3 id="Causality"><a href="#Causality" class="headerlink" title="Causality"></a>Causality</h3><ul>
+<li><a href="http://www.vs.inf.ethz.ch/publ/papers/holygrail.pdf" target="_blank" rel="noopener">Detecting Causal Relationships in Distributed Computations: In Search of the Holy Grail</a> - Schwarz &amp; Mattern, 1994</li>
+<li><a href="http://scholar.google.com/scholar?q=Understanding+the+limitations+of+causally+and+totally+ordered+communication" target="_blank" rel="noopener">Understanding the Limitations of Causally and Totally Ordered Communication</a> - Cheriton &amp; Skeen, 1993</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/22/[译]Distributed systems for fun and profit_2抽象描述系统的特征/" rel="next" title="[译]Distributed systems for fun and profit_2抽象描述系统的特征">
+                <i class="fa fa-chevron-left"></i> [译]Distributed systems for fun and profit_2抽象描述系统的特征
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/29/[译]Distributed systems for fun and profit_4复制/" rel="prev" title="[译]Distributed systems for fun and profit_4复制">
+                [译]Distributed systems for fun and profit_4复制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#三-Time-and-order-时间和顺序"><span class="nav-text">三.Time and order 时间和顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Total-and-partial-order-全局有序和偏序"><span class="nav-text">Total and partial order  全局有序和偏序</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#What-is-time-时间"><span class="nav-text">What is time? 时间</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Does-time-progress-at-the-same-rate-everywhere-各个分布式节点中时间相同吗？"><span class="nav-text">Does time progress at the same rate everywhere?各个分布式节点中时间相同吗？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Time-with-a-“global-clock”-assumption-全局时钟"><span class="nav-text">Time with a “global-clock” assumption 全局时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Time-with-a-“Local-clock”-assumption-本地时钟"><span class="nav-text">Time with a “Local-clock” assumption  本地时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Time-with-a-“No-clock”-assumption-无时钟"><span class="nav-text">Time with a “No-clock” assumption 无时钟</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-is-time-used-in-a-distributed-system-分布式系统中时间的作用"><span class="nav-text">How is time used in a distributed system?分布式系统中时间的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vector-clocks-time-for-causal-order-矢量时钟"><span class="nav-text">Vector clocks (time for causal order) 矢量时钟</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Lamport-clock"><span class="nav-text">Lamport clock</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vector-clock矢量时钟"><span class="nav-text">vector clock矢量时钟</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Failure-detectors-time-for-cutoff-故障检测器"><span class="nav-text">Failure detectors (time for cutoff) 故障检测器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Time-order-and-performance-时间、顺序和性能"><span class="nav-text">Time, order and performance 时间、顺序和性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Further-reading"><span class="nav-text">Further reading</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lamport-clocks-vector-clocks"><span class="nav-text">Lamport clocks, vector clocks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Failure-detection"><span class="nav-text">Failure detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Snapshots"><span class="nav-text">Snapshots</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Causality"><span class="nav-text">Causality</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

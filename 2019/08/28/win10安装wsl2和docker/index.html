@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[TOC] 参考https://zhuanlan.zhihu.com/p/69121280 踩过的坑 WSL2需要Windows build 18917 更新,WSL不需要.但是最好首先将操作系统更新到需要的版本,而不是先安装WSL再更新 不要安装不在windows商店的Linux发行版(包括github上的各种centos以及centos官方docker镜像,centos目前不是windows商">
+<meta property="og:type" content="article">
+<meta property="og:title" content="win10安装wsl2和docker">
+<meta property="og:url" content="https://jaychenfe.github.io/2019/08/28/win10安装wsl2和docker/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="[TOC] 参考https://zhuanlan.zhihu.com/p/69121280 踩过的坑 WSL2需要Windows build 18917 更新,WSL不需要.但是最好首先将操作系统更新到需要的版本,而不是先安装WSL再更新 不要安装不在windows商店的Linux发行版(包括github上的各种centos以及centos官方docker镜像,centos目前不是windows商">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190824083248.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190828223853.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829074144.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829075855.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190822214926.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829080630.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829081316.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829082356.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829082930.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829083356.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190828215546.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190828215721.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="win10安装wsl2和docker">
+<meta name="twitter:description" content="[TOC] 参考https://zhuanlan.zhihu.com/p/69121280 踩过的坑 WSL2需要Windows build 18917 更新,WSL不需要.但是最好首先将操作系统更新到需要的版本,而不是先安装WSL再更新 不要安装不在windows商店的Linux发行版(包括github上的各种centos以及centos官方docker镜像,centos目前不是windows商">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190824083248.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2019/08/28/win10安装wsl2和docker/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>win10安装wsl2和docker | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2019/08/28/win10安装wsl2和docker/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">win10安装wsl2和docker
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-28 21:43:29" itemprop="dateCreated datePublished" datetime="2019-08-28T21:43:29+00:00">2019-08-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/工具建设/" itemprop="url" rel="index"><span itemprop="name">工具建设</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://zhuanlan.zhihu.com/p/69121280" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/69121280</a></p>
+<h1 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h1><ul>
+<li>WSL2需要Windows build 18917 更新,WSL不需要.但是最好<strong>首先</strong>将操作系统更新到需要的版本,<strong>而不是</strong>先安装WSL再更新</li>
+<li><strong>不要</strong>安装不在windows商店的Linux发行版(包括github上的各种centos以及centos官方docker镜像,centos目前不是windows商店的Linux发行版之一)</li>
+<li>windows升级过程可能会有多个更新,每次更新都检查C盘,预留10G以上的硬盘空间</li>
+</ul>
+<h1 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h1><p>以下默认使用管理员权限打开powershell</p>
+<h2 id="1-确认操作系统版本"><a href="#1-确认操作系统版本" class="headerlink" title="1.确认操作系统版本"></a>1.确认操作系统版本</h2><p>开始菜单(右键)&gt;设置&gt;系统&gt;关于&gt;windows规格</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190824083248.png" alt=""></p>
+<p>如果版本号(小数点之前的数字)小于18917需要更新,否则进入步骤3安装wsl </p>
+<h2 id="2-升级window版本"><a href="#2-升级window版本" class="headerlink" title="2.升级window版本"></a>2.升级window版本</h2><h3 id="2-1开启快速通道-Insider-Preview"><a href="#2-1开启快速通道-Insider-Preview" class="headerlink" title="2.1开启快速通道(Insider Preview)"></a>2.1开启快速通道(Insider Preview)</h3><p>开始菜单(右键)&gt;设置&gt;更新和安全&gt;windows预览体验计划</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190828223853.png" alt=""><br><br></p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829074144.png" alt=""></p>
+<p><br></p>
+<h3 id="2-2更新"><a href="#2-2更新" class="headerlink" title="2.2更新"></a>2.2更新</h3><p>开始菜单(右键)&gt;设置&gt;更新和安全&gt;windows更新</p>
+<p>开始更新,<strong>可能需要重启,时间比较长</strong></p>
+<p>更新完成后如下:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829075855.png" alt=""></p>
+<p>操作系统版本大于18917即可</p>
+<h2 id="3-安装wsl"><a href="#3-安装wsl" class="headerlink" title="3.安装wsl"></a>3.安装wsl</h2><h3 id="3-1-开启wsl"><a href="#3-1-开启wsl" class="headerlink" title="3.1 开启wsl"></a>3.1 开启wsl</h3><p>在powershell命令行中输入如下命令开启wsl</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190822214926.png" alt=""><br>可能需要重启</p>
+<h3 id="3-2-在windows商店中选择合适的linux发行版"><a href="#3-2-在windows商店中选择合适的linux发行版" class="headerlink" title="3.2 在windows商店中选择合适的linux发行版"></a>3.2 在windows商店中选择合适的linux发行版</h3><p>这里我选择了Ubuntu,安装</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829080630.png" alt=""></p>
+<h3 id="3-3测试wsl"><a href="#3-3测试wsl" class="headerlink" title="3.3测试wsl"></a>3.3测试wsl</h3><p>命令行中输入<code>wsl -l -v 查看</code>,这里版本应该是1</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829081316.png" alt=""></p>
+<h2 id="4-升级到wsl2"><a href="#4-升级到wsl2" class="headerlink" title="4.升级到wsl2"></a>4.升级到wsl2</h2><h3 id="4-1开启VirtualMachinePlatform"><a href="#4-1开启VirtualMachinePlatform" class="headerlink" title="4.1开启VirtualMachinePlatform"></a>4.1开启VirtualMachinePlatform</h3><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform</span><br></pre></td></tr></table></figure>
+<h3 id="4-2将发行版的wsl版本设置为2"><a href="#4-2将发行版的wsl版本设置为2" class="headerlink" title="4.2将发行版的wsl版本设置为2"></a>4.2将发行版的wsl版本设置为2</h3><p>命令为<code>wsl --set-version &lt;Distro&gt; 2</code>,例如<code>wsl --set-version Ubuntu 2</code></p>
+<p>如果想使wsl2 成为默认架构，可以使用以下命令执行此操作:</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wsl --set-default-version <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>这将使你安装的任何新发行版初始化为 wsl2 发行版。</p>
+<h3 id="4-3测试wsl2"><a href="#4-3测试wsl2" class="headerlink" title="4.3测试wsl2"></a>4.3测试wsl2</h3><p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829082356.png" alt=""></p>
+<h2 id="5-安装docker"><a href="#5-安装docker" class="headerlink" title="5.安装docker"></a>5.安装docker</h2><h3 id="5-1进入wsl2"><a href="#5-1进入wsl2" class="headerlink" title="5.1进入wsl2"></a>5.1进入wsl2</h3><p>输入<code>wsl -u root</code>进入wsl2,并切换到根目录</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829082930.png" alt=""></p>
+<h3 id="5-2快速安装docker"><a href="#5-2快速安装docker" class="headerlink" title="5.2快速安装docker"></a>5.2快速安装docker</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> curl -fsSL https://get.docker.com -o get-docker.sh</span><br><span class="line"><span class="meta">$</span> sudo sh get-docker.sh</span><br><span class="line"><span class="meta">$</span> sudo service docker start</span><br></pre></td></tr></table></figure>
+<p>测试一下,运行<code>docker run hello-world</code></p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190829083356.png" alt=""></p>
+<h3 id="5-3在docker中安装mysql"><a href="#5-3在docker中安装mysql" class="headerlink" title="5.3在docker中安装mysql"></a>5.3在docker中安装mysql</h3><p>在 <a href="https://hub.docker.com/_/mysql" target="_blank" rel="noopener">https://hub.docker.com/_/mysql</a>   找到合适的mysql镜像版本,这里使用mysql5.7.27</p>
+<p>运行如下命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name mysql -p3306:<span class="number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="number">123</span>qweasd -d mysql:<span class="number">5.7</span>.<span class="number">27</span></span><br></pre></td></tr></table></figure>
+<p>这里启动了一个mysql5.7.27的docker镜像,密码为<code>123qweasd</code>,并将docker的3306端口(mysql默认端口)映射到了wsl2的3306端口</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190828215546.png" alt=""></p>
+<p>在wsl2中使用<code>ifconfig</code>获取局域网ip记住</p>
+<h2 id="6-在windows中测试"><a href="#6-在windows中测试" class="headerlink" title="6.在windows中测试"></a>6.在windows中测试</h2><p>在Win10中打开IDEA旗舰版,用自带的数据库连接工具连接成功</p>
+<p>host和mysql密码和上一步相同</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190828215721.png" alt=""></p>
+<p>至此,在windows中连接wsl2中的docker中的mysql成功</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/15/使用BaGet搭建私有nuget服务器/" rel="next" title="使用BaGet搭建私有nuget服务器">
+                <i class="fa fa-chevron-left"></i> 使用BaGet搭建私有nuget服务器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/31/SpringBoot启动引导-SpringFramework的手动装配/" rel="prev" title="SpringBoot启动引导-SpringFramework的手动装配">
+                SpringBoot启动引导-SpringFramework的手动装配 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#踩过的坑"><span class="nav-text">踩过的坑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装过程"><span class="nav-text">安装过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-确认操作系统版本"><span class="nav-text">1.确认操作系统版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-升级window版本"><span class="nav-text">2.升级window版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1开启快速通道-Insider-Preview"><span class="nav-text">2.1开启快速通道(Insider Preview)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2更新"><span class="nav-text">2.2更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-安装wsl"><span class="nav-text">3.安装wsl</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-开启wsl"><span class="nav-text">3.1 开启wsl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-在windows商店中选择合适的linux发行版"><span class="nav-text">3.2 在windows商店中选择合适的linux发行版</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3测试wsl"><span class="nav-text">3.3测试wsl</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-升级到wsl2"><span class="nav-text">4.升级到wsl2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1开启VirtualMachinePlatform"><span class="nav-text">4.1开启VirtualMachinePlatform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2将发行版的wsl版本设置为2"><span class="nav-text">4.2将发行版的wsl版本设置为2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3测试wsl2"><span class="nav-text">4.3测试wsl2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-安装docker"><span class="nav-text">5.安装docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1进入wsl2"><span class="nav-text">5.1进入wsl2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2快速安装docker"><span class="nav-text">5.2快速安装docker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3在docker中安装mysql"><span class="nav-text">5.3在docker中安装mysql</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-在windows中测试"><span class="nav-text">6.在windows中测试</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[TOC] JDK安装和配置Windows环境 从Java官网下载Windows版本的JDK   JDK8 JDK11 JDK12   点击安装包进行安装，记住安装路径   设置Windows环境变量Java_Home： 1C:\Program Files\Java\jdk-12  设置Windows环境变量Path，在原有内容之后添加: 1;%Java_Home%\bin  设置Windows环">
+<meta name="keywords" content="Java基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java开发环境配置">
+<meta property="og:url" content="https://jaychenfe.github.io/2018/11/03/Java开发环境配置/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="[TOC] JDK安装和配置Windows环境 从Java官网下载Windows版本的JDK   JDK8 JDK11 JDK12   点击安装包进行安装，记住安装路径   设置Windows环境变量Java_Home： 1C:\Program Files\Java\jdk-12  设置Windows环境变量Path，在原有内容之后添加: 1;%Java_Home%\bin  设置Windows环">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095231.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095314.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095841.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103094840">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103094938.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125850.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130548.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130621.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130739.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103101750.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102149.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103101837.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102625.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102700.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102824.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103103340.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103103832.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104037.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104122.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104349.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104617.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124005.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124257.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124542.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124733.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124924.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125035.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125150.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125400.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125559.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125656.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125738.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java开发环境配置">
+<meta name="twitter:description" content="[TOC] JDK安装和配置Windows环境 从Java官网下载Windows版本的JDK   JDK8 JDK11 JDK12   点击安装包进行安装，记住安装路径   设置Windows环境变量Java_Home： 1C:\Program Files\Java\jdk-12  设置Windows环境变量Path，在原有内容之后添加: 1;%Java_Home%\bin  设置Windows环">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095231.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2018/11/03/Java开发环境配置/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java开发环境配置 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2018/11/03/Java开发环境配置/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java开发环境配置
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-03 07:48:03" itemprop="dateCreated datePublished" datetime="2018-11-03T07:48:03+00:00">2018-11-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="JDK安装和配置"><a href="#JDK安装和配置" class="headerlink" title="JDK安装和配置"></a>JDK安装和配置</h1><h2 id="Windows环境"><a href="#Windows环境" class="headerlink" title="Windows环境"></a>Windows环境</h2><ol>
+<li><p>从Java官网下载Windows版本的JDK </p>
+<ul>
+<li><a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">JDK8</a></li>
+<li><a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html" target="_blank" rel="noopener">JDK11</a></li>
+<li><a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk12-downloads-5295953.html" target="_blank" rel="noopener">JDK12</a></li>
+</ul>
+</li>
+<li><p>点击安装包进行安装，记住安装路径</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095231.png" alt=""></p>
+</li>
+<li><p>设置Windows环境变量Java_Home：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Program Files\Java\jdk-12</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置Windows环境变量Path，在原有内容之后添加:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;%Java_Home%\bin</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置Windows环境变量CLASSPATH，在原有内容之后添加:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">;%Java_Home%\lib\dt.jar;%Java_Home%\lib\tools.jar</span><br></pre></td></tr></table></figure>
+<p>如果环境变量CLASSPATH不存在，则创建，设置其值为:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%Java_Home%\lib\dt.jar;%Java_Home%\lib\tools.jar</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095314.png" alt=""></p>
+</li>
+<li><p>运行命令<code>java -version</code>和<code>javac -version</code>，测试安装是否成功</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103095841.png" alt=""></p>
+</li>
+</ol>
+<h2 id="MacOS环境"><a href="#MacOS环境" class="headerlink" title="MacOS环境"></a>MacOS环境</h2><ol>
+<li><p>从Java官方网站下载macOS版本的JDK (Java SE Development Kit 8u161)：<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html</a></p>
+</li>
+<li><p>一直点击下一步安装</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103094840" alt=""></p>
+</li>
+<li><p><strong>Java默认安装路径</strong>: <code>/Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/</code><br>JDK Home目录：<code>/Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/Contents/Home</code> (配置IDE需要)</p>
+</li>
+<li><p>配置环境变量，在.zshrc (根据使用shell对应更改):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/Contents/Home </span><br><span class="line">export PATH=$JAVA_HOME/bin:$PATH</span><br><span class="line">export CLASSPATH=JAVA_HOME/libh/tools.jar:$JAVA_HOME/lib/dt.jar</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运行命令 <code>source .zshrc</code></p>
+</li>
+<li><p>确认安装成功，运行命令 <code>java -version</code>, 正确的输出为:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103094938.png" alt=""></p>
+</li>
+</ol>
+<h1 id="Maven安装和配置"><a href="#Maven安装和配置" class="headerlink" title="Maven安装和配置"></a>Maven安装和配置</h1><h2 id="Windows-安装"><a href="#Windows-安装" class="headerlink" title="Windows 安装"></a>Windows 安装</h2><h3 id="下载和安装"><a href="#下载和安装" class="headerlink" title="下载和安装"></a>下载和安装</h3><ol>
+<li>从<a href="http://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.zip" target="_blank" rel="noopener">Maven官方 http://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/&gt;</a>下载安装压缩包</li>
+<li>解压文件夹 <code>apache-maven-3.6.1</code> 到任意文件夹, 例如我解压到 </li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125850.png" alt=""></p>
+<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><ol>
+<li><p>设置环境变量 <code>M2_HOME</code> 为maven安装的路径, 例如:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130548.png" alt=""></p>
+</li>
+<li><p>添加<code>%M2_HOME%\bin</code>到系统环境变量path中, 例如:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130621.png" alt=""></p>
+</li>
+</ol>
+<h3 id="运行命令测试安装"><a href="#运行命令测试安装" class="headerlink" title="运行命令测试安装"></a>运行命令测试安装</h3><p>运行命令: <code>mvn -version</code>:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103130739.png" alt=""></p>
+<h2 id="macOS-安装"><a href="#macOS-安装" class="headerlink" title="macOS 安装"></a>macOS 安装</h2><h3 id="使用brew安装"><a href="#使用brew安装" class="headerlink" title="使用brew安装"></a>使用brew安装</h3><p>运行命令: <code>brew update; brew install maven</code></p>
+<h3 id="运行命令测试安装-1"><a href="#运行命令测试安装-1" class="headerlink" title="运行命令测试安装"></a>运行命令测试安装</h3><p>运行命令: <code>mvn -version</code></p>
+<h1 id="IDE配置"><a href="#IDE配置" class="headerlink" title="IDE配置"></a>IDE配置</h1><h2 id="VSCode配置"><a href="#VSCode配置" class="headerlink" title="VSCode配置"></a>VSCode配置</h2><h3 id="一-基础环境"><a href="#一-基础环境" class="headerlink" title="一.基础环境"></a>一.基础环境</h3><ol>
+<li><p>在插件市场中搜索“Java Extension Pack”并安装。 </p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103101750.png" alt=""></p>
+</li>
+<li><p>在磁盘中创建一个临时空目录，并创建<code>Main.java</code>。之后，使用VSCode打开该目录。 </p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102149.png" alt=""></p>
+</li>
+<li><p>在<code>Main.java</code>文件中输入或粘贴要测试的代码 </p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103101837.png" alt=""></p>
+</li>
+<li><p>打开<code>调试</code>选项卡（或按下“Ctrl+Alt+D”），并选择<code>添加配置</code>。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102625.png" alt=""></p>
+</li>
+<li><p>打开“launch.json”，并修改配置项“mainClass”为真实的主类名（本例中为“Main”）。</p>
+<p>  <img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102700.png" alt=""></p>
+</li>
+<li><p>在启动调试前，还需要设置“JAVA_HOME”的路径。打开“文件”–“首选项”–“设置”（或按下“Ctrl+,”），并修改“java.home”配置项为真实的“JAVA_HOME”路径。 </p>
+<p>  <img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103102824.png" alt=""></p>
+</li>
+<li><p>至此，环境配置完毕，可直接按下“F5”键启动调试，并可正常下断点和监视变量。</p>
+<p>  <img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103103340.png" alt=""></p>
+</li>
+</ol>
+<h3 id="二-Maven环境"><a href="#二-Maven环境" class="headerlink" title="二.Maven环境"></a>二.Maven环境</h3><ol>
+<li><p>首先配置可以正常使用的Maven环境。</p>
+</li>
+<li><p>新建一个临时空目录，在其中创建必须的几个文件和文件夹，包括<code>pom.xml</code>、<code>src/main/java</code>。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103103832.png" alt=""></p>
+</li>
+<li><p>修改VSCode中与Maven相关的配置，将Maven可执行文件（windows平台为<code>mvn.cmd</code>）的绝对路径填写在<code>maven.executable.path</code>配置项中，并将Maven配置文件<code>settings.xml</code>的绝对路径填写在<code>java.configuration.maven.userSettings</code>配置项中。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104037.png" alt=""></p>
+</li>
+<li><p>保存配置并重启VSCode，之后在“pom.xml”文件上右击，并选择“Update project configration”。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104122.png" alt=""></p>
+</li>
+<li><p>之后，VSCode的Java插件将会在工作区中生成相关的文件（“.classpath”、“target”等）。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104220.png" alt=""></p>
+</li>
+<li><p>在工作区下方，即可选择Maven工程的常用命令。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104349.png" alt=""></p>
+</li>
+<li><p>配置完成后，代码中可直接提示出“pom.xml”包含的包中的类。</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103104617.png" alt=""></p>
+</li>
+</ol>
+<h2 id="IntelliJ-IDEA-安装配置"><a href="#IntelliJ-IDEA-安装配置" class="headerlink" title="IntelliJ IDEA 安装配置"></a>IntelliJ IDEA 安装配置</h2><h3 id="一-IntelliJ-IDEA安装"><a href="#一-IntelliJ-IDEA安装" class="headerlink" title="一. IntelliJ IDEA安装"></a>一. IntelliJ IDEA安装</h3><ol>
+<li><p>在Intellij官方网站下载Community版</p>
+<ul>
+<li><p>Windows 下载地址: <a href="https://www.jetbrains.com/idea/download/#section=windows" target="_blank" rel="noopener">https://www.jetbrains.com/idea/download/#section=windows</a></p>
+</li>
+<li><p>Mac 下载地址: <a href="https://www.jetbrains.com/idea/download/#section=mac" target="_blank" rel="noopener">https://www.jetbrains.com/idea/download/#section=mac</a></p>
+</li>
+<li><p>Linux 下载地址: <a href="https://www.jetbrains.com/idea/download/#section=linux" target="_blank" rel="noopener">https://www.jetbrains.com/idea/download/#section=linux</a></p>
+<p>直接双击安装包，开始安装</p>
+</li>
+</ul>
+</li>
+<li><p>选择安装JRE</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124005.png" alt=""></p>
+</li>
+<li><p>选择导入配置信息或者不导入配置信息</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124257.png" alt=""></p>
+<h3 id="二-IntelliJ-IDEA-配置"><a href="#二-IntelliJ-IDEA-配置" class="headerlink" title="二. IntelliJ IDEA 配置"></a>二. IntelliJ IDEA 配置</h3><p>如果你没有导入配置文件，第一次运行IDEA会看到一个设置导航</p>
+<ol>
+<li><p>选择喜欢的UI配色</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124542.png" alt=""></p>
+</li>
+<li><p>选择安装推荐插件，这里保持默认就好，或者根据你的需要安装插件</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124733.png" alt=""></p>
+</li>
+</ol>
+<p>3.配置build任务，保持默认就好</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103124924.png" alt=""></p>
+<h3 id="三-配置项目默认JDK"><a href="#三-配置项目默认JDK" class="headerlink" title="三. 配置项目默认JDK"></a>三. 配置项目默认JDK</h3><ol>
+<li>在IDEA启动窗口，选择 <em>Configure</em> -&gt; <em>Project Default</em> -&gt; <em>Project Structure</em>, 打开 <em>Default Project Structure</em> 窗口</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125035.png" alt=""></p>
+<ol start="2">
+<li>在 <em>Project SDK</em> 标签下，选择一个 Java SDK或者点击 <em>New</em> -&gt; <em>+ JDK</em> 选择新的Java SDK</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125150.png" alt=""></p>
+<ol start="3">
+<li>点击右下角 <em>确认</em></li>
+</ol>
+<h3 id="四-创建第一个Java项目"><a href="#四-创建第一个Java项目" class="headerlink" title="四. 创建第一个Java项目"></a>四. 创建第一个Java项目</h3><ol>
+<li>点击Java启动窗口的 <em>Create New Project</em></li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125400.png" alt=""></p>
+<ol start="2">
+<li>左边标签栏选择 <em>Java</em>, 在Project设置窗口中还可以选择 <em>Project SDK</em>，不需要选择其他的库和框架，点击下一步</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125559.png" alt=""></p>
+<ol start="3">
+<li>在 <em>New Project</em> 窗口下，选择 <em>Create Project from template (从模板创建项目)</em>，然后勾选 <em>Command Line App (命令行程序)</em>，点击下一步</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125656.png" alt=""></p>
+<ol start="4">
+<li>设置 <em>Project Name</em>，选择 <em>Project location</em>，此处可以保持默认 <em>package</em>，课程中会再介绍 package 概念，然后点击下一步，完成项目创建。<img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181103125738.png" alt=""></li>
+</ol>
+<h3 id="五-IntelliJ-IDEA-插件推荐"><a href="#五-IntelliJ-IDEA-插件推荐" class="headerlink" title="五. IntelliJ IDEA 插件推荐"></a>五. IntelliJ IDEA 插件推荐</h3><ul>
+<li><strong>Material Theme UI</strong>： 一个很好看的 UI 主题</li>
+<li><strong>IdeaVim</strong>: 在IDEA里使用VIM编辑代码， Vim已死，Vim永存~</li>
+<li><strong>WakaTime</strong>: 记录每天写代码的时间</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://blog.hotsun168.com/index.php/archives/10/" target="_blank" rel="noopener">使用VSCode搭建简单Java开发环境（一、基础环境）</a></li>
+<li><a href="http://blog.hotsun168.com/index.php/archives/16/" target="_blank" rel="noopener">使用VSCode搭建简单Java开发环境（二、Maven环境）</a></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java基础/" rel="tag"># Java基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/21/Hexo搭建个人博客/" rel="next" title="Hexo搭建个人博客">
+                <i class="fa fa-chevron-left"></i> Hexo搭建个人博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/03/[置顶]我的博文目录/" rel="prev" title="[置顶]我的博文目录">
+                [置顶]我的博文目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JDK安装和配置"><span class="nav-text">JDK安装和配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows环境"><span class="nav-text">Windows环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MacOS环境"><span class="nav-text">MacOS环境</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Maven安装和配置"><span class="nav-text">Maven安装和配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows-安装"><span class="nav-text">Windows 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#下载和安装"><span class="nav-text">下载和安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置环境变量"><span class="nav-text">设置环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行命令测试安装"><span class="nav-text">运行命令测试安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#macOS-安装"><span class="nav-text">macOS 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用brew安装"><span class="nav-text">使用brew安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行命令测试安装-1"><span class="nav-text">运行命令测试安装</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IDE配置"><span class="nav-text">IDE配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#VSCode配置"><span class="nav-text">VSCode配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-基础环境"><span class="nav-text">一.基础环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-Maven环境"><span class="nav-text">二.Maven环境</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IntelliJ-IDEA-安装配置"><span class="nav-text">IntelliJ IDEA 安装配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-IntelliJ-IDEA安装"><span class="nav-text">一. IntelliJ IDEA安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-IntelliJ-IDEA-配置"><span class="nav-text">二. IntelliJ IDEA 配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-配置项目默认JDK"><span class="nav-text">三. 配置项目默认JDK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四-创建第一个Java项目"><span class="nav-text">四. 创建第一个Java项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五-IntelliJ-IDEA-插件推荐"><span class="nav-text">五. IntelliJ IDEA 插件推荐</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

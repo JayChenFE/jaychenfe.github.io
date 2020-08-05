@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[TOC] 原理 示例菜单程序(Js实现)需求:假设我们正在编写一个用户界面程序，该用户界面上至少有数十个Button 按钮。因为项目比较复杂，所以我们决定让某个程序员负责绘制这些按钮，而另外一些程序员则负责编写点击按钮后的具体行为，这些行为都将被封装在对象里。在大型项目开发中，这是很正常的分工。对于绘制按钮的程序员来说，他完全不知道某个按钮未来将用来做什么，可能用来刷新菜单界面，也可能用来增加一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令模式">
+<meta property="og:url" content="https://jaychenfe.github.io/2019/05/22/命令模式/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="[TOC] 原理 示例菜单程序(Js实现)需求:假设我们正在编写一个用户界面程序，该用户界面上至少有数十个Button 按钮。因为项目比较复杂，所以我们决定让某个程序员负责绘制这些按钮，而另外一些程序员则负责编写点击按钮后的具体行为，这些行为都将被封装在对象里。在大型项目开发中，这是很正常的分工。对于绘制按钮的程序员来说，他完全不知道某个按钮未来将用来做什么，可能用来刷新菜单界面，也可能用来增加一">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190526093521.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190526102057.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="命令模式">
+<meta name="twitter:description" content="[TOC] 原理 示例菜单程序(Js实现)需求:假设我们正在编写一个用户界面程序，该用户界面上至少有数十个Button 按钮。因为项目比较复杂，所以我们决定让某个程序员负责绘制这些按钮，而另外一些程序员则负责编写点击按钮后的具体行为，这些行为都将被封装在对象里。在大型项目开发中，这是很正常的分工。对于绘制按钮的程序员来说，他完全不知道某个按钮未来将用来做什么，可能用来刷新菜单界面，也可能用来增加一">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190526093521.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2019/05/22/命令模式/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>命令模式 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2019/05/22/命令模式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">命令模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-22 22:53:03" itemprop="dateCreated datePublished" datetime="2019-05-22T22:53:03+00:00">2019-05-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190526093521.png" alt=""></p>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="菜单程序-Js实现"><a href="#菜单程序-Js实现" class="headerlink" title="菜单程序(Js实现)"></a>菜单程序(Js实现)</h2><h3 id="需求"><a href="#需求" class="headerlink" title="需求:"></a>需求:</h3><p>假设我们正在编写一个用户界面程序，该用户界面上至少有数十个Button 按钮。因为项目比较复杂，所以我们决定让某个程序员负责绘制这些按钮，而另外一些程序员则负责编写点击按钮后的具体行为，这些行为都将被封装在对象里。在大型项目开发中，这是很正常的分工。对于绘制按钮的程序员来说，他完全不知道某个按钮未来将用来做什么，可能用来刷新菜单界面，也可能用来增加一些子菜单，他只知道点击这个按钮会发生某些事情</p>
+<p>这里运用命令模式的理由：点击了按钮之后，必须向某些负责具体行为的对象发送请求，这些对象就是请求的接收者。但是目前并不知道接收者是什么对象，也不知道接收者究竟会做什么。此时我们需要借助命令对象的帮助，以便解开按钮和负责具体行为对象之间的耦合。</p>
+<p>设计模式的主题总是把不变的事物和变化的事物分离开来，命令模式也不例外。按下按钮之后会发生一些事情是不变的，而具体会发生什么事情是可变的。通过command 对象的帮助，将来我们可以轻易地改变这种关联，因此也可以在将来再次改变按钮的行为</p>
+<h3 id="传统实现"><a href="#传统实现" class="headerlink" title="传统实现"></a>传统实现</h3><p>下面进入代码编写阶段</p>
+<p>首先在页面中完成这些按钮的“绘制”：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">  &lt;html&gt;</span><br><span class="line"></span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;title&gt;<span class="xml"><span class="tag">&lt;/<span class="name">title</span>&gt;</span></span></span><br><span class="line">    &lt;<span class="regexp">/head&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    &lt;body&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">        &lt;button id="button1"&gt;点击按钮1&lt;/</span>button&gt;</span><br><span class="line">        &lt;button id=<span class="string">"button2"</span>&gt;点击按钮<span class="number">2</span>&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">        &lt;button id="button3"&gt;点击按钮3&lt;/</span>button&gt;</span><br><span class="line"></span><br><span class="line">        &lt;script&gt;</span><br><span class="line">            <span class="keyword">var</span> button1 = <span class="built_in">document</span>.getElementById(<span class="string">'button1'</span>),</span><br><span class="line">            <span class="keyword">var</span> button2 = <span class="built_in">document</span>.getElementById(<span class="string">'button2'</span>),</span><br><span class="line">            <span class="keyword">var</span> button3 = <span class="built_in">document</span>.getElementById(<span class="string">'button3'</span>);</span><br><span class="line">        &lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp">  	 &lt;/</span>body&gt;</span><br><span class="line"></span><br><span class="line">&lt;<span class="regexp">/html&gt;</span></span><br></pre></td></tr></table></figure>
+<p>接下来定义setCommand 函数，setCommand 函数负责往按钮上面安装命令。可以肯定的是，点击按钮会执行某个command 命令，执行命令的动作被约定为调用command 对象的execute()方法。<br>虽然还不知道这些命令究竟代表什么操作，但负责绘制按钮的程序员不关心这些事情，他只需要预留好安装命令的接口，command 对象自然知道如何和正确的对象沟通：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> setCommand = <span class="function"><span class="keyword">function</span> (<span class="params">button, command</span>) </span>&#123;</span><br><span class="line">              button.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">                  command.execute();</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;;</span><br></pre></td></tr></table></figure>
+<p>最后，负责编写点击按钮之后的具体行为的程序员总算交上了他们的成果，他们完成了刷新菜单界面、增加子菜单和删除子菜单这几个功能，这几个功能被分布在MenuBar 和SubMenu 这两个对象中：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> MenuBar = &#123;</span><br><span class="line">    refresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'刷新菜单目录'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> SubMenu = &#123;</span><br><span class="line">    add: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'增加子菜单'</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    del: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'删除子菜单'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在让button 变得有用起来之前，我们要先把这些行为都封装在命令类中：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RefreshMenuBarCommand = <span class="function"><span class="keyword">function</span> (<span class="params">receiver</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.receiver = receiver;</span><br><span class="line">&#125;;</span><br><span class="line">RefreshMenuBarCommand.prototype.execute = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.receiver.refresh();</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> AddSubMenuCommand = <span class="function"><span class="keyword">function</span> (<span class="params">receiver</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.receiver = receiver;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">AddSubMenuCommand.prototype.execute = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.receiver.add();</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> DelSubMenuCommand = <span class="function"><span class="keyword">function</span> (<span class="params">receiver</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.receiver = receiver;</span><br><span class="line">&#125;;</span><br><span class="line">DelSubMenuCommand.prototype.execute = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'删除子菜单'</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>最后就是把命令接收者传入到command 对象中，并且把command 对象安装到button 上面：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> refreshMenuBarCommand = <span class="keyword">new</span> RefreshMenuBarCommand(MenuBar);</span><br><span class="line"><span class="keyword">var</span> addSubMenuCommand = <span class="keyword">new</span> AddSubMenuCommand(SubMenu);</span><br><span class="line"><span class="keyword">var</span> delSubMenuCommand = <span class="keyword">new</span> DelSubMenuCommand(SubMenu);</span><br><span class="line">setCommand(button1, refreshMenuBarCommand);</span><br><span class="line">setCommand(button2, addSubMenuCommand);</span><br><span class="line">setCommand(button3, delSubMenuCommand);</span><br></pre></td></tr></table></figure>
+<h3 id="JavaScript-中的命令模式"><a href="#JavaScript-中的命令模式" class="headerlink" title="JavaScript 中的命令模式"></a>JavaScript 中的命令模式</h3><p>也许我们会感到很奇怪，所谓的命令模式，看起来就是给对象的某个方法取了execute 的名字。引入command 对象和receiver 这两个无中生有的角色无非是把简单的事情复杂化了，即使不用什么模式，用下面寥寥几行代码就可以实现相同的功能：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> bindClick = <span class="function"><span class="keyword">function</span> (<span class="params">button, func</span>) </span>&#123;</span><br><span class="line">    button.onclick = func;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> MenuBar = &#123;</span><br><span class="line">    refresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'刷新菜单界面'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> SubMenu = &#123;</span><br><span class="line">    add: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'增加子菜单'</span>);</span><br><span class="line">    &#125;,</span><br><span class="line">    del: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'删除子菜单'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">bindClick(button1, MenuBar.refresh);</span><br><span class="line">bindClick(button2, SubMenu.add);</span><br><span class="line">bindClick(button3, SubMenu.del);</span><br></pre></td></tr></table></figure>
+<p>其实,命令模式的由来，其实是回调（callback）函数的一个面向对象的替代品。<br>JavaScript 作为将函数作为一等对象的语言，跟策略模式一样，命令模式也早已融入到了JavaScript 语言之中。运算块不一定要封装在command.execute 方法中，也可以封装在普通函数中。函数作为一等对象，本身就可以被四处传递。即使我们依然需要请求“接收者”，那也未必使用面向对象的方式，闭包可以完成同样的功能。</p>
+<p>在面向对象设计中，命令模式的接收者被当成command 对象的属性保存起来，同时约定执行命令的操作调用command.execute 方法。在使用闭包的命令模式实现中，接收者被封闭在闭包产生的环境中，执行命令的操作可以更加简单，仅仅执行回调函数即可。无论接收者被保存为对象的属性，还是被封闭在闭包产生的环境中，在将来执行命令的时候，接收者都能被顺利访问。用<br>闭包实现的命令模式如下代码所示：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> setCommand = <span class="function"><span class="keyword">function</span>(<span class="params"> button, func </span>)</span>&#123;</span><br><span class="line">	button.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		func();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> MenuBar = &#123;</span><br><span class="line">	refresh: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="built_in">console</span>.log( <span class="string">'刷新菜单界面'</span> );</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> RefreshMenuBarCommand = <span class="function"><span class="keyword">function</span>(<span class="params"> receiver </span>)</span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		receiver.refresh();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> refreshMenuBarCommand = RefreshMenuBarCommand( MenuBar );</span><br><span class="line">setCommand( button1, refreshMenuBarCommand );</span><br></pre></td></tr></table></figure>
+<p>如果想更明确地表达当前正在使用命令模式，或者除了执行命令之外，将来有可能还要提供撤销命令等操作。那我们最好还是把执行函数改为调用execute 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RefreshMenuBarCommand = <span class="function"><span class="keyword">function</span> (<span class="params">receiver</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        execute: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">            receiver.refresh();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> setCommand = <span class="function"><span class="keyword">function</span> (<span class="params">button, command</span>) </span>&#123;</span><br><span class="line">    button.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        command.execute();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> refreshMenuBarCommand = RefreshMenuBarCommand(MenuBar);</span><br><span class="line">setCommand(button1, refreshMenuBarCommand);</span><br></pre></td></tr></table></figure>
+<h2 id="计算器-C-实现"><a href="#计算器-C-实现" class="headerlink" title="计算器(C#)实现"></a>计算器(C#)实现</h2><p>设计一个计算器具有以下功能</p>
+<ul>
+<li>可以进行整数的加减乘除</li>
+<li>用户可以撤销操作</li>
+<li>用户可以重新执行撤销的操作</li>
+</ul>
+<p>代码如下:</p>
+<p>Command类</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> "Command"</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Command</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params"></span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">UnExecute</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Calculator类(Receiver)</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> "Receiver"</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Calculator</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> _curr = <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Operation</span>(<span class="params"><span class="keyword">char</span> @<span class="keyword">operator</span>, <span class="keyword">int</span> operand</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">switch</span> (@<span class="keyword">operator</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'+'</span>: _curr += operand; <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'-'</span>: _curr -= operand; <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'*'</span>: _curr *= operand; <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'/'</span>: _curr /= operand; <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Console.WriteLine(<span class="string">$"Current value = <span class="subst">&#123;_curr&#125;</span> (afterOperating: <span class="subst">&#123;@<span class="keyword">operator</span>&#125;</span> <span class="subst">&#123;operand&#125;</span>)"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>CalculatorCommand类(ConcreteCommand)</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> "ConcreteCommand"</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculatorCommand</span> : <span class="title">Command</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Calculator _calculator;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">char</span> _operator;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> <span class="keyword">int</span> _operand;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CalculatorCommand</span>(<span class="params">Calculator calculator, <span class="keyword">char</span> @<span class="keyword">operator</span>, <span class="keyword">int</span> operand</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _operator = @<span class="keyword">operator</span>;</span><br><span class="line">        _operand = operand;</span><br><span class="line">        _calculator = calculator;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Execute</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _calculator.Operation(_operator, _operand);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">UnExecute</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _calculator.Operation(Undo(_operator), _operand);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">char</span> <span class="title">Undo</span>(<span class="params"><span class="keyword">char</span> @<span class="keyword">operator</span></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">char</span> undo;</span><br><span class="line">        <span class="keyword">switch</span> (@<span class="keyword">operator</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'+'</span>:</span><br><span class="line">                undo = <span class="string">'-'</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'-'</span>:</span><br><span class="line">                undo = <span class="string">'+'</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'*'</span>:</span><br><span class="line">                undo = <span class="string">'/'</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'/'</span>:</span><br><span class="line">                undo = <span class="string">'*'</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                undo = <span class="string">' '</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> undo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>User类(Invoker)</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> "Invoker"</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Calculator _calculator = <span class="keyword">new</span> Calculator();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> List&lt;Command&gt; _commandList = <span class="keyword">new</span> List&lt;Command&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> _current = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Redo</span>(<span class="params"><span class="keyword">int</span> levels</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"\n---- Redo &#123;0&#125; levels "</span>, levels);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; levels; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (_current &gt;= _commandList.Count - <span class="number">1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">var</span> command = _commandList[_current++];</span><br><span class="line">            command.Execute();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Undo</span>(<span class="params"><span class="keyword">int</span> levels</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"\n---- Undo &#123;0&#125; levels "</span>, levels);</span><br><span class="line">        <span class="comment">// Perform undo operations</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; levels; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (_current &lt;= <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">var</span> command = _commandList[--_current];</span><br><span class="line">            command.UnExecute();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Compute</span>(<span class="params"><span class="keyword">char</span> @<span class="keyword">operator</span>, <span class="keyword">int</span> operand</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// Create command operation and execute it</span></span><br><span class="line">        Command command = <span class="keyword">new</span> CalculatorCommand(_calculator, @<span class="keyword">operator</span>, operand);</span><br><span class="line">        command.Execute();</span><br><span class="line">        <span class="comment">// Add command to undo list</span></span><br><span class="line">        _commandList.Add(command);</span><br><span class="line">        _current++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>客户端</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line"> &#123;</span><br><span class="line">     <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>     &#123;</span><br><span class="line">         <span class="comment">// Create user and let her compute</span></span><br><span class="line">         User user = <span class="keyword">new</span> User();</span><br><span class="line">         user.Compute(<span class="string">'+'</span>, <span class="number">100</span>);</span><br><span class="line">         user.Compute(<span class="string">'-'</span>, <span class="number">50</span>);</span><br><span class="line">         user.Compute(<span class="string">'*'</span>, <span class="number">10</span>);</span><br><span class="line">         user.Compute(<span class="string">'/'</span>, <span class="number">2</span>);</span><br><span class="line">         <span class="comment">// Undo 4 commands</span></span><br><span class="line">         user.Undo(<span class="number">4</span>); </span><br><span class="line">         <span class="comment">// Redo 3 commands</span></span><br><span class="line">         user.Redo(<span class="number">3</span>); </span><br><span class="line">         <span class="comment">// Wait for user</span></span><br><span class="line">         Console.Read();</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="盒马生鲜-python实现"><a href="#盒马生鲜-python实现" class="headerlink" title="盒马生鲜(python实现)"></a>盒马生鲜(python实现)</h2><blockquote>
+<p>David：听说阿里开了一家实体店——盒马鲜生，特别火爆！明天就周末了，我们一起去吃大闸蟹吧！ Tony：吃货！真是味觉的哥伦布啊，哪里的餐饮新店都少不了你的影子。不过听说盒马鲜生到处是黑科技诶，而且海生是自己挑的，还满新奇的。</p>
+<p>David：那就说好了，明天 11：00，盒马鲜生，不吃不散！</p>
+<p>Tony 和 David 来到杭州上城区的一家分店。这里食客众多，物品丰富，特别是生鲜，从几十块钱的小龙虾到几百块的大青蟹，再到一千多的俄罗斯帝王蟹，应有尽有。帝王蟹是吃不起了，Tony 和 David 挑了一只 900g 的一号大青蟹。</p>
+<p>食材挑好了，接下来就是现厂加工。加工的方式有多种，清蒸、姜葱炒、香辣炒、避风塘炒等，可以任意选择，当然不同的方式价格也有所不同。因为我们选的蟹是当时活动推荐的，所以免加工费。选择一种加工方式后进行下单，下单后会给你一个呼叫器，厨师做好了会有专门的服务人员送过来，坐着等就可以了……</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190526102057.png" alt=""><br>盒马鲜生之所以这么火爆，一方面是因为中国从来就不缺像 David 这样的吃货，另一方面是因为里面的海生很新鲜，而且可以自己挑选。很多人都喜欢吃大闸蟹，但是你有没有注意到一个问题？从你买大闸蟹到吃上大闸蟹的整个过程，可能都没有见过厨师，而你却能享受美味的佳肴。这里有一个很重要的角色就是服务员，她帮你下订单，然后把订单传送给厨师，厨师收到订单后根据订单做餐。我们用代码来模拟一下这个过程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABCMeta, abstractmethod</span><br><span class="line"></span><br><span class="line"><span class="comment"># 引入ABCMeta和abstractmethod来定义抽象类和抽象方法</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Chef</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"厨师"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">steamFood</span><span class="params">(self, originalMaterial)</span>:</span></span><br><span class="line">        print(originalMaterial + <span class="string">"清蒸中..."</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"清蒸"</span> + originalMaterial</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">stirFriedFood</span><span class="params">(self, originalMaterial)</span>:</span></span><br><span class="line">        print(originalMaterial + <span class="string">"爆炒中..."</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"香辣炒"</span> + originalMaterial</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Order</span><span class="params">(metaclass=ABCMeta)</span>:</span></span><br><span class="line">    <span class="string">"订单"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, originalMaterial)</span>:</span></span><br><span class="line">        self._chef = Chef()</span><br><span class="line">        self._name = name</span><br><span class="line">        self._originalMaterial = originalMaterial</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getDisplayName</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self._name + self._originalMaterial</span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">processingOrder</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SteamedOrder</span><span class="params">(Order)</span>:</span></span><br><span class="line">    <span class="string">"清蒸"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, originalMaterial)</span>:</span></span><br><span class="line">        super().__init__(<span class="string">"清蒸"</span>, originalMaterial)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">processingOrder</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> (self._chef <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>):</span><br><span class="line">            <span class="keyword">return</span> self._chef.steamFood(self._originalMaterial)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpicyOrder</span><span class="params">(Order)</span>:</span></span><br><span class="line">    <span class="string">"香辣炒"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, originalMaterial)</span>:</span></span><br><span class="line">        super().__init__(<span class="string">"香辣炒"</span>, originalMaterial)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">processingOrder</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> (self._chef <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>):</span><br><span class="line">            <span class="keyword">return</span> self._chef.stirFriedFood(self._originalMaterial)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Waiter</span>:</span></span><br><span class="line">    <span class="string">"服务员"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.__name = name</span><br><span class="line">        self.__order = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">receiveOrder</span><span class="params">(self, order)</span>:</span></span><br><span class="line">        self.__order = order</span><br><span class="line">        print(<span class="string">"服务员"</span> + self.__name + <span class="string">"：您的 "</span> + order.getDisplayName() +</span><br><span class="line">              <span class="string">" 订单已经收到,请耐心等待"</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">placeOrder</span><span class="params">(self)</span>:</span></span><br><span class="line">        food = self.__order.processingOrder()</span><br><span class="line">        print(<span class="string">"服务员"</span> + self.__name + <span class="string">"：您的餐 "</span> + food + <span class="string">" 已经准备好，请您慢用!"</span>)</span><br></pre></td></tr></table></figure>
+<p>测试代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testOrder</span><span class="params">()</span>:</span></span><br><span class="line">    waiter = Waiter(<span class="string">"Anna"</span>)</span><br><span class="line">    steamedOrder = SteamedOrder(<span class="string">"大闸蟹"</span>)</span><br><span class="line">    print(<span class="string">"客户David：我要一份"</span> + steamedOrder.getDisplayName())</span><br><span class="line">    waiter.receiveOrder(steamedOrder)</span><br><span class="line">    waiter.placeOrder()</span><br><span class="line">    print()</span><br><span class="line"></span><br><span class="line">    spicyOrder = SpicyOrder(<span class="string">"大闸蟹"</span>)</span><br><span class="line">    print(<span class="string">"客户Tony：我要一份"</span> + steamedOrder.getDisplayName())</span><br><span class="line">    waiter.receiveOrder(spicyOrder)</span><br><span class="line">    waiter.placeOrder()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">testOrder()</span><br></pre></td></tr></table></figure>
+<p>测试结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">客户David：我要一份清蒸大闸蟹</span><br><span class="line">服务员Anna：您的 清蒸大闸蟹 订单已经收到,请耐心等待</span><br><span class="line">大闸蟹清蒸中...</span><br><span class="line">服务员Anna：您的餐 清蒸大闸蟹 已经准备好，请您慢用!</span><br><span class="line"></span><br><span class="line">客户Tony：我要一份清蒸大闸蟹</span><br><span class="line">服务员Anna：您的 香辣炒大闸蟹 订单已经收到,请耐心等待</span><br><span class="line">大闸蟹爆炒中...</span><br><span class="line">服务员Anna：您的餐 香辣炒大闸蟹 已经准备好，请您慢用!</span><br></pre></td></tr></table></figure>
+<h2 id="游戏-python实现"><a href="#游戏-python实现" class="headerlink" title="游戏(python实现)"></a>游戏(python实现)</h2><p>在游戏中，有两个最基本的动作，一个是行走（也叫移动），一个是攻击。这几乎是所有游戏都少不了的基础功能，不然就没法玩了！</p>
+<p>现在我们来模拟一下游戏角色（英雄）中的移动和攻击，为简单起见，假设移动只有上移（U）、下移（D）、左移（L）、右移（R）、上跳（J）、下蹲（S）这 6 个动作，而攻击（A）只有 1 种，括号中字符代表每一个动作在键盘中的按键，也就是对应动作的调用，这些动作的命令可以单独使用，但更多的时候会组合在一起使用。比如，弹跳就是上跳 + 下蹲两个的动作的组合，我们用 JP 表示；而弹跳攻击是弹跳 + 攻击的组合（也就是上跳 + 攻击 + 下蹲），我们用 JA 表示；而移动也可以两个方向一起移动，如上移 + 右移，我们用 RU 表示。下面的程序中，为简单起见，这里用标准输入的字符来代表按键输入事件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> abc <span class="keyword">import</span> ABCMeta, abstractmethod</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameRole</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每次移动的步距</span></span><br><span class="line">    STEP = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__x = <span class="number">0</span></span><br><span class="line">        self.__y = <span class="number">0</span></span><br><span class="line">        self.__z = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">leftMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__x -= self.STEP</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">rightMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__x += self.STEP</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">upMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__y += self.STEP</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">downMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__y -= self.STEP</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">jumpMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__z += self.STEP</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">squatMove</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__z -= self.STEP</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attack</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"攻击..."</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">showPosition</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"x:"</span> + str(self.__x) + <span class="string">", y:"</span> +</span><br><span class="line">              str(self.__y) + <span class="string">", z:"</span> + str(self.__z))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameCommand</span><span class="params">(metaclass=ABCMeta)</span>:</span></span><br><span class="line">    <span class="string">"游戏角色的命令类"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, role)</span>:</span></span><br><span class="line">        self._role = role</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">setRole</span><span class="params">(self, role)</span>:</span></span><br><span class="line">        self._role = role</span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Left</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"左移命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.leftMove()</span><br><span class="line">        self._role.showPosition()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Right</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"右移命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.rightMove()</span><br><span class="line">        self._role.showPosition()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Up</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"上移命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.upMove()</span><br><span class="line">        self._role.showPosition()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Down</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"下移命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.downMove()</span><br><span class="line">        self._role.showPosition()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Jump</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"弹跳命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.jumpMove()</span><br><span class="line">        self._role.showPosition()</span><br><span class="line">        <span class="comment"># 跳起后空中停留半秒</span></span><br><span class="line">        time.sleep(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Squat</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"下蹲命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.squatMove()</span><br><span class="line">        self._role.showPosition()</span><br><span class="line">        <span class="comment"># 下蹲后伏地半秒</span></span><br><span class="line">        time.sleep(<span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Attack</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line">    <span class="string">"攻击命令"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._role.attack()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MacroCommand</span><span class="params">(GameCommand)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, role=None)</span>:</span></span><br><span class="line">        super().__init__(role)</span><br><span class="line">        self.__commands = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">addCommand</span><span class="params">(self, command)</span>:</span></span><br><span class="line">        <span class="comment"># 让所有的命令作用于同一个对象</span></span><br><span class="line">        <span class="comment"># command.setRole(self._role)</span></span><br><span class="line">        self.__commands.append(command)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">removeCommand</span><span class="params">(self, command)</span>:</span></span><br><span class="line">        self.__commands.remove(command)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">execute</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">for</span> command <span class="keyword">in</span> self.__commands:</span><br><span class="line">            command.execute()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GameInvoker</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__command = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">setCommand</span><span class="params">(self, command)</span>:</span></span><br><span class="line">        self.__command = command</span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">action</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.__command <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            self.__command.execute()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testGame</span><span class="params">()</span>:</span></span><br><span class="line">    role = GameRole()</span><br><span class="line">    invoker = GameInvoker()</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        strCmd = input(<span class="string">"请输入命令："</span>)</span><br><span class="line">        strCmd = strCmd.upper()</span><br><span class="line">        <span class="keyword">if</span> (strCmd == <span class="string">"L"</span>):</span><br><span class="line">            invoker.setCommand(Left(role)).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"R"</span>):</span><br><span class="line">            invoker.setCommand(Right(role)).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"U"</span>):</span><br><span class="line">            invoker.setCommand(Up(role)).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"D"</span>):</span><br><span class="line">            invoker.setCommand(Down(role)).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"JP"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Jump(role))</span><br><span class="line">            cmd.addCommand(Squat(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"A"</span>):</span><br><span class="line">            invoker.setCommand(Attack(role)).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"LU"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Left(role))</span><br><span class="line">            cmd.addCommand(Up(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"LD"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Left(role))</span><br><span class="line">            cmd.addCommand(Down(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"RU"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Right(role))</span><br><span class="line">            cmd.addCommand(Up(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"RD"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Right(role))</span><br><span class="line">            cmd.addCommand(Down(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"LA"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Left(role))</span><br><span class="line">            cmd.addCommand(Attack(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"RA"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Right(role))</span><br><span class="line">            cmd.addCommand(Attack(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"UA"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Up(role))</span><br><span class="line">            cmd.addCommand(Attack(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"DA"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Down(role))</span><br><span class="line">            cmd.addCommand(Attack(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"JA"</span>):</span><br><span class="line">            cmd = MacroCommand()</span><br><span class="line">            cmd.addCommand(Jump(role))</span><br><span class="line">            cmd.addCommand(Attack(role))</span><br><span class="line">            cmd.addCommand(Squat(role))</span><br><span class="line">            invoker.setCommand(cmd).action()</span><br><span class="line">        <span class="keyword">elif</span> (strCmd == <span class="string">"Q"</span>):</span><br><span class="line">            exit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">testGame()</span><br></pre></td></tr></table></figure>
+<p>在上面的 Demo 中 MacroCommand 是一种组合命令，也叫<strong>宏命令</strong>（Macro Command）。宏命令是一个具体命令类，它拥有一个集合属性，在该集合中包含了对其他命令对象的引用，如上面的弹跳命令是上跳、攻击、下蹲 3 个命令的组合，引用了 3 个命令对象。</p>
+<p>当调用宏命令的 execute() 方法时，会循环地调用每一个子命令的 execute() 方法。一个宏命令的成员可以是简单命令，还可以继续是宏命令，宏命令将递归地调用它所包含的每个成员命令的 execute() 方法。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/19/中介者模式/" rel="next" title="中介者模式">
+                <i class="fa fa-chevron-left"></i> 中介者模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/06/10/建造者模式/" rel="prev" title="建造者模式">
+                建造者模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-text">原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例"><span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#菜单程序-Js实现"><span class="nav-text">菜单程序(Js实现)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#需求"><span class="nav-text">需求:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传统实现"><span class="nav-text">传统实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript-中的命令模式"><span class="nav-text">JavaScript 中的命令模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算器-C-实现"><span class="nav-text">计算器(C#)实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#盒马生鲜-python实现"><span class="nav-text">盒马生鲜(python实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#游戏-python实现"><span class="nav-text">游戏(python实现)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

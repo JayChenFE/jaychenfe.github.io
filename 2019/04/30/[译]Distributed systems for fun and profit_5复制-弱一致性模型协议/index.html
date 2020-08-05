@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="五. Replication: weak consistency model protocols复制 弱一致性模型协议Now that we’ve taken a look at protocols that can enforce single-copy consistency under an increasingly realistic set of supported failure ca">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译]Distributed systems for fun and profit_5复制 弱一致性模型协议">
+<meta property="og:url" content="https://jaychenfe.github.io/2019/04/30/[译]Distributed systems for fun and profit_5复制-弱一致性模型协议/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="五. Replication: weak consistency model protocols复制 弱一致性模型协议Now that we’ve taken a look at protocols that can enforce single-copy consistency under an increasingly realistic set of supported failure ca">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[译]Distributed systems for fun and profit_5复制 弱一致性模型协议">
+<meta name="twitter:description" content="五. Replication: weak consistency model protocols复制 弱一致性模型协议Now that we’ve taken a look at protocols that can enforce single-copy consistency under an increasingly realistic set of supported failure ca">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2019/04/30/[译]Distributed systems for fun and profit_5复制-弱一致性模型协议/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>[译]Distributed systems for fun and profit_5复制 弱一致性模型协议 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2019/04/30/[译]Distributed systems for fun and profit_5复制-弱一致性模型协议/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[译]Distributed systems for fun and profit_5复制 弱一致性模型协议
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-30 22:05:02" itemprop="dateCreated datePublished" datetime="2019-04-30T22:05:02+00:00">2019-04-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/微服务理论文章阅读学习/" itemprop="url" rel="index"><span itemprop="name">微服务理论文章阅读学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="五-Replication-weak-consistency-model-protocols"><a href="#五-Replication-weak-consistency-model-protocols" class="headerlink" title="五. Replication: weak consistency model protocols"></a>五. Replication: weak consistency model protocols</h1><h1 id="复制-弱一致性模型协议"><a href="#复制-弱一致性模型协议" class="headerlink" title="复制 弱一致性模型协议"></a>复制 弱一致性模型协议</h1><p>Now that we’ve taken a look at protocols that can enforce single-copy consistency under an increasingly realistic set of supported failure cases, let’s turn our attention at the world of options that opens up once we let go of the requirement of single-copy consistency.</p>
+<p>第四章中提到的各个算法都是为了保证single-copy，也就是强一致性。在这一章节里，我们关注第二种策略：处理“不同”。即我们允许出现不同（而且不同是正常的），我们要做的就是如何处理这些不同然后得出正确的结果。</p>
+<p>By and large, it is hard to come up with a single dimension that defines or characterizes the protocols that allow for replicas to diverge. Most such protocols are highly available, and the key issue is more whether or not the end users find the guarantees, abstractions and APIs useful for their purpose in spite of the fact that the replicas may diverge when node and/or network failures occur.</p>
+<p>总的来说，很难想出一个单一维度来定义或表述允许副本分歧的协议。 大多数此类协议都是度可用的，而且关键在于发生节点或网络故障时是否能为用户提供有用的保证，抽象和API使他们达到原本的目的。</p>
+<p>Why haven’t weakly consistent systems been more popular?</p>
+<p>为什么弱一致系统没火起来?</p>
+<p>As I stated in the introduction, I think that much of distributed programming is about dealing with the implications of two consequences of distribution:</p>
+<ul>
+<li>that information travels at the speed of light</li>
+<li>that independent things fail independently</li>
+</ul>
+<p>如图我在介绍章节说的那样，<strong>多数的分布式程序都是为了解决分布式导致的两个问题：</strong></p>
+<ul>
+<li><strong>信息光速传播</strong></li>
+<li><strong>独立事务独立失败</strong></li>
+</ul>
+<p>The implication that follows from the limitation on the speed at which information travels is that nodes experience the world in different, unique ways. Computation on a single node is easy, because everything happens in a predictable global total order. Computation on a distributed system is difficult, because there is no global total order.</p>
+<p>信息传播速度限制所带来的意义是节点以不同的，独特的方式体验世界。 单个节点上的计算很容易，因为一切都以可预测的全局顺序发生。 而分布式系统上的计算很困难，因为没有全局顺序。</p>
+<p>For the longest while (i.e. decades of research), we’ve solved this problem by introducing a global total order. I’ve discussed the many methods for achieving strong consistency by creating order (in a fault-tolerant manner) where there is no naturally occurring total order.</p>
+<p>在最长的时间里（即数十年的研究），我们通过引入全局顺序来解决这个问题。 我已经讨论了通过创建顺序（以容错方式）实现强一致性的许多方法，其中没有自然发生的总顺序。</p>
+<p>Of course, the problem is that enforcing order is expensive. This breaks down in particular with large scale internet systems, where a system needs to remain available. A system enforcing strong consistency doesn’t behave like a distributed system: it behaves like a single system, which is bad for availability during a partition.</p>
+<p>但是很明显，问题在于执行顺序是代价很大。 特别是在大型互联网系统中，系统需要保持高可用状态。 强制一致性的系统的行为不太像分布式系统,而是类似于单个系统，这对分区可用性不利。</p>
+<p>Furthermore, for each operation, often a majority of the nodes must be contacted - and often not just once, but twice (as you saw in the discussion on 2PC). This is particularly painful in systems that need to be geographically distributed to provide adequate performance for a global user base.</p>
+<p>此外，对于每个操作，通常必须在大多数节点间通讯 - 通常不仅仅是一次，而是两次（正如您在2PC的讨论中看到的那样）。 在需要为全球用户群提供高性能服务的系统中，这尤其痛苦。</p>
+<p>So behaving like a single system by default is perhaps not desirable.</p>
+<p>因此，默认情况下表现得像单个系统可能并不理想</p>
+<p>Perhaps what we want is a system where we can write code that doesn’t use expensive coordination, and yet returns a “usable” value. Instead of having a single truth, we will allow different replicas to diverge from each other - both to keep things efficient but also to tolerate partitions - and then try to find a way to deal with the divergence in some manner.</p>
+<p>也许我们想要的是这样一个系统，可以编写不用编写复杂的资源调度代码，但仍然返回“可用”值。相比获取唯一的正确值, 我们更希望允许不同的副本彼此分离 -这 不仅保持了数据的有效性而且做到了了容忍分区 ,并且试图找到一种以某种方式处理分歧的方法。</p>
+<p>Eventual consistency expresses this idea: that nodes can for some time diverge from each other, but that eventually they will agree on the value.</p>
+<p>最终的一致性表达了这个想法：节点可以在一段时间内相互分离，但最终会达成一致值。</p>
+<p>Within the set of systems providing eventual consistency, there are two types of system designs:</p>
+<p>有两种类型的系统设计可以提供最终一致性：</p>
+<p><em>Eventual consistency with probabilistic guarantees</em>. This type of system can detect conflicting writes at some later point, but does not guarantee that the results are equivalent to some correct sequential execution. In other words, conflicting updates will sometimes result in overwriting a newer value with an older one and some anomalies can be expected to occur during normal operation (or during partitions).</p>
+<p><em>概率保证的最终一致性</em>。 这种类型的系统可以在稍后的某点检测到冲突的写入，但不保证结果等同于某些正确的顺序执行。 换句话说，冲突的更新有时会导致用较旧的值覆盖较新的值，并且在正常操作期间（或在分区期间）可能会发生一些异常。</p>
+<p>In recent years, the most influential system design is Amazon’s Dynamo, which I will discuss as an example of a system that offers eventual consistency with probabilistic guarantees.</p>
+<p>近年来，最具影响力的系统设计是亚马逊的Dynamo，我将作为一个系统的例子进行讨论，该系统最终与概率保证保持一致。</p>
+<p><em>Eventual consistency with strong guarantees</em>. This type of system guarantees that the results converge to a common value equivalent to some correct sequential execution. In other words, such systems do not produce any anomalous results; without any coordination you can build replicas of the same service, and those replicas can communicate in any pattern and receive the updates in any order, and they will eventually agree on the end result as long as they all see the same information.</p>
+<p><em>强保证的最终一致性</em>。这种类型的系统保证结果收敛到相当于某些正确顺序执行的公共值。换句话说，这种系统不会产生任何异常结果;在没有任何协调的情况下，您可以构建相同服务的副本，并且这些副本可以以任何模式进行通信并以任何顺序接收更新，并且只要它们都看到相同的信息，它们最终将同意最终结果。</p>
+<p>CRDT’s (convergent replicated data types) are data types that guarantee convergence to the same value in spite of network delays, partitions and message reordering. They are provably convergent, but the data types that can be implemented as CRDT’s are limited.</p>
+<p>CRDT（会聚复制数据类型）是数据类型，可以保证在网络延迟，分区和消息重新排序的情况下收敛到相同的值。它们可以证明是收敛的，但可以作为CRDT实现的数据类型是有限的。</p>
+<p>The CALM (consistency as logical monotonicity) conjecture is an alternative expression of the same principle: it equates logical monotonicity with convergence. If we can conclude that something is logically monotonic, then it is also safe to run without coordination. Confluence analysis - in particular, as applied for the Bloom programming language - can be used to guide programmer decisions about when and where to use the coordination techniques from strongly consistent systems and when it is safe to execute without coordination.</p>
+<p>CALM（作为逻辑单调性的一致性）猜想是相同原理的另一种表达：它将逻辑单调性与收敛等同起来。如果我们可以断定某些东西在逻辑上是单调的，那么在没有协调的情况下运行也是安全的。汇流分析 - 特别是应用于Bloom编程语言 - 可用于指导程序员决定何时何地使用来自强一致系统的协调技术，以及何时可以安全地执行而无需协调。</p>
+<h2 id="Reconciling-different-operation-orders-协调不同操作顺序"><a href="#Reconciling-different-operation-orders-协调不同操作顺序" class="headerlink" title="Reconciling different operation orders 协调不同操作顺序"></a>Reconciling different operation orders 协调不同操作顺序</h2><p>What does a system that does not enforce single-copy consistency look like?  Let’s try to make this more concrete by looking at a few examples.</p>
+<p>不强制执行单拷贝一致性的系统是什么样的？ 让我们试着通过一些例子来说明这一点。</p>
+<p>Perhaps the most obvious characteristic of systems that do not enforce single-copy consistency is that they allow replicas to diverge from each other. This means that there is no strictly defined pattern of communication: replicas can be separated from each other and yet continue to be available and accept writes.</p>
+<p>也许不强制实现单拷贝一致性的系统最明显的特征是它们允许副本彼此分离。 这意味着没有严格定义的通信模式：副本可以彼此分离，但仍然可用并接受写入。</p>
+<p>Let’s imagine a system of three replicas, each of which is partitioned from the others. For example, the replicas might be in different datacenters and for some reason unable to communicate. Each replica remains available during the partition, accepting both reads and writes from some set of clients:</p>
+<p>让我们设想一个由三个副本组成的系统，每个副本都与其他副本分开。 例如，副本可能位于不同的数据中心，并且由于某种原因无法进行通信。 每个副本在分区期间仍然可用，接受来自某些客户端的读取和写入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Clients]   - &gt; [A]</span><br><span class="line"></span><br><span class="line">--- Partition ---</span><br><span class="line"></span><br><span class="line">[Clients]   - &gt; [B]</span><br><span class="line"></span><br><span class="line">--- Partition ---</span><br><span class="line"></span><br><span class="line">[Clients]   - &gt; [C]</span><br></pre></td></tr></table></figure>
+<p>After some time, the partitions heal and the replica servers exchange information. They have received different updates from different clients and have diverged each other, so some sort of reconciliation needs to take place. What we would like to happen is that all of the replicas converge to the same result.<br>一段时间后，分区会恢复，副本服务器会交换信息。 他们收到了来自不同客户的不同更新，并且相互分歧，因此需要进行某种协调。 我们希望发生的是所有副本都得到相同的结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[A] \</span><br><span class="line">    --&gt; [merge]</span><br><span class="line">[B] /     |</span><br><span class="line">          |</span><br><span class="line">[C] ----[merge]---&gt; result</span><br></pre></td></tr></table></figure>
+<p>Another way to think about systems with weak consistency guarantees is to imagine a set of clients sending messages to two replicas in some order. Because there is no coordination protocol that enforces a single total order, the messages can get delivered in different orders at the two replicas:<br>考虑具有弱一致性保证的系统的另一种方法是想象一组客户端以某种顺序向两个副本发送消息。 由于没有强制执行单个总顺序的协调协议，因此可以在两个副本的不同订单中传递消息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[Clients]  --&gt; [A]  1, 2, 3</span><br><span class="line">[Clients]  --&gt; [B]  2, 3, 1</span><br></pre></td></tr></table></figure>
+<p>This is, in essence, the reason why we need coordination protocols. For example, assume that we are trying to concatenate a string and the operations in messages 1, 2 and 3 are:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: &#123; operation: concat(&apos;Hello &apos;) &#125;</span><br><span class="line">2: &#123; operation: concat(&apos;World&apos;) &#125;</span><br><span class="line">3: &#123; operation: concat(&apos;!&apos;) &#125;</span><br></pre></td></tr></table></figure>
+<p>Then, without coordination, A will produce “Hello World!”, and B will produce “World!Hello “.</p>
+<p>然后，在没有协调的情况下，A将产生“Hello World！”，B将产生“World！Hello”。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A: concat(concat(concat(&apos;&apos;, &apos;Hello &apos;), &apos;World&apos;), &apos;!&apos;) = &apos;Hello World!&apos;</span><br><span class="line">B: concat(concat(concat(&apos;&apos;, &apos;World&apos;), &apos;!&apos;), &apos;Hello &apos;) = &apos;World!Hello &apos;</span><br></pre></td></tr></table></figure>
+<p>This is, of course, incorrect. Again, what we’d like to happen is that the replicas converge to the same result.</p>
+<p>这当然是不正确的。 同样，我们想要发生的是分区收敛到相同的结果。</p>
+<p>Keeping these two examples in mind, let’s look at Amazon’s Dynamo first to establish a baseline, and then discuss a number of novel approaches to building systems with weak consistency guarantees, such as CRDT’s and the CALM theorem.</p>
+<p>记住这两个例子，让我们首先看看亚马逊的Dynamo建立基线，然后讨论一些新的方法来构建具有弱一致性保证的系统，例如CRDT和CALM定理。</p>
+<h2 id="Amazon’s-Dynamo"><a href="#Amazon’s-Dynamo" class="headerlink" title="Amazon’s Dynamo"></a>Amazon’s Dynamo</h2><p>Amazon’s Dynamo system design (2007) is probably the best-known system that offers weak consistency guarantees but high availability. It is the basis for many other real world systems, including LinkedIn’s Voldemort, Facebook’s Cassandra and Basho’s Riak.</p>
+<p>Dynamo is an eventually consistent, highly available key-value store. A key value store is like a large hash table: a client can set values via <code>set(key, value)</code> and retrieve them by key using <code>get(key)</code>. A Dynamo cluster consists of N peer nodes; each node has a set of keys which it is responsible for storing.</p>
+<p>Dynamo prioritizes availability over consistency; it does not guarantee single-copy consistency. Instead, replicas may diverge from each other when values are written; when a key is read, there is a read reconciliation phase that attempts to reconcile differences between replicas before returning the value back to the client.</p>
+<p>For many features on Amazon, it is more important to avoid outages than it is to ensure that data is perfectly consistent, as an outage can lead to lost business and a loss of credibility. Furthermore, if the data is not particularly important, then a weakly consistent system can provide better performance and higher availability at a lower cost than a traditional RDBMS.</p>
+<p>Since Dynamo is a complete system design, there are many different parts to look at beyond the core replication task. The diagram below illustrates some of the tasks; notably, how a write is routed to a node and written to multiple replicas.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">[ Client ]</span><br><span class="line">    |</span><br><span class="line">( Mapping keys to nodes )</span><br><span class="line">    |</span><br><span class="line">    V</span><br><span class="line">[ Node A ]</span><br><span class="line">    |     \</span><br><span class="line">( Synchronous replication task: minimum durability )</span><br><span class="line">    |        \</span><br><span class="line">[ Node B]  [ Node C ]</span><br><span class="line">    A</span><br><span class="line">    |</span><br><span class="line">( Conflict detection; asynchronous replication task:</span><br><span class="line">  ensuring that partitioned / recovered nodes recover )</span><br><span class="line">    |</span><br><span class="line">    V</span><br><span class="line">[ Node D]</span><br></pre></td></tr></table></figure>
+<p>After looking at how a write is initially accepted, we’ll look at how conflicts are detected, as well as the asynchronous replica synchronization task. This task is needed because of the high availability design, in which nodes may be temporarily unavailable (down or partitioned). The replica synchronization task ensures that nodes can catch up fairly rapidly even after a failure.</p>
+<h3 id="Consistent-hashing"><a href="#Consistent-hashing" class="headerlink" title="Consistent hashing"></a>Consistent hashing</h3><p>Whether we are reading or writing, the first thing that needs to happen is that we need to locate where the data should live on the system. This requires some type of key-to-node mapping.</p>
+<p>In Dynamo, keys are mapped to nodes using a hashing technique known as <a href="https://github.com/mixu/vnodehash" target="_blank" rel="noopener">consistent hashing</a> (which I will not discuss in detail). The main idea is that a key can be mapped to a set of nodes responsible for it by a simple calculation on the client. This means that a client can locate keys without having to query the system for the location of each key; this saves system resources as hashing is generally faster than performing a remote procedure call.</p>
+<h3 id="Partial-quorums"><a href="#Partial-quorums" class="headerlink" title="Partial quorums"></a>Partial quorums</h3><p>Once we know where a key should be stored, we need to do some work to persist the value. This is a synchronous task; the reason why we will immediately write the value onto multiple nodes is to provide a higher level of durability (e.g. protection from the immediate failure of a node).</p>
+<p>Just like Paxos or Raft, Dynamo uses quorums for replication. However, Dynamo’s quorums are sloppy (partial) quorums rather than strict (majority) quorums.</p>
+<p>Informally, a strict quorum system is a quorum system with the property that any two quorums (sets) in the quorum system overlap. Requiring a majority to vote for an update before accepting it guarantees that only a single history is admitted since each majority quorum must overlap in at least one node. This was the property that Paxos, for example, relied on.</p>
+<p>Partial quorums do not have that property; what this means is that a majority is not required and that different subsets of the quorum may contain different versions of the same data. The user can choose the number of nodes to write to and read from:</p>
+<ul>
+<li>the user can choose some number W-of-N nodes required for a write to succeed; and</li>
+<li>the user can specify the number of nodes (R-of-N) to be contacted during a read.</li>
+</ul>
+<p><code>W</code> and <code>R</code> specify the number of nodes that need to be involved to a write or a read. Writing to more nodes makes writes slightly slower but increases the probability that the value is not lost; reading from more nodes increases the probability that the value read is up to date.</p>
+<p>The usual recommendation is that <code>R + W &gt; N</code>, because this means that the read and write quorums overlap in one node - making it less likely that a stale value is returned. A typical configuration is <code>N = 3</code> (e.g. a total of three replicas for each value); this means that the user can choose between:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">R = 1, W = 3;</span><br><span class="line">R = 2, W = 2 or</span><br><span class="line">R = 3, W = 1</span><br></pre></td></tr></table></figure>
+<p>More generally, again assuming <code>R + W &gt; N</code>:</p>
+<ul>
+<li><code>R = 1</code>, <code>W = N</code>: fast reads, slow writes</li>
+<li><code>R = N</code>, <code>W = 1</code>: fast writes, slow reads</li>
+<li><code>R = N/2</code> and <code>W = N/2 + 1</code>: favorable to both</li>
+</ul>
+<p>N is rarely more than 3, because keeping that many copies of large amounts of data around gets expensive!</p>
+<p>As I mentioned earlier, the Dynamo paper has inspired many other similar designs. They all use the same partial quorum based replication approach, but with different defaults for N, W and R:</p>
+<ul>
+<li>Basho’s Riak (N = 3, R = 2, W = 2 default)</li>
+<li>Linkedin’s Voldemort (N = 2 or 3, R = 1, W = 1 default)</li>
+<li>Apache’s Cassandra (N = 3, R = 1, W = 1 default)</li>
+</ul>
+<p>There is another detail: when sending a read or write request, are all N nodes asked to respond (Riak), or only a number of nodes that meets the minimum (e.g. R or W; Voldemort). The “send-to-all” approach is faster and less sensitive to latency (since it only waits for the fastest R or W nodes of N) but also less efficient, while the “send-to-minimum” approach is more sensitive to latency (since latency communicating with a single node will delay the operation) but also more efficient (fewer messages / connections overall).</p>
+<p>What happens when the read and write quorums overlap, e.g. (<code>R + W &gt; N</code>)? Specifically, it is often claimed that this results in “strong consistency”.</p>
+<h3 id="Is-R-W-gt-N-the-same-as-“strong-consistency”"><a href="#Is-R-W-gt-N-the-same-as-“strong-consistency”" class="headerlink" title="Is R + W &gt; N the same as “strong consistency”?"></a>Is R + W &gt; N the same as “strong consistency”?</h3><p>No.</p>
+<p>It’s not completely off base: a system where <code>R + W &gt; N</code> can detect read/write conflicts, since any read quorum and any write quorum share a member. E.g. at least one node is in both quorums:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"> 1     2   N/2+1     N/2+2    N</span><br><span class="line">[...] [R]  [R + W]   [W]    [...]</span><br></pre></td></tr></table></figure>
+<p>This guarantees that a previous write will be seen by a subsequent read. However, this only holds if the nodes in N never change. Hence, Dynamo doesn’t qualify, because in Dynamo the cluster membership can change if nodes fail.</p>
+<p>Dynamo is designed to be always writable. It has a mechanism which handles node failures by adding a different, unrelated server into the set of nodes responsible for certain keys when the original server is down. This means that the quorums are no longer guaranteed to always overlap. Even <code>R = W = N</code> would not qualify, since while the quorum sizes are equal to N, the nodes in those quorums can change during a failure. Concretely, during a partition, if a sufficient number of nodes cannot be reached, Dynamo will add new nodes to the quorum from unrelated but accessible nodes.</p>
+<p>Furthermore, Dynamo doesn’t handle partitions in the manner that a system enforcing a strong consistency model would: namely, writes are allowed on both sides of a partition, which means that for at least some time the system does not act as a single copy. So calling <code>R + W &gt; N</code> “strongly consistent” is misleading; the guarantee is merely probabilistic - which is not what strong consistency refers to.</p>
+<h3 id="Conflict-detection-and-read-repair"><a href="#Conflict-detection-and-read-repair" class="headerlink" title="Conflict detection and read repair"></a>Conflict detection and read repair</h3><p>Systems that allow replicas to diverge must have a way to eventually reconcile two different values. As briefly mentioned during the partial quorum approach, one way to do this is to detect conflicts at read time, and then apply some conflict resolution method. But how is this done?</p>
+<p>In general, this is done by tracking the causal history of a piece of data by supplementing it with some metadata. Clients must keep the metadata information when they read data from the system, and must return back the metadata value when writing to the database.</p>
+<p>We’ve already encountered a method for doing this: vector clocks can be used to represent the history of a value. Indeed, this is what the original Dynamo design uses for detecting conflicts.</p>
+<p>However, using vector clocks is not the only alternative. If you look at many practical system designs, you can deduce quite a bit about how they work by looking at the metadata that they track.</p>
+<p><em>No metadata</em>. When a system does not track metadata, and only returns the value (e.g. via a client API), it cannot really do anything special about concurrent writes. A common rule is that the last writer wins: in other words, if two writers are writing at the same time, only the value from the slowest writer is kept around.</p>
+<p><em>Timestamps</em>. Nominally, the value with the higher timestamp value wins. However, if time is not carefully synchronized, many odd things can happen where old data from a system with a faulty or fast clock overwrites newer values. Facebook’s Cassandra is a Dynamo variant that uses timestamps instead of vector clocks.</p>
+<p><em>Version numbers</em>. Version numbers may avoid some of the issues related with using timestamps. Note that the smallest mechanism that can accurately track causality when multiple histories are possible are vector clocks, not version numbers.</p>
+<p><em>Vector clocks</em>. Using vector clocks, concurrent and out of date updates can be detected. Performing read repair then becomes possible, though in some cases (concurrent changes) we need to ask the client to pick a value. This is because if the changes are concurrent and we know nothing more about the data (as is the case with a simple key-value store), then it is better to ask than to discard data arbitrarily.</p>
+<p>When reading a value, the client contacts <code>R</code> of <code>N</code> nodes and asks them for the latest value for a key. It takes all the responses, discards the values that are strictly older (using the vector clock value to detect this). If there is only one unique vector clock + value pair, it returns that. If there are multiple vector clock + value pairs that have been edited concurrently (e.g. are not comparable), then all of those values are returned.</p>
+<p>As is obvious from the above, read repair may return multiple values. This means that the client / application developer must occasionally handle these cases by picking a value based on some use-case specific criterion.</p>
+<p>In addition, a key component of a practical vector clock system is that the clocks cannot be allowed to grow forever - so there needs to be a procedure for occasionally garbage collecting the clocks in a safe manner to balance fault tolerance with storage requirements.</p>
+<h3 id="Replica-synchronization-gossip-and-Merkle-trees"><a href="#Replica-synchronization-gossip-and-Merkle-trees" class="headerlink" title="Replica synchronization: gossip and Merkle trees"></a>Replica synchronization: gossip and Merkle trees</h3><p>Given that the Dynamo system design is tolerant of node failures and network partitions, it needs a way to deal with nodes rejoining the cluster after being partitioned, or when a failed node is replaced or partially recovered.</p>
+<p>Replica synchronization is used to bring nodes up to date after a failure, and for periodically synchronizing replicas with each other.</p>
+<p>Gossip is a probabilistic technique for synchronizing replicas. The pattern of communication (e.g. which node contacts which node) is not determined in advance. Instead, nodes have some probability <code>p</code> of attempting to synchronize with each other. Every <code>t</code> seconds, each node picks a node to communicate with. This provides an additional mechanism beyond the synchronous task (e.g. the partial quorum writes) which brings the replicas up to date.</p>
+<p>Gossip is scalable, and has no single point of failure, but can only provide probabilistic guarantees.</p>
+<p>In order to make the information exchange during replica synchronization efficient, Dynamo uses a technique called Merkle trees, which I will not cover in detail. The key idea is that a data store can be hashed at multiple different levels of granularity: a hash representing the whole content, half the keys, a quarter of the keys and so on.</p>
+<p>By maintaining this fairly granular hashing, nodes can compare their data store content much more efficiently than a naive technique. Once the nodes have identified which keys have different values, they exchange the necessary information to bring the replicas up to date.</p>
+<h3 id="Dynamo-in-practice-probabilistically-bounded-staleness-PBS"><a href="#Dynamo-in-practice-probabilistically-bounded-staleness-PBS" class="headerlink" title="Dynamo in practice: probabilistically bounded staleness (PBS)"></a>Dynamo in practice: probabilistically bounded staleness (PBS)</h3><p>And that pretty much covers the Dynamo system design:</p>
+<ul>
+<li>consistent hashing to determine key placement</li>
+<li>partial quorums for reading and writing</li>
+<li>conflict detection and read repair via vector clocks and</li>
+<li>gossip for replica synchronization</li>
+</ul>
+<p>How might we characterize the behavior of such a system? A fairly recent paper from Bailis et al. (2012) describes an approach called <a href="http://pbs.cs.berkeley.edu/" target="_blank" rel="noopener">PBS</a> (probabilistically bounded staleness) uses simulation and data collected from a real world system to characterize the expected behavior of such a system.</p>
+<p>PBS estimates the degree of inconsistency by using information about the anti-entropy (gossip) rate, the network latency and local processing delay to estimate the expected level of consistency of reads. It has been implemented in Cassandra, where timing information is piggybacked on other messages and an estimate is calculated based on a sample of this information in a Monte Carlo simulation.</p>
+<p>Based on the paper, during normal operation eventually consistent data stores are often faster and can read a consistent state within tens or hundreds of milliseconds. The table below illustrates amount of time required from a 99.9% probability of consistent reads given different <code>R</code> and <code>W</code> settings on empirical timing data from LinkedIn (SSD and 15k RPM disks) and Yammer:</p>
+<p><img src="" alt="from the PBS paper"></p>
+<p>For example, going from <code>R=1</code>, <code>W=1</code> to <code>R=2</code>, <code>W=1</code> in the Yammer case reduces the inconsistency window from 1352 ms to 202 ms - while keeping the read latencies lower (32.6 ms) than the fastest strict quorum (<code>R=3</code>, <code>W=1</code>; 219.27 ms).</p>
+<p>For more details, have a look at the <a href="http://pbs.cs.berkeley.edu/" target="_blank" rel="noopener">PBS website</a>  and the associated paper.</p>
+<h2 id="Disorderly-programming"><a href="#Disorderly-programming" class="headerlink" title="Disorderly programming"></a>Disorderly programming</h2><p>Let’s look back at the examples of the kinds of situations that we’d like to resolve. The first scenario consisted of three different servers behind partitions; after the partitions healed, we wanted the servers to converge to the same value. Amazon’s Dynamo made this possible by reading from <code>R</code> out of <code>N</code> nodes and then performing read reconciliation.</p>
+<p>In the second example, we considered a more specific operation: string concatenation. It turns out that there is no known technique for making string concatenation resolve to the same value without imposing an order on the operations (i.e. without expensive coordination). However, there are operations which can be applied safely in any order, where a simple register would not be able to do so. As Pat Helland wrote:</p>
+<blockquote>
+<p>… operation-centric work can be made commutative (with the right operations and the right semantics) where a simple READ/WRITE semantic does not lend itself to commutativity.</p>
+</blockquote>
+<p>For example, consider a system that implements a simple accounting system with the <code>debit</code> and <code>credit</code> operations in two different ways:</p>
+<ul>
+<li>using a register with <code>read</code> and <code>write</code> operations, and</li>
+<li>using a integer data type with native <code>debit</code> and <code>credit</code> operations</li>
+</ul>
+<p>The latter implementation knows more about the internals of the data type, and so it can preserve the intent of the operations in spite of the operations being reordered. Debiting or crediting can be applied in any order, and the end result is the same:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100 + credit(10) + credit(20) = 130 and</span><br><span class="line">100 + credit(20) + credit(10) = 130</span><br></pre></td></tr></table></figure>
+<p> However, writing a fixed value cannot be done in any order: if writes are reordered, the one of the writes will overwrite the other:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100 + write(110) + write(130) = 130 but</span><br><span class="line">100 + write(130) + write(110) = 110</span><br></pre></td></tr></table></figure>
+<p>Let’s take the example from the beginning of this chapter, but use a different operation. In this scenario, clients are sending messages to two nodes, which see the operations in different orders:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[Clients]  --&gt; [A]  1, 2, 3</span><br><span class="line">[Clients]  --&gt; [B]  2, 3, 1</span><br></pre></td></tr></table></figure>
+<p>Instead of string concatenation, assume that we are looking to find the largest value (e.g. MAX()) for a set of integers. The messages 1, 2 and 3 are:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1: &#123; operation: max(previous, 3) &#125;</span><br><span class="line">2: &#123; operation: max(previous, 5) &#125;</span><br><span class="line">3: &#123; operation: max(previous, 7) &#125;</span><br></pre></td></tr></table></figure>
+<p>Then, without coordination, both A and B will converge to 7, e.g.:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">A: max(max(max(0, 3), 5), 7) = 7</span><br><span class="line">B: max(max(max(0, 5), 7), 3) = 7</span><br></pre></td></tr></table></figure>
+<p>In both cases, two replicas see updates in different order, but we are able to merge the results in a way that has the same result in spite of what the order is. The result converges to the same answer in both cases because of the merge procedure (<code>max</code>) we used.</p>
+<p>It is likely not possible to write a merge procedure that works for all data types. In Dynamo, a value is a binary blob, so the best that can be done is to expose it and ask the application to handle each conflict.</p>
+<p>However, if we know that the data is of a more specific type, handling these kinds of conflicts becomes possible. CRDT’s are data structures designed to provide data types that will always converge, as long as they see the same set of operations (in any order).</p>
+<h2 id="CRDTs-Convergent-replicated-data-types"><a href="#CRDTs-Convergent-replicated-data-types" class="headerlink" title="CRDTs: Convergent replicated data types"></a>CRDTs: Convergent replicated data types</h2><p>CRDTs (convergent replicated datatypes) exploit knowledge regarding the commutativity and associativity of specific operations on specific datatypes.</p>
+<p>In order for a set of operations to converge on the same value in an environment where replicas only communicate occasionally, the operations need to be order-independent and insensitive to (message) duplication/redelivery. Thus, their operations need to be:</p>
+<ul>
+<li>Associative (<code>a+(b+c)=(a+b)+c</code>), so that grouping doesn’t matter</li>
+<li>Commutative (<code>a+b=b+a</code>), so that order of application doesn’t matter</li>
+<li>Idempotent (<code>a+a=a</code>), so that duplication does not matter</li>
+</ul>
+<p>It turns out that these structures are already known in mathematics; they are known as join or meet <a href="http://en.wikipedia.org/wiki/Semilattice" target="_blank" rel="noopener">semilattices</a>.</p>
+<p>A <a href="http://en.wikipedia.org/wiki/Lattice_%28order%29" target="_blank" rel="noopener">lattice</a> is a partially ordered set with a distinct top (least upper bound) and a distinct bottom (greatest lower bound). A semilattice is like a lattice, but one that only has a distinct top or bottom. A join semilattice is one with a distinct top (least upper bound) and a meet semilattice is one with a distinct bottom (greatest lower bound).</p>
+<p>Any data type that can be expressed as a semilattice can be implemented as a data structure which guarantees convergence. For example, calculating the <code>max()</code> of a set of values will always return the same result regardless of the order in which the values were received, as long as all values are eventually received, because the <code>max()</code> operation is associative, commutative and idempotent.</p>
+<p>For example, here are two lattices: one drawn for a set, where the merge operator is <code>union(items)</code> and one drawn for a strictly increasing integer counter, where the merge operator is <code>max(values)</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">   &#123; a, b, c &#125;              7</span><br><span class="line">  /      |    \            /  \</span><br><span class="line">&#123;a, b&#125; &#123;b,c&#125; &#123;a,c&#125;        5    7</span><br><span class="line">  |  \  /  | /           /   |  \</span><br><span class="line">  &#123;a&#125; &#123;b&#125; &#123;c&#125;            3   5   7</span><br></pre></td></tr></table></figure>
+<p>With data types that can be expressed as semilattices, you can have replicas communicate in any pattern and receive the updates in any order, and they will eventually agree on the end result as long as they all see the same information. That is a powerful property that can be guaranteed as long as the prerequisites hold.</p>
+<p>However, expressing a data type as a semilattice often requires some level of interpretation. Many data types have operations which are not in fact order-independent. For example, adding items to a set is associative, commutative and idempotent. However, if we also allow items to be removed from a set, then we need some way to resolve conflicting operations, such as <code>add(A)</code> and <code>remove(A)</code>. What does it mean to remove an element if the local replica never added it? This resolution has to be specified in a manner that is order-independent, and there are several different choices with different tradeoffs.</p>
+<p>This means that several familiar data types have more specialized implementations as CRDT’s which make a different tradeoff in order to resolve conflicts in an order-independent manner. Unlike a key-value store which simply deals with registers (e.g. values that are opaque blobs from the perspective of the system), someone using CRDTs must use the right data type to avoid anomalies.</p>
+<p>Some examples of the different data types specified as CRDT’s include:</p>
+<ul>
+<li>Counters<ul>
+<li>Grow-only counter (merge = max(values); payload = single integer)</li>
+<li>Positive-negative counter (consists of two grow counters, one for increments and another for decrements)</li>
+</ul>
+</li>
+<li>Registers<ul>
+<li>Last Write Wins -register (timestamps or version numbers; merge = max(ts); payload = blob)</li>
+<li>Multi-valued -register (vector clocks; merge = take both)</li>
+</ul>
+</li>
+<li>Sets<ul>
+<li>Grow-only set (merge = union(items); payload = set; no removal)</li>
+<li>Two-phase set (consists of two sets, one for adding, and another for removing; elements can be added once and removed once)</li>
+<li>Unique set (an optimized version of the two-phase set)</li>
+<li>Last write wins set (merge = max(ts); payload = set)</li>
+<li>Positive-negative set (consists of one PN-counter per set item)</li>
+<li>Observed-remove set</li>
+</ul>
+</li>
+<li>Graphs and text sequences (see the paper)</li>
+</ul>
+<p>To ensure anomaly-free operation, you need to find the right data type for your specific application - for example, if you know that you will only remove an item once, then a two-phase set works; if you will only ever add items to a set and never remove them, then a grow-only set works.</p>
+<p>Not all data structures have known implementations as CRDTs, but there are CRDT implementations for booleans, counters, sets, registers and graphs in the recent (2011) <a href="http://hal.inria.fr/docs/00/55/55/88/PDF/techreport.pdf" target="_blank" rel="noopener">survey paper from Shapiro et al</a>.</p>
+<p>Interestingly, the register implementations correspond directly with the implementations that key value stores use: a last-write-wins register uses timestamps or some equivalent and simply converges to the largest timestamp value; a multi-valued register corresponds to the Dynamo strategy of retaining, exposing and reconciling concurrent changes. For the details, I recommend that you take a look at the papers in the further reading section of this chapter.</p>
+<h2 id="The-CALM-theorem"><a href="#The-CALM-theorem" class="headerlink" title="The CALM theorem"></a>The CALM theorem</h2><p>The CRDT data structures were based on the recognition that data structures expressible as semilattices are convergent. But programming is about more than just evolving state, unless you are just implementing a data store.</p>
+<p>Clearly, order-independence is an important property of any computation that converges: if the order in which data items are received influences the result of the computation, then there is no way to execute a computation without guaranteeing order.</p>
+<p>However, there are many programming models in which the order of statements does not play a significant role. For example, in the <a href="http://en.wikipedia.org/wiki/MapReduce" target="_blank" rel="noopener">MapReduce model</a>, both the Map and the Reduce tasks are specified as stateless tuple-processing tasks that need to be run on a dataset. Concrete decisions about how and in what order data is routed to the tasks is not specified explicitly, instead, the batch job scheduler is responsible for scheduling the tasks to run on the cluster.</p>
+<p>Similarly, in SQL one specifies the query, but not how the query is executed. The query is simply a declarative description of the task, and it is the job of the query optimizer to figure out an efficient way to execute the query (across multiple machines, databases and tables).</p>
+<p>Of course, these programming models are not as permissive as a general purpose programming language. MapReduce tasks need to be expressible as stateless tasks in an acyclic dataflow program; SQL statements can execute fairly sophisticated computations but many things are hard to express in it.</p>
+<p>However, it should be clear from these two examples that there are many kinds of data processing tasks which are amenable to being expressed in a declarative language where the order of execution is not explicitly specified. Programming models which express a desired result while leaving the exact order of statements up to an optimizer to decide often have semantics that are order-independent. This means that such programs may be possible to execute without coordination, since they depend on the inputs they receive but not necessarily the specific order in which the inputs are received.</p>
+<p>The key point is that such programs <em>may be</em> safe to execute without coordination. Without a clear rule that characterizes what is safe to execute without coordination, and what is not, we cannot implement a program while remaining certain that the result is correct.</p>
+<p>This is what the CALM theorem is about. The CALM theorem is based on a recognition of the link between logical monotonicity and useful forms of eventual consistency (e.g. confluence / convergence). It states that logically monotonic programs are guaranteed to be eventually consistent.</p>
+<p>Then, if we know that some computation is logically monotonic, then we know that it is also safe to execute without coordination.</p>
+<p>To better understand this, we need to contrast monotonic logic (or monotonic computations) with <a href="http://plato.stanford.edu/entries/logic-nonmonotonic/" target="_blank" rel="noopener">non-monotonic logic</a> (or non-monotonic computations).</p>
+<dl><br>  <dt>Monotony</dt><br>  <dd>if sentence <code>φ</code> is a consequence of a set of premises <code>Γ</code>, then it can also be inferred from any set <code>Δ</code> of premises extending <code>Γ</code></dd><br></dl>
+
+<p>Most standard logical frameworks are monotonic: any inferences made within a framework such as first-order logic, once deductively valid, cannot be invalidated by new information. A non-monotonic logic is a system in which that property does not hold - in other words, if some conclusions can be invalidated by learning new knowledge.</p>
+<p>Within the artificial intelligence community, non-monotonic logics are associated with <a href="http://plato.stanford.edu/entries/reasoning-defeasible/" target="_blank" rel="noopener">defeasible reasoning</a> - reasoning, in which assertions made utilizing partial information can be invalidated by new knowledge. For example, if we learn that Tweety is a bird, we’ll assume that Tweety can fly; but if we later learn that Tweety is a penguin, then we’ll have to revise our conclusion.</p>
+<p>Monotonicity concerns the relationship between premises (or facts about the world) and conclusions (or assertions about the world). Within a monotonic logic, we know that our results are retraction-free: <a href="http://en.wikipedia.org/wiki/Monotonicity_of_entailment" target="_blank" rel="noopener">monotone</a> computations do not need to be recomputed or coordinated; the answer gets more accurate over time. Once we know that Tweety is a bird (and that we’re reasoning using monotonic logic), we can safely conclude that Tweety can fly and that nothing we learn can invalidate that conclusion.</p>
+<p>While any computation that produces a human-facing result can be interpreted as an assertion about the world (e.g. the value of “foo” is “bar”), it is difficult to determine whether a computation in a von Neumann machine based programming model is monotonic, because it is not exactly clear what the relationship between facts and assertions are and whether those relationships are monotonic.</p>
+<p>However, there are a number of programming models for which determining monotonicity is possible. In particular, <a href="http://en.wikipedia.org/wiki/Relational_algebra" target="_blank" rel="noopener">relational algebra</a> (e.g. the theoretical underpinnings of SQL) and <a href="http://en.wikipedia.org/wiki/Datalog" target="_blank" rel="noopener">Datalog</a> provide highly expressive languages that have well-understood interpretations.</p>
+<p>Both basic Datalog and relational algebra (even with recursion) are known to be monotonic. More specifically, computations expressed using a certain set of basic operators are known to be monotonic (selection, projection, natural join, cross product, union and recursive Datalog without negation), and non-monotonicity is introduced by using more advanced operators (negation, set difference, division, universal quantification, aggregation).</p>
+<p>This means that computations expressed using a significant number of operators (e.g. map, filter, join, union, intersection) in those systems are logically monotonic; any computations using those operators are also monotonic and thus safe to run without coordination. Expressions that make use of negation and aggregation, on the other hand, are not safe to run without coordination.</p>
+<p>It is important to realize the connection between non-monotonicity and operations that are expensive to perform in a distributed system. Specifically, both <em>distributed aggregation</em> and <em>coordination protocols</em> can be considered to be a form of negation. As Joe Hellerstein <a href="http://www.eecs.berkeley.edu/Pubs/TechRpts/2010/EECS-2010-90.pdf" target="_blank" rel="noopener">writes</a>:</p>
+<blockquote>
+<p>To establish the veracity of a negated predicate in a distributed setting, an evaluation strategy has to start “counting to 0” to determine emptiness, and wait until the distributed counting process has definitely terminated. Aggregation is the generalization of this idea.</p>
+</blockquote>
+<p>and:</p>
+<blockquote>
+<p>This idea can be seen from the other direction as well. Coordination protocols are themselves aggregations, since they entail voting: Two-Phase Commit requires unanimous votes, Paxos consensus requires majority votes, and Byzantine protocols require a 2/3 majority. Waiting requires counting.</p>
+</blockquote>
+<p>If, then we can express our computation in a manner in which it is possible to test for monotonicity, then we can perform a whole-program static analysis that detects which parts of the program are eventually consistent and safe to run without coordination (the monotonic parts) - and which parts are not (the non-monotonic ones).</p>
+<p>Note that this requires a different kind of language, since these inferences are hard to make for traditional programming languages where sequence, selection and iteration are at the core. Which is why the Bloom language was designed.</p>
+<h2 id="What-is-non-monotonicity-good-for"><a href="#What-is-non-monotonicity-good-for" class="headerlink" title="What is non-monotonicity good for?"></a>What is non-monotonicity good for?</h2><p>The difference between monotonicity and non-monotonicity is interesting. For example, adding two numbers is monotonic, but calculating an aggregation over two nodes containing numbers is not. What’s the difference? One of these is a computation (adding two numbers), while the other is an assertion (calculating an aggregate).</p>
+<p>How does a computation differ from an assertion? Let’s consider the query “is pizza a vegetable?”. To answer that, we need to get at the core: when is it acceptable to infer that something is (or is not) true?</p>
+<p>There are several acceptable answers, each corresponding to a different set of assumptions regarding the information that we have and the way we ought to act upon it - and we’ve come to accept different answers in different contexts.</p>
+<p>In everyday reasoning, we make what is known as the <a href="http://en.wikipedia.org/wiki/Open_world_assumption" target="_blank" rel="noopener">open-world assumption</a>: we assume that we do not know everything, and hence cannot make conclusions from a lack of knowledge. That is, any sentence may be true, false or unknown.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">                                OWA +             |  OWA +</span><br><span class="line">                                Monotonic logic   |  Non-monotonic logic</span><br><span class="line">Can derive P(true)      |   Can assert P(true)    |  Cannot assert P(true)</span><br><span class="line">Can derive P(false)     |   Can assert P(false)   |  Cannot assert P(true)</span><br><span class="line">Cannot derive P(true)   |   Unknown               |  Unknown</span><br><span class="line">or P(false)</span><br></pre></td></tr></table></figure>
+<p>When making the open world assumption, we can only safely assert something we can deduce from what is known. Our information about the world is assumed to be incomplete.</p>
+<p>Let’s first look at the case where we know our reasoning is monotonic. In this case, any (potentially incomplete) knowledge that we have cannot be invalidated by learning new knowledge. So if we can infer that a sentence is true based on some deduction, such as “things that contain two tablespoons of tomato paste are vegetables” and “pizza contains two tablespoons of tomato paste”, then we can conclude that “pizza is a vegetable”. The same goes for if we can deduce that a sentence is false.</p>
+<p>However, if we cannot deduce anything - for example, the set of knowledge we have contains customer information and nothing about pizza or vegetables - then under the open world assumption we have to say that we cannot conclude anything.</p>
+<p>With non-monotonic knowledge, anything we know right now can potentially be invalidated. Hence, we cannot safely conclude anything, even if we can deduce true or false from what we currently know.</p>
+<p>However, within the database context, and within many computer science applications we prefer to make more definite conclusions. This means assuming what is known as the <a href="http://en.wikipedia.org/wiki/Closed_world_assumption" target="_blank" rel="noopener">closed-world assumption</a>: that anything that cannot be shown to be true is false. This means that no explicit declaration of falsehood is needed. In other words, the database of facts that we have is assumed to be complete (minimal), so that anything not in it can be assumed to be false.</p>
+<p>For example, under the CWA, if our database does not have an entry for a flight between San Francisco and Helsinki, then we can safely conclude that no such flight exists.</p>
+<p>We need one more thing to be able to make definite assertions: <a href="http://en.wikipedia.org/wiki/Circumscription_%28logic%29" target="_blank" rel="noopener">logical circumscription</a>. Circumscription is a formalized rule of conjecture. Domain circumscription conjectures that the known entities are all there are. We need to be able to assume that the known entities are all there are in order to reach a definite conclusion.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                                CWA +             |  CWA +</span><br><span class="line">                                Circumscription + |  Circumscription +</span><br><span class="line">                                Monotonic logic   |  Non-monotonic logic</span><br><span class="line">Can derive P(true)      |   Can assert P(true)    |  Can assert P(true)</span><br><span class="line">Can derive P(false)     |   Can assert P(false)   |  Can assert P(false)</span><br><span class="line">Cannot derive P(true)   |   Can assert P(false)   |  Can assert P(false)</span><br><span class="line">or P(false)</span><br></pre></td></tr></table></figure>
+<p>In particular, non-monotonic inferences need this assumption. We can only make a confident assertion if we assume that we have complete information, since additional information may otherwise invalidate our assertion.</p>
+<p>What does this mean in practice? First, monotonic logic can reach definite conclusions as soon as it can derive that a sentence is true (or false). Second, nonmonotonic logic requires an additional assumption: that the known entities are all there is.</p>
+<p>So why are two operations that are on the surface equivalent different? Why is adding two numbers monotonic, but calculating an aggregation over two nodes not? Because the aggregation does not only calculate a sum but also asserts that it has seen all of the values. And the only way to guarantee that is to coordinate across nodes and ensure that the node performing the calculation has really seen all of the values within the system.</p>
+<p>Thus, in order to handle non-monotonicity one needs to either use distributed coordination to ensure that assertions are made only after all the information is known or make assertions with the caveat that the conclusion can be invalidated later on.</p>
+<p>Handling non-monotonicity is important for reasons of expressiveness. This comes down to being able to express non-monotone things; for example, it is nice to be able to say that the total of some column is X. The system must detect that this kind of computation  requires a global coordination boundary to ensure that we have seen all the entities.</p>
+<p>Purely monotone systems are rare. It seems that most applications operate under the closed-world assumption even when they have incomplete data, and we humans are fine with that. When a database tells you that a direct flight between San Francisco and Helsinki does not exist, you will probably treat this as “according to this database, there is no direct flight”, but you do not rule out the possibility that that in reality such a flight might still exist.</p>
+<p>Really, this issue only becomes interesting when replicas can diverge (e.g. during a partition or due to delays during normal operation). Then there is a need for a more specific consideration: whether the answer is based on just the current node, or the totality of the system.</p>
+<p>Further, since nonmonotonicity is caused by making an assertion, it seems plausible that many computations can proceed for a long time and only apply coordination at the point where some result or assertion is passed to a 3rd party system or end user. Certainly it is not necessary for every single read and write operation within a system to enforce a total order, if those reads and writes are simply a part of a long running computation.</p>
+<h2 id="The-Bloom-language"><a href="#The-Bloom-language" class="headerlink" title="The Bloom language"></a>The Bloom language</h2><p>The <a href="http://www.bloom-lang.net/" target="_blank" rel="noopener">Bloom language</a> is a language designed to make use of the CALM theorem. It is a Ruby DSL which has its formal basis in a temporal logic programming language called Dedalus.</p>
+<p>In Bloom, each node has a database consisting of collections and lattices. Programs are expressed as sets of unordered statements which interact with collections (sets of facts) and lattices (CRDTs). Statements are order-independent by default, but one can also write non-monotonic functions.</p>
+<p>Have a look at the <a href="http://www.bloom-lang.net/" target="_blank" rel="noopener">Bloom website</a> and <a href="https://github.com/bloom-lang/bud/tree/master/docs" target="_blank" rel="noopener">tutorials</a> to learn more about Bloom.</p>
+<hr>
+<h2 id="Further-reading"><a href="#Further-reading" class="headerlink" title="Further reading"></a>Further reading</h2><h4 id="The-CALM-theorem-confluence-analysis-and-Bloom"><a href="#The-CALM-theorem-confluence-analysis-and-Bloom" class="headerlink" title="The CALM theorem, confluence analysis and Bloom"></a>The CALM theorem, confluence analysis and Bloom</h4><p><a href="http://vimeo.com/53904989" target="_blank" rel="noopener">Joe Hellerstein’s talk @RICON 2012</a> is a good introduction to the topic, as is <a href="http://vimeo.com/45111940" target="_blank" rel="noopener">Neil Conway’s talk @Basho</a>. For Bloom in particular, see <a href="http://channel9.msdn.com/Events/Lang-NEXT/Lang-NEXT-2012/Bloom-Disorderly-Programming-for-a-Distributed-World" target="_blank" rel="noopener">Peter Alvaro’s talk@Microsoft</a>.</p>
+<ul>
+<li><a href="http://www.eecs.berkeley.edu/Pubs/TechRpts/2010/EECS-2010-90.pdf" target="_blank" rel="noopener">The Declarative Imperative: Experiences and Conjectures in Distributed Logic</a> - Hellerstein, 2010</li>
+<li><a href="http://db.cs.berkeley.edu/papers/cidr11-bloom.pdf" target="_blank" rel="noopener">Consistency Analysis in Bloom: a CALM and Collected Approach</a> - Alvaro et al., 2011</li>
+<li><a href="http://db.cs.berkeley.edu/papers/UCB-lattice-tr.pdf" target="_blank" rel="noopener">Logic and Lattices for Distributed Programming</a> - Conway et al., 2012</li>
+<li><a href="http://db.cs.berkeley.edu/papers/datalog2011-dedalus.pdf" target="_blank" rel="noopener">Dedalus: Datalog in Time and Space</a> - Alvaro et al., 2011</li>
+</ul>
+<h4 id="CRDTs"><a href="#CRDTs" class="headerlink" title="CRDTs"></a>CRDTs</h4><p><a href="http://research.microsoft.com/apps/video/dl.aspx?id=153540" target="_blank" rel="noopener">Marc Shapiro’s talk @ Microsoft</a> is a good starting point for understanding CRDT’s.</p>
+<ul>
+<li><a href="http://hal.archives-ouvertes.fr/docs/00/39/79/81/PDF/RR-6956.pdf" target="_blank" rel="noopener">CRDTs: Consistency Without Concurrency Control</a> - Letitia et al., 2009</li>
+<li><a href="http://hal.inria.fr/docs/00/55/55/88/PDF/techreport.pdf" target="_blank" rel="noopener">A comprehensive study of Convergent and Commutative Replicated Data Types</a>, Shapiro et al., 2011</li>
+<li><a href="http://arxiv.org/pdf/1210.3368v1.pdf" target="_blank" rel="noopener">An Optimized conflict-free Replicated Set</a> - Bieniusa et al., 2012</li>
+</ul>
+<h4 id="Dynamo-PBS-optimistic-replication"><a href="#Dynamo-PBS-optimistic-replication" class="headerlink" title="Dynamo; PBS; optimistic replication"></a>Dynamo; PBS; optimistic replication</h4><ul>
+<li><a href="http://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf" target="_blank" rel="noopener">Dynamo: Amazon’s Highly Available Key-value Store</a> - DeCandia et al., 2007</li>
+<li><a href="http://scholar.google.com/scholar?q=PNUTS:+Yahoo!&#39;s+Hosted+Data+Serving+Platform" target="_blank" rel="noopener">PNUTS: Yahoo!’s Hosted Data Serving Platform</a> - Cooper et al., 2008</li>
+<li><a href="http://scholar.google.com/scholar?q=The+Bayou+Architecture%3A+Support+for+Data+Sharing+among+Mobile+Users" target="_blank" rel="noopener">The Bayou Architecture: Support for Data Sharing among Mobile Users</a> - Demers et al. 1994</li>
+<li><a href="http://pbs.cs.berkeley.edu/pbs-vldb2012.pdf" target="_blank" rel="noopener">Probabilistically Bound Staleness for Practical Partial Quorums</a> - Bailis et al., 2012</li>
+<li><a href="https://queue.acm.org/detail.cfm?id=2462076" target="_blank" rel="noopener">Eventual Consistency Today: Limitations, Extensions, and Beyond</a> - Bailis &amp; Ghodsi, 2013</li>
+<li><a href="http://www.ysaito.com/survey.pdf" target="_blank" rel="noopener">Optimistic replication</a> - Saito &amp; Shapiro, 2005</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/29/[译]Distributed systems for fun and profit_4复制/" rel="next" title="[译]Distributed systems for fun and profit_4复制">
+                <i class="fa fa-chevron-left"></i> [译]Distributed systems for fun and profit_4复制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/04/30/[译]Distributed systems for fun and profit_6延伸阅读/" rel="prev" title="[译]Distributed systems for fun and profit_6延伸阅读">
+                [译]Distributed systems for fun and profit_6延伸阅读 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#五-Replication-weak-consistency-model-protocols"><span class="nav-text">五. Replication: weak consistency model protocols</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#复制-弱一致性模型协议"><span class="nav-text">复制 弱一致性模型协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reconciling-different-operation-orders-协调不同操作顺序"><span class="nav-text">Reconciling different operation orders 协调不同操作顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Amazon’s-Dynamo"><span class="nav-text">Amazon’s Dynamo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Consistent-hashing"><span class="nav-text">Consistent hashing</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Partial-quorums"><span class="nav-text">Partial quorums</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Is-R-W-gt-N-the-same-as-“strong-consistency”"><span class="nav-text">Is R + W &gt; N the same as “strong consistency”?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Conflict-detection-and-read-repair"><span class="nav-text">Conflict detection and read repair</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replica-synchronization-gossip-and-Merkle-trees"><span class="nav-text">Replica synchronization: gossip and Merkle trees</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dynamo-in-practice-probabilistically-bounded-staleness-PBS"><span class="nav-text">Dynamo in practice: probabilistically bounded staleness (PBS)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Disorderly-programming"><span class="nav-text">Disorderly programming</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CRDTs-Convergent-replicated-data-types"><span class="nav-text">CRDTs: Convergent replicated data types</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-CALM-theorem"><span class="nav-text">The CALM theorem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-non-monotonicity-good-for"><span class="nav-text">What is non-monotonicity good for?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Bloom-language"><span class="nav-text">The Bloom language</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Further-reading"><span class="nav-text">Further reading</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#The-CALM-theorem-confluence-analysis-and-Bloom"><span class="nav-text">The CALM theorem, confluence analysis and Bloom</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CRDTs"><span class="nav-text">CRDTs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dynamo-PBS-optimistic-replication"><span class="nav-text">Dynamo; PBS; optimistic replication</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

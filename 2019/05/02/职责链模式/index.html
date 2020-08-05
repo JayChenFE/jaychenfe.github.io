@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[TOC] 原理定义从生活中的例子可以发现，某个请求可能需要几个人的审批，即使技术经理审批完了，还需要上一级的审批。这样的例子，还有公司中的请假，少于3天的，直属Leader就可以批准，3天到7天之内就需要项目经理批准，多余7天的就需要技术总监的批准了。介绍了这么多生活中责任链模式的例子的，下面具体给出面向对象中责任链模式的定义。 　　责任链模式指的是——某个请求需要多个对象进行处理，从而避免请求">
+<meta property="og:type" content="article">
+<meta property="og:title" content="职责链模式">
+<meta property="og:url" content="https://jaychenfe.github.io/2019/05/02/职责链模式/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="[TOC] 原理定义从生活中的例子可以发现，某个请求可能需要几个人的审批，即使技术经理审批完了，还需要上一级的审批。这样的例子，还有公司中的请假，少于3天的，直属Leader就可以批准，3天到7天之内就需要项目经理批准，多余7天的就需要技术总监的批准了。介绍了这么多生活中责任链模式的例子的，下面具体给出面向对象中责任链模式的定义。 　　责任链模式指的是——某个请求需要多个对象进行处理，从而避免请求">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190503230122.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190503225804.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190502214437.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="职责链模式">
+<meta name="twitter:description" content="[TOC] 原理定义从生活中的例子可以发现，某个请求可能需要几个人的审批，即使技术经理审批完了，还需要上一级的审批。这样的例子，还有公司中的请假，少于3天的，直属Leader就可以批准，3天到7天之内就需要项目经理批准，多余7天的就需要技术总监的批准了。介绍了这么多生活中责任链模式的例子的，下面具体给出面向对象中责任链模式的定义。 　　责任链模式指的是——某个请求需要多个对象进行处理，从而避免请求">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190503230122.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2019/05/02/职责链模式/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>职责链模式 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2019/05/02/职责链模式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">职责链模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-02 17:04:11" itemprop="dateCreated datePublished" datetime="2019-05-02T17:04:11+00:00">2019-05-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[TOC]</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>从生活中的例子可以发现，某个请求可能需要几个人的审批，即使技术经理审批完了，还需要上一级的审批。这样的例子，还有公司中的请假，少于3天的，直属Leader就可以批准，3天到7天之内就需要项目经理批准，多余7天的就需要技术总监的批准了。介绍了这么多生活中责任链模式的例子的，下面具体给出面向对象中责任链模式的定义。</p>
+<p>　　责任链模式指的是——某个请求需要多个对象进行处理，从而避免请求的发送者和接收之间的耦合关系。将这些对象连成一条链子，并沿着这条链子传递该请求，直到有对象处理它为止。</p>
+<h2 id="结构图"><a href="#结构图" class="headerlink" title="结构图"></a>结构图</h2><p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190503230122.png" alt=""></p>
+<p>　主要涉及两个角色：</p>
+<ul>
+<li>抽象处理者角色（Handler）：定义出一个处理请求的接口。这个接口通常由接口或抽象类来实现。</li>
+<li>具体处理者角色（ConcreteHandler）：具体处理者接受到请求后，可以选择将该请求处理掉，或者将请求传给下一个处理者。因此，每个具体处理者需要保存下一个处理者的引用，以便把请求传递下去。</li>
+</ul>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="采购商品-C-实现"><a href="#采购商品-C-实现" class="headerlink" title="采购商品(C#实现)"></a>采购商品(C#实现)</h2><p>公司规定，</p>
+<ul>
+<li><p>采购架构总价在1万之内，经理级别的人批准即可，</p>
+</li>
+<li><p>总价大于1万小于2万5的则还需要副总进行批准，</p>
+</li>
+<li><p>总价大于2万5小于10万的需要还需要总经理批准，</p>
+</li>
+<li><p>而大于总价大于10万的则需要组织一个会议进行讨论</p>
+</li>
+</ul>
+<p>对于这样一个需求，最直观的方法就是设计一个方法，参数是采购的总价，然后在这个方法内对价格进行调整判断，然后针对不同的条件交给不同级别的人去处理，这样确实可以解决问题，但这样一来，我们就需要多重if-else语句来进行判断，但当加入一个新的条件范围时，我们又不得不去修改原来设计的方法来再添加一个条件判断，这样的设计显然违背了“开-闭”原则。这时候，可以采用责任链模式来解决这样的问题。具体实现代码如下所示。</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 采购请求</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">PurchaseRequest</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="comment">// 金额</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">double</span> Amount &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">      <span class="comment">// 产品名字</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">string</span> ProductName &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">PurchaseRequest</span>(<span class="params"><span class="keyword">double</span> amount, <span class="keyword">string</span> productName</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          Amount = amount;</span><br><span class="line">          ProductName = productName;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 审批人,Handler</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Approver</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">public</span> Approver NextApprover &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">string</span> Name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">Approver</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">this</span>.Name = name;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">ProcessRequest</span>(<span class="params">PurchaseRequest request</span>)</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ConcreteHandler</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Manager</span> : <span class="title">Approver</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">Manager</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function">          : <span class="title">base</span>(<span class="params">name</span>)</span></span><br><span class="line"><span class="function"></span>      &#123; &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">ProcessRequest</span>(<span class="params">PurchaseRequest request</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">if</span> (request.Amount &lt; <span class="number">10000.0</span>)</span><br><span class="line">          &#123;</span><br><span class="line">              Console.WriteLine(<span class="string">"&#123;0&#125;-&#123;1&#125; approved the request of purshing &#123;2&#125;"</span>, <span class="keyword">this</span>, Name, request.ProductName);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">else</span> <span class="keyword">if</span> (NextApprover != <span class="literal">null</span>)</span><br><span class="line">          &#123;</span><br><span class="line">              NextApprover.ProcessRequest(request);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ConcreteHandler,副总</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">VicePresident</span> : <span class="title">Approver</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">VicePresident</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function">          : <span class="title">base</span>(<span class="params">name</span>)</span></span><br><span class="line"><span class="function"></span>      &#123; </span><br><span class="line">      &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">ProcessRequest</span>(<span class="params">PurchaseRequest request</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">if</span> (request.Amount &lt; <span class="number">25000.0</span>)</span><br><span class="line">          &#123;</span><br><span class="line">              Console.WriteLine(<span class="string">"&#123;0&#125;-&#123;1&#125; approved the request of purshing &#123;2&#125;"</span>, <span class="keyword">this</span>, Name, request.ProductName);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">else</span> <span class="keyword">if</span> (NextApprover != <span class="literal">null</span>)</span><br><span class="line">          &#123;</span><br><span class="line">              NextApprover.ProcessRequest(request);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ConcreteHandler，总经理</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">President</span> :<span class="title">Approver</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">President</span>(<span class="params"><span class="keyword">string</span> name</span>)</span></span><br><span class="line"><span class="function">          : <span class="title">base</span>(<span class="params">name</span>)</span></span><br><span class="line"><span class="function"></span>      &#123; &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">ProcessRequest</span>(<span class="params">PurchaseRequest request</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          <span class="keyword">if</span> (request.Amount &lt; <span class="number">100000.0</span>)</span><br><span class="line">          &#123;</span><br><span class="line">              Console.WriteLine(<span class="string">"&#123;0&#125;-&#123;1&#125; approved the request of purshing &#123;2&#125;"</span>, <span class="keyword">this</span>, Name, request.ProductName);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="keyword">else</span></span><br><span class="line">          &#123;</span><br><span class="line">              Console.WriteLine(<span class="string">"Request需要组织一个会议讨论"</span>);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">  &#123;</span><br><span class="line">      <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>      &#123;</span><br><span class="line">          PurchaseRequest requestTelphone = <span class="keyword">new</span> PurchaseRequest(<span class="number">4000.0</span>, <span class="string">"Telphone"</span>);</span><br><span class="line">          PurchaseRequest requestSoftware = <span class="keyword">new</span> PurchaseRequest(<span class="number">10000.0</span>, <span class="string">"Visual Studio"</span>);</span><br><span class="line">          PurchaseRequest requestComputers = <span class="keyword">new</span> PurchaseRequest(<span class="number">40000.0</span>, <span class="string">"Computers"</span>);</span><br><span class="line"></span><br><span class="line">          Approver manager = <span class="keyword">new</span> Manager(<span class="string">"LearningHard"</span>);</span><br><span class="line">          Approver Vp = <span class="keyword">new</span> VicePresident(<span class="string">"Tony"</span>);</span><br><span class="line">          Approver Pre = <span class="keyword">new</span> President(<span class="string">"BossTom"</span>);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 设置责任链</span></span><br><span class="line">          manager.NextApprover = Vp;</span><br><span class="line">          Vp.NextApprover = Pre;</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 处理请求</span></span><br><span class="line">          manager.ProcessRequest(requestTelphone);</span><br><span class="line">          manager.ProcessRequest(requestSoftware);</span><br><span class="line">          manager.ProcessRequest(requestComputers);</span><br><span class="line">          Console.ReadLine();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190503225804.png" alt=""></p>
+<h2 id="购买商品-js实现"><a href="#购买商品-js实现" class="headerlink" title="购买商品(js实现)"></a>购买商品(js实现)</h2><p>购买规则:</p>
+<ul>
+<li>已支付500元定金的用户会收到100元的商城优惠券</li>
+<li>200元定金的用户会收到50元的优惠券</li>
+<li>没有支付定金的用户只能普通购买,没有优惠券不一定能买到</li>
+</ul>
+<p>有以下参数</p>
+<ul>
+<li>orderType 订单类型 1:500定金用户    2:200定金用户     3:普通用户</li>
+<li>pay  true:已支付 false:已支付</li>
+<li>stock:库存 只有普通用户受限</li>
+</ul>
+<h3 id="普通代码"><a href="#普通代码" class="headerlink" title="普通代码"></a>普通代码</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> order = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (orderType === <span class="number">1</span>) &#123; <span class="comment">// 500 元定金购买模式</span></span><br><span class="line">        <span class="keyword">if</span> (pay === <span class="literal">true</span>) &#123; <span class="comment">// 已支付定金</span></span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'500 元定金预购, 得到100 优惠券'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// 未支付定金，降级到普通购买模式</span></span><br><span class="line">            <span class="keyword">if</span> (stock &gt; <span class="number">0</span>) &#123; <span class="comment">// 用于普通购买的手机还有库存</span></span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'普通购买, 无优惠券'</span>);</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'手机库存不足'</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (orderType === <span class="number">2</span>) &#123; <span class="comment">// 200 元定金购买模式</span></span><br><span class="line">        <span class="keyword">if</span> (pay === <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'200 元定金预购, 得到50 优惠券'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (stock &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'普通购买, 无优惠券'</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'手机库存不足'</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (orderType === <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (stock &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'普通购买, 无优惠券'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'手机库存不足'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">order(<span class="number">1</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出： 500 元定金预购, 得到100 优惠券</span></span><br></pre></td></tr></table></figure>
+<h3 id="用职责链模式重构"><a href="#用职责链模式重构" class="headerlink" title="用职责链模式重构"></a>用职责链模式重构</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> order500 = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (orderType === <span class="number">1</span> &amp;&amp; pay === <span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'500 元定金预购, 得到100 优惠券'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        order200(orderType, pay, stock); <span class="comment">// 将请求传递给200 元订单</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 200 元订单</span></span><br><span class="line"><span class="keyword">var</span> order200 = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (orderType === <span class="number">2</span> &amp;&amp; pay === <span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'200 元定金预购, 得到50 优惠券'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        orderNormal(orderType, pay, stock); <span class="comment">// 将请求传递给普通订单</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 普通购买订单</span></span><br><span class="line"><span class="keyword">var</span> orderNormal = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (stock &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'普通购买, 无优惠券'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'手机库存不足'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试结果：</span></span><br><span class="line">order500(<span class="number">1</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：500 元定金预购, 得到100 优惠券</span></span><br><span class="line">order500(<span class="number">1</span>, <span class="literal">false</span>, <span class="number">500</span>); <span class="comment">// 输出：普通购买, 无优惠券</span></span><br><span class="line">order500(<span class="number">2</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：200 元定金预购, 得到500 优惠券</span></span><br><span class="line">order500(<span class="number">3</span>, <span class="literal">false</span>, <span class="number">500</span>); <span class="comment">// 输出：普通购买, 无优惠券</span></span><br><span class="line">order500(<span class="number">3</span>, <span class="literal">false</span>, <span class="number">0</span>); <span class="comment">// 输出：手机库存不足</span></span><br></pre></td></tr></table></figure>
+<p>好了很多仍然有一些问题</p>
+<ul>
+<li>职责链的顺序非常僵硬</li>
+</ul>
+<h3 id="灵活拆分职责链节点"><a href="#灵活拆分职责链节点" class="headerlink" title="灵活拆分职责链节点"></a>灵活拆分职责链节点</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> order500 = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (orderType === <span class="number">1</span> &amp;&amp; pay === <span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'500 元定金预购，得到100 优惠券'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'nextSuccessor'</span>; <span class="comment">// 我不知道下一个节点是谁，反正把请求往后面传递</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> order200 = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (orderType === <span class="number">2</span> &amp;&amp; pay === <span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'200 元定金预购，得到50 优惠券'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'nextSuccessor'</span>; <span class="comment">// 我不知道下一个节点是谁，反正把请求往后面传递</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> orderNormal = <span class="function"><span class="keyword">function</span> (<span class="params">orderType, pay, stock</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (stock &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'普通购买，无优惠券'</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'手机库存不足'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Chain.prototype.setNextSuccessor 指定在链中的下一个节点</span></span><br><span class="line"><span class="comment">// Chain.prototype.passRequest 传递请求给某个节点</span></span><br><span class="line"><span class="keyword">var</span> Chain = <span class="function"><span class="keyword">function</span> (<span class="params">fn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.fn = fn;</span><br><span class="line">    <span class="keyword">this</span>.successor = <span class="literal">null</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Chain.prototype.setNextSuccessor = <span class="function"><span class="keyword">function</span> (<span class="params">successor</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.successor = successor;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Chain.prototype.passRequest = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> ret = <span class="keyword">this</span>.fn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">    <span class="keyword">if</span> (ret === <span class="string">'nextSuccessor'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.successor &amp;&amp; <span class="keyword">this</span>.successor.passRequest.apply(<span class="keyword">this</span>.successor, <span class="built_in">arguments</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> chainOrder500 = <span class="keyword">new</span> Chain(order500);</span><br><span class="line"><span class="keyword">var</span> chainOrder200 = <span class="keyword">new</span> Chain(order200);</span><br><span class="line"><span class="keyword">var</span> chainOrderNormal = <span class="keyword">new</span> Chain(orderNormal);</span><br><span class="line"></span><br><span class="line">chainOrder500.setNextSuccessor(chainOrder200);</span><br><span class="line">chainOrder200.setNextSuccessor(chainOrderNormal);</span><br><span class="line">chainOrder500.passRequest(<span class="number">1</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：500 元定金预购，得到100 优惠券</span></span><br><span class="line">chainOrder500.passRequest(<span class="number">2</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：200 元定金预购，得到50 优惠券</span></span><br><span class="line">chainOrder500.passRequest(<span class="number">3</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：普通购买，无优惠券</span></span><br><span class="line">chainOrder500.passRequest(<span class="number">1</span>, <span class="literal">false</span>, <span class="number">0</span>); <span class="comment">// 输出：手机库存不足</span></span><br></pre></td></tr></table></figure>
+<h3 id="用AOP实现职责链"><a href="#用AOP实现职责链" class="headerlink" title="用AOP实现职责链"></a>用AOP实现职责链</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Function</span>.prototype.after = <span class="function"><span class="keyword">function</span> (<span class="params">fn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> self = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> ret = self.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">        <span class="keyword">if</span> (ret === <span class="string">'nextSuccessor'</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> fn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> order = order500yuan.after(order200yuan).after(orderNormal);</span><br><span class="line">order(<span class="number">1</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：500 元定金预购，得到100 优惠券</span></span><br><span class="line">order(<span class="number">2</span>, <span class="literal">true</span>, <span class="number">500</span>); <span class="comment">// 输出：200 元定金预购，得到50 优惠券</span></span><br><span class="line">order(<span class="number">1</span>, <span class="literal">false</span>, <span class="number">500</span>); <span class="comment">// 输出：普通购买，无优惠券</span></span><br></pre></td></tr></table></figure>
+<h2 id="获取文件上传对象-js实现"><a href="#获取文件上传对象-js实现" class="headerlink" title="获取文件上传对象(js实现)"></a>获取文件上传对象(js实现)</h2><p>用职责链模式实现之前迭代器获取文件对象的例子</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getActiveUploadObj = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ActiveXObject(<span class="string">"TXFTNActiveX.FTNUpload"</span>); <span class="comment">// IE 上传控件</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> getFlashUploadObj = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (supportFlash()) &#123; <span class="comment">// supportFlash 函数未提供</span></span><br><span class="line">        <span class="keyword">var</span> str = <span class="string">'&lt;object type="application/x-shockwave-flash"&gt;&lt;/object&gt;'</span>;</span><br><span class="line">        <span class="keyword">return</span> $(str).appendTo($(<span class="string">'body'</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> getFormUploadObj = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> str = <span class="string">'&lt;input name="file" type="file" class="ui-file"/&gt;'</span>; <span class="comment">// 表单上传</span></span><br><span class="line">    <span class="keyword">return</span> $(str).appendTo($(<span class="string">'body'</span>));</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> getUploadObj = getActiveUploadObj.after(getFlashUploadObj).after(getFormUploadObj);</span><br></pre></td></tr></table></figure>
+<h2 id="职责链模式-python实现"><a href="#职责链模式-python实现" class="headerlink" title="职责链模式(python实现)"></a>职责链模式(python实现)</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># http://www.testingperspective.com/wiki/doku.php/collaboration/chetan/designpatternsinpython/chain-of-responsibilitypattern</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Handler</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">successor</span><span class="params">(self, successor)</span>:</span></span><br><span class="line">        self.successor = successor</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler1</span><span class="params">(Handler)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> request &gt; <span class="number">0</span> <span class="keyword">and</span> request &lt;= <span class="number">10</span>:</span><br><span class="line">            print(<span class="string">"in handler1"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.successor.handle(request)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler2</span><span class="params">(Handler)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> request &gt; <span class="number">10</span> <span class="keyword">and</span> request &lt;= <span class="number">20</span>:</span><br><span class="line">            print(<span class="string">"in handler2"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.successor.handle(request)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteHandler3</span><span class="params">(Handler)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle</span><span class="params">(self, request)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> request &gt; <span class="number">20</span> <span class="keyword">and</span> request &lt;= <span class="number">30</span>:</span><br><span class="line">            print(<span class="string">"in handler3"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">'end of chain, no handler for &#123;&#125;'</span>.format(request))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Client</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        h1 = ConcreteHandler1()</span><br><span class="line">        h2 = ConcreteHandler2()</span><br><span class="line">        h3 = ConcreteHandler3()</span><br><span class="line"></span><br><span class="line">        h1.successor(h2)</span><br><span class="line">        h2.successor(h3)</span><br><span class="line"></span><br><span class="line">        requests = [<span class="number">2</span>, <span class="number">5</span>, <span class="number">14</span>, <span class="number">22</span>, <span class="number">18</span>, <span class="number">3</span>, <span class="number">35</span>, <span class="number">27</span>, <span class="number">20</span>]</span><br><span class="line">        <span class="keyword">for</span> request <span class="keyword">in</span> requests:</span><br><span class="line">            h1.handle(request)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    client = Client()</span><br></pre></td></tr></table></figure>
+<p>结果:<br><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190502214437.png" alt=""></p>
+<h1 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h1><p>责任链模式的优点不言而喻，主要有以下点：</p>
+<ul>
+<li>降低了请求的发送者和接收者之间的耦合。</li>
+<li>把多个条件判定分散到各个处理类中，使得代码更加清晰，责任更加明确。</li>
+</ul>
+<p>　　责任链模式也具有一定的缺点，如：</p>
+<ul>
+<li>在找到正确的处理对象之前，所有的条件判定都要执行一遍，当责任链过长时，可能会引起性能的问题</li>
+<li>可能导致某个请求不被处理。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/30/[译]Distributed systems for fun and profit_6延伸阅读/" rel="next" title="[译]Distributed systems for fun and profit_6延伸阅读">
+                <i class="fa fa-chevron-left"></i> [译]Distributed systems for fun and profit_6延伸阅读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/04/装饰者模式/" rel="prev" title="装饰者模式">
+                装饰者模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义"><span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构图"><span class="nav-text">结构图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例"><span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#采购商品-C-实现"><span class="nav-text">采购商品(C#实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#购买商品-js实现"><span class="nav-text">购买商品(js实现)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#普通代码"><span class="nav-text">普通代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用职责链模式重构"><span class="nav-text">用职责链模式重构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#灵活拆分职责链节点"><span class="nav-text">灵活拆分职责链节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用AOP实现职责链"><span class="nav-text">用AOP实现职责链</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取文件上传对象-js实现"><span class="nav-text">获取文件上传对象(js实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#职责链模式-python实现"><span class="nav-text">职责链模式(python实现)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优缺点"><span class="nav-text">优缺点</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

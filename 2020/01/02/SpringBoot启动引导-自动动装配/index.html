@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="[toc] 6. SpringBoot的自动装配SpringBoot的自动配置完全由 @EnableAutoConfiguration 开启。 @EnableAutoConfiguration 的内容： 1234567@Target(ElementType.TYPE)@Retention(RetentionPolicy.RUNTIME)@Documented@Inherited@AutoConfi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot启动引导-自动动装配">
+<meta property="og:url" content="https://jaychenfe.github.io/2020/01/02/SpringBoot启动引导-自动动装配/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="[toc] 6. SpringBoot的自动装配SpringBoot的自动配置完全由 @EnableAutoConfiguration 开启。 @EnableAutoConfiguration 的内容： 1234567@Target(ElementType.TYPE)@Retention(RetentionPolicy.RUNTIME)@Documented@Inherited@AutoConfi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.876Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBoot启动引导-自动动装配">
+<meta name="twitter:description" content="[toc] 6. SpringBoot的自动装配SpringBoot的自动配置完全由 @EnableAutoConfiguration 开启。 @EnableAutoConfiguration 的内容： 1234567@Target(ElementType.TYPE)@Retention(RetentionPolicy.RUNTIME)@Documented@Inherited@AutoConfi">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2020/01/02/SpringBoot启动引导-自动动装配/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>SpringBoot启动引导-自动动装配 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2020/01/02/SpringBoot启动引导-自动动装配/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SpringBoot启动引导-自动动装配
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-02 17:34:53" itemprop="dateCreated datePublished" datetime="2020-01-02T17:34:53+00:00">2020-01-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>[toc]</p>
+<h2 id="6-SpringBoot的自动装配"><a href="#6-SpringBoot的自动装配" class="headerlink" title="6. SpringBoot的自动装配"></a>6. SpringBoot的自动装配</h2><p>SpringBoot的自动配置完全由 <code>@EnableAutoConfiguration</code> 开启。</p>
+<p><code>@EnableAutoConfiguration</code> 的内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@AutoConfigurationPackage</span></span><br><span class="line"><span class="meta">@Import</span>(AutoConfigurationImportSelector.class)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EnableAutoConfiguration</span><br></pre></td></tr></table></figure>
+<p>文档注释原文翻译：</p>
+<blockquote>
+<p>Enable auto-configuration of the Spring Application Context, attempting to guess and configure beans that you are likely to need. Auto-configuration classes are usually applied based on your classpath and what beans you have defined. For example, if you have <code>tomcat-embedded.jar</code> on your classpath you are likely to want a <code>TomcatServletWebServerFactory</code> (unless you have defined your own <code>ServletWebServerFactory</code> bean).</p>
+<p>启用Spring-ApplicationContext的自动配置，并且会尝试猜测和配置您可能需要的Bean。通常根据您的类路径和定义的Bean来应用自动配置类。例如，如果您的类路径上有 <code>tomcat-embedded.jar</code>，则可能需要 <code>TomcatServletWebServerFactory</code> （除非自己已经定义了 <code>ServletWebServerFactory</code> 的Bean）。</p>
+<p>When using <code>SpringBootApplication</code>, the auto-configuration of the context is automatically enabled and adding this annotation has therefore no additional effect.</p>
+<p>使用 <code>@SpringBootApplication</code> 时，将自动启用上下文的自动配置，因此再添加该注解不会产生任何其他影响。</p>
+<p>Auto-configuration tries to be as intelligent as possible and will back-away as you define more of your own configuration. You can always manually <code>exclude()</code> any configuration that you never want to apply (use <code>excludeName()</code> if you don’t have access to them). You can also exclude them via the <code>spring.autoconfigure.exclude</code> property. Auto-configuration is always applied after user-defined beans have been registered.</p>
+<p>自动配置会尝试尽可能地智能化，并且在您定义更多自定义配置时会自动退出（被覆盖）。您始终可以手动排除掉任何您不想应用的配置（如果您无法访问它们，请使用 <code>excludeName()</code> 方法），您也可以通过 <code>spring.autoconfigure.exclude</code> 属性排除它们。自动配置始终在注册用户自定义的Bean之后应用。</p>
+<p>The package of the class that is annotated with <code>@EnableAutoConfiguration</code>, usually via <code>@SpringBootApplication</code>, has specific significance and is often used as a ‘default’. For example, it will be used when scanning for <code>@Entity</code> classes. It is generally recommended that you place <code>@EnableAutoConfiguration</code> (if you’re not using <code>@SpringBootApplication</code>) in a root package so that all sub-packages and classes can be searched.</p>
+<p>通常被 <code>@EnableAutoConfiguration</code> 标注的类（如 <code>@SpringBootApplication</code>）的包具有特定的意义，通常被用作“默认值”。例如，在扫描@Entity类时将使用它。通常建议您将 <code>@EnableAutoConfiguration</code>（如果您未使用 <code>@SpringBootApplication</code>）放在根包中，以便可以搜索所有包及子包下的类。</p>
+<p>Auto-configuration classes are regular Spring <code>Configuration</code> beans. They are located using the <code>SpringFactoriesLoader</code> mechanism (keyed against this class). Generally auto-configuration beans are <code>@Conditional</code> beans (most often using <code>@ConditionalOnClass</code> and <code>@ConditionalOnMissingBean</code> annotations).</p>
+<p>自动配置类也是常规的Spring配置类。它们使用 <code>SpringFactoriesLoader</code> 机制定位（针对此类）。通常自动配置类也是 <code>@Conditional</code> Bean（最经常的情况下是使用 <code>@ConditionalOnClass</code> 和 <code>@ConditionalOnMissingBean</code> 标注）。</p>
+</blockquote>
+<p><code>@EnableAutoConfiguration</code> 也是一个组合注解,分开来看</p>
+<h3 id="6-1-AutoConfigurationPackage"><a href="#6-1-AutoConfigurationPackage" class="headerlink" title="6.1 @AutoConfigurationPackage"></a>6.1 @AutoConfigurationPackage</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Indicates that the package containing the annotated class should be registered with</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> AutoConfigurationPackages&#125;.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> 表示包含该注解的类所在的包应该在 AutoConfigurationPackages 中注册。</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Phillip Webb</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> 1.3.0</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> AutoConfigurationPackages</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Import</span>(AutoConfigurationPackages.Registrar.class)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> AutoConfigurationPackage</span><br></pre></td></tr></table></figure>
+<p>它的实现原理是在注解上标注了 <code>@Import</code>，导入了一个 <code>AutoConfigurationPackages.Registrar</code> 。</p>
+<h4 id="6-1-1-AutoConfigurationPackages-Registrar"><a href="#6-1-1-AutoConfigurationPackages-Registrar" class="headerlink" title="6.1.1 AutoConfigurationPackages.Registrar"></a>6.1.1 AutoConfigurationPackages.Registrar</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * &#123;<span class="doctag">@link</span> ImportBeanDefinitionRegistrar&#125; to store the base package from the importing</span></span><br><span class="line"><span class="comment"> ImportBeanDefinitionRegistrar 用于保存导入的配置类所在的根包</span></span><br><span class="line"><span class="comment"> * configuration.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Registrar</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span>, <span class="title">DeterminableImports</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata metadata, BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">		register(registry, <span class="keyword">new</span> PackageImport(metadata).getPackageName());</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Object&gt; <span class="title">determineImports</span><span class="params">(AnnotationMetadata metadata)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Collections.singleton(<span class="keyword">new</span> PackageImport(metadata));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它就是实现把主配置所在根包保存起来以便后期扫描用的。分析源码：</p>
+<p><code>Registrar</code> 实现了 <code>ImportBeanDefinitionRegistrar</code> 接口，它向IOC容器中要手动注册组件。</p>
+<p>在重写的 <code>registerBeanDefinitions</code> 方法中，它要调用外部类 <code>AutoConfigurationPackages</code> 的register方法。</p>
+<p>看传入的参数：<strong>new PackageImport(metadata).getPackageName()</strong>,它实例化的 <code>PackageImport</code> 对象的构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PackageImport(AnnotationMetadata metadata) &#123;</span><br><span class="line">    <span class="keyword">this</span>.packageName = ClassUtils.getPackageName(metadata.getClassName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它取了一个 metadata 的所在包名。那 metadata 又是什么呢？</p>
+<p>翻看 <code>ImportBeanDefinitionRegistrar</code>的文档注释：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * ......</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> importingClassMetadata annotation metadata of the importing class</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> registry current bean definition registry</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意 <strong>importingClassMetadata</strong> 的参数说明：<strong>导入类的注解元数据</strong>。</p>
+<p>它实际代表的是被 <code>@Import</code> 标记的类的信息。</p>
+<p>那在 SpringBoot 的主启动类中，被标记的肯定就是最开始案例里的 <code>DemoApplication</code>。</p>
+<p>也就是说它是 <code>DemoApplication</code> 的类信息，那获取它的包名就是获取主启动类的所在包。</p>
+<p>拿到这个包有什么意义呢？不清楚，那就回到那个 <code>Registrar</code> 中，看它调用的 register 方法都干了什么：</p>
+<h4 id="6-1-2-register方法"><a href="#6-1-2-register方法" class="headerlink" title="6.1.2 register方法"></a>6.1.2 register方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String BEAN = AutoConfigurationPackages.class.getName();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">(BeanDefinitionRegistry registry, String... packageNames)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 判断 BeanFactory 中是否包含 AutoConfigurationPackages</span></span><br><span class="line">    <span class="keyword">if</span> (registry.containsBeanDefinition(BEAN)) &#123;</span><br><span class="line">        BeanDefinition beanDefinition = registry.getBeanDefinition(BEAN);</span><br><span class="line">        ConstructorArgumentValues constructorArguments = beanDefinition.getConstructorArgumentValues();</span><br><span class="line">        <span class="comment">// addBasePackages：添加根包扫描包</span></span><br><span class="line">        constructorArguments.addIndexedArgumentValue(<span class="number">0</span>, addBasePackages(constructorArguments, packageNames));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        GenericBeanDefinition beanDefinition = <span class="keyword">new</span> GenericBeanDefinition();</span><br><span class="line">        beanDefinition.setBeanClass(BasePackages.class);</span><br><span class="line">        beanDefinition.getConstructorArgumentValues().addIndexedArgumentValue(<span class="number">0</span>, packageNames);</span><br><span class="line">        beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);</span><br><span class="line">        registry.registerBeanDefinition(BEAN, beanDefinition);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>划重点：它要判断当前IOC容器中是否包含 <code>AutoConfigurationPackages</code> 。如果有，就会拿到刚才传入的包名，设置到一个 <strong>basePackage</strong> 里面！basePackage 的意义很明显是根包。</p>
+<p>换句话说，它要<strong>取主启动类所在包及子包下的组件</strong>。</p>
+<p>到这里，就呼应了文档注释中的描述，也解释了为什么 <strong>SpringBoot 的启动器一定要在所有类的最外层</strong>。</p>
+<h3 id="6-2-Import-AutoConfigurationImportSelector-class"><a href="#6-2-Import-AutoConfigurationImportSelector-class" class="headerlink" title="6.2 @Import(AutoConfigurationImportSelector.class)"></a>6.2 @Import(AutoConfigurationImportSelector.class)</h3><p>根据上一章节的基础，看到这个也不难理解，它导入了一个 <code>ImportSelector</code>，来向容器中导入组件。</p>
+<p>导入的组件是：<code>AutoConfigurationImportSelector</code></p>
+<h4 id="6-2-1-AutoConfigurationImportSelector"><a href="#6-2-1-AutoConfigurationImportSelector" class="headerlink" title="6.2.1 AutoConfigurationImportSelector"></a>6.2.1 AutoConfigurationImportSelector</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware,</span><br><span class="line">		ResourceLoaderAware, BeanFactoryAware, EnvironmentAware, Ordered</span><br></pre></td></tr></table></figure>
+<p>文档注释原文翻译：</p>
+<blockquote>
+<p><code>DeferredImportSelector</code> to handle auto-configuration. This class can also be subclassed if a custom variant of <code>@EnableAutoConfiguration</code> is needed.</p>
+<p><code>DeferredImportSelector</code> 处理自动配置。如果需要自定义扩展 <code>@EnableAutoConfiguration</code>，则也可以编写该类的子类。</p>
+</blockquote>
+<p>咱能看出来它是 <code>ImportSelector</code> , 可它又特别提到了 <code>DeferredImportSelector</code>，它又是什么呢？</p>
+<h4 id="6-2-2-DeferredImportSelector"><a href="#6-2-2-DeferredImportSelector" class="headerlink" title="6.2.2 DeferredImportSelector"></a>6.2.2 DeferredImportSelector</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public interface DeferredImportSelector extends ImportSelector</span><br></pre></td></tr></table></figure>
+<p>它是 <code>ImportSelector</code> 的子接口，它的文档注释原文和翻译：</p>
+<blockquote>
+<p>A variation of <code>ImportSelector</code> that runs after all <code>@Configuration</code> beans have been processed. This type of selector can be particularly useful when the selected imports are <code>@Conditional</code> . Implementations can also extend the <code>org.springframework.core.Ordered</code> interface or use the <code>org.springframework.core.annotation.Order</code> annotation to indicate a precedence against other <code>DeferredImportSelectors</code> . Implementations may also provide an import group which can provide additional sorting and filtering logic across different selectors.</p>
+<p><code>ImportSelector</code> 的一种扩展，在处理完所有 <code>@Configuration</code> 类型的Bean之后运行。当所选导入为 <code>@Conditional</code> 时，这种类型的选择器特别有用。</p>
+<p>实现类还可以扩展 <code>Ordered</code> 接口，或使用 <code>@Order</code> 注解来指示相对于其他 <code>DeferredImportSelector</code> 的优先级。</p>
+<p>实现类也可以提供导入组，该导入组可以提供跨不同选择器的其他排序和筛选逻辑。</p>
+</blockquote>
+<p>由此我们可以知道，<code>DeferredImportSelector</code> 的执行时机，是<strong>在 <code>@Configuration</code> 注解中的其他逻辑被处理完毕之后（包括对 <code>@ImportResource</code>、<code>@Bean</code> 这些注解的处理）再执行</strong>，换句话说，<strong><code>DeferredImportSelector</code> 的执行时机比 <code>ImportSelector</code> 更晚</strong>。</p>
+<hr>
+<p>回到 <code>AutoConfigurationImportSelector</code>，它的核心部分，就是 <code>ImportSelector</code> 的 <code>selectImport</code> 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public String[] selectImports(AnnotationMetadata annotationMetadata) &#123;</span><br><span class="line">    if (!isEnabled(annotationMetadata)) &#123;</span><br><span class="line">        return NO_IMPORTS;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader</span><br><span class="line">            .loadMetadata(this.beanClassLoader);</span><br><span class="line">    // 加载自动配置类</span><br><span class="line">    AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(autoConfigurationMetadata, </span><br><span class="line">            annotationMetadata);</span><br><span class="line">    return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>关键的源码在 <code>getAutoConfigurationEntry(autoConfigurationMetadata, annotationMetadata)</code> ：</p>
+<h4 id="6-2-3-getAutoConfigurationEntry-autoConfigurationMetadata-annotationMetadata"><a href="#6-2-3-getAutoConfigurationEntry-autoConfigurationMetadata-annotationMetadata" class="headerlink" title="6.2.3 getAutoConfigurationEntry(autoConfigurationMetadata, annotationMetadata)"></a>6.2.3 getAutoConfigurationEntry(autoConfigurationMetadata, annotationMetadata)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Return the &#123;@link AutoConfigurationEntry&#125; based on the &#123;@link AnnotationMetadata&#125;</span><br><span class="line"> * of the importing &#123;@link Configuration @Configuration&#125; class.</span><br><span class="line"> * </span><br><span class="line"> * 根据导入的@Configuration类的AnnotationMetadata返回AutoConfigurationImportSelector.AutoConfigurationEntry。</span><br><span class="line"> */</span><br><span class="line">protected AutoConfigurationEntry getAutoConfigurationEntry(AutoConfigurationMetadata autoConfigurationMetadata,</span><br><span class="line">         AnnotationMetadata annotationMetadata) &#123;</span><br><span class="line">    if (!isEnabled(annotationMetadata)) &#123;</span><br><span class="line">        return EMPTY_ENTRY;</span><br><span class="line">    &#125;</span><br><span class="line">    AnnotationAttributes attributes = getAttributes(annotationMetadata);</span><br><span class="line">    // 【核心】加载候选的自动配置类</span><br><span class="line">    List&lt;String&gt; configurations = getCandidateConfigurations(annotationMetadata, attributes);</span><br><span class="line">    configurations = removeDuplicates(configurations);</span><br><span class="line">    Set&lt;String&gt; exclusions = getExclusions(annotationMetadata, attributes);</span><br><span class="line">    checkExcludedClasses(configurations, exclusions);</span><br><span class="line">    configurations.removeAll(exclusions);</span><br><span class="line">    configurations = filter(configurations, autoConfigurationMetadata);</span><br><span class="line">    fireAutoConfigurationImportEvents(configurations, exclusions);</span><br><span class="line">    return new AutoConfigurationEntry(configurations, exclusions);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法里有一个非常关键的集合：<strong>configurations</strong>（最后直接拿他来返回出去了，给 <code>selectImports</code> 方法转成 <code>String[]</code>）。</p>
+<p>既然最后拿它返回出去，必然它是导入其他组件的核心。</p>
+<p>这个 <code>configurations</code> 集合的数据，都是通过 <code>getCandidateConfigurations</code> 方法来获取：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">protected Class&lt;?&gt; getSpringFactoriesLoaderFactoryClass() &#123;</span><br><span class="line">    return EnableAutoConfiguration.class;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected List&lt;String&gt; getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) &#123;</span><br><span class="line">    // SPI机制加载自动配置类</span><br><span class="line">    List&lt;String&gt; configurations = SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(),</span><br><span class="line">             getBeanClassLoader());</span><br><span class="line">    Assert.notEmpty(configurations, &quot;No auto configuration classes found in META-INF/spring.factories. If you &quot;</span><br><span class="line">             + &quot;are using a custom packaging, make sure that file is correct.&quot;);</span><br><span class="line">    return configurations;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法又调用了 <code>SpringFactoriesLoader.loadFactoryNames</code> 方法，传入的Class就是 <code>@EnableAutoConfiguration</code>：</p>
+<h4 id="6-2-4-SpringFactoriesLoader-loadFactoryNames"><a href="#6-2-4-SpringFactoriesLoader-loadFactoryNames" class="headerlink" title="6.2.4 SpringFactoriesLoader.loadFactoryNames"></a>6.2.4 SpringFactoriesLoader.loadFactoryNames</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public static final String FACTORIES_RESOURCE_LOCATION = &quot;META-INF/spring.factories&quot;;</span><br><span class="line"></span><br><span class="line">public static List&lt;String&gt; loadFactoryNames(Class&lt;?&gt; factoryClass, @Nullable ClassLoader classLoader) &#123;</span><br><span class="line">    String factoryClassName = factoryClass.getName();</span><br><span class="line">    //     ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓</span><br><span class="line">    return loadSpringFactories(classLoader).getOrDefault(factoryClassName, Collections.emptyList());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static Map&lt;String, List&lt;String&gt;&gt; loadSpringFactories(@Nullable ClassLoader classLoader) &#123;</span><br><span class="line">    MultiValueMap&lt;String, String&gt; result = cache.get(classLoader);</span><br><span class="line">    if (result != null) &#123;</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        // ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓</span><br><span class="line">        Enumeration&lt;URL&gt; urls = (classLoader != null ?</span><br><span class="line">                 classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :</span><br><span class="line">                 ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));</span><br><span class="line">        result = new LinkedMultiValueMap&lt;&gt;();</span><br><span class="line">        while (urls.hasMoreElements()) &#123;</span><br><span class="line">            URL url = urls.nextElement();</span><br><span class="line">            UrlResource resource = new UrlResource(url);</span><br><span class="line">            Properties properties = PropertiesLoaderUtils.loadProperties(resource);</span><br><span class="line">            for (Map.Entry&lt;?, ?&gt; entry : properties.entrySet()) &#123;</span><br><span class="line">                String factoryClassName = ((String) entry.getKey()).trim();</span><br><span class="line">                for (String factoryName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) &#123;</span><br><span class="line">                    result.add(factoryClassName, factoryName.trim());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cache.put(classLoader, result);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">    catch (IOException ex) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;Unable to load factories from location [&quot; +</span><br><span class="line">                                       FACTORIES_RESOURCE_LOCATION + &quot;]&quot;, ex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>源码中使用 classLoader 去加载了指定常量路径下的资源： <code>FACTORIES_RESOURCE_LOCATION</code> ，而这个常量指定的路径实际是：<strong>META-INF/spring.factories</strong> 。</p>
+<p>这个文件在 <code>spring-boot-autoconfiguration</code> 包下可以找到。</p>
+<p><code>spring-boot-autoconfiguration</code> 包下 <code>META-INF/spring.factories</code> 节选：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># Initializers</span><br><span class="line">org.springframework.context.ApplicationContextInitializer=\</span><br><span class="line">org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,\</span><br><span class="line">org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener</span><br><span class="line"></span><br><span class="line"># Application Listeners</span><br><span class="line">org.springframework.context.ApplicationListener=\</span><br><span class="line">org.springframework.boot.autoconfigure.BackgroundPreinitializer</span><br><span class="line"></span><br><span class="line"># Auto Configuration Import Listeners</span><br><span class="line">org.springframework.boot.autoconfigure.AutoConfigurationImportListener=\</span><br><span class="line">org.springframework.boot.autoconfigure.condition.ConditionEvaluationReportAutoConfigurationImportListener</span><br><span class="line"></span><br><span class="line"># Auto Configuration Import Filters</span><br><span class="line">org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\</span><br><span class="line">org.springframework.boot.autoconfigure.condition.OnBeanCondition,\</span><br><span class="line">org.springframework.boot.autoconfigure.condition.OnClassCondition,\</span><br><span class="line">org.springframework.boot.autoconfigure.condition.OnWebApplicationCondition</span><br><span class="line"></span><br><span class="line"># Auto Configure</span><br><span class="line">org.springframework.boot.autoconfigure.EnableAutoConfiguration=\</span><br><span class="line">org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\</span><br><span class="line">org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\</span><br><span class="line">org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\</span><br><span class="line">org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\</span><br><span class="line">org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>之后拿到这个资源文件，以 Properties 的形式加载，并取出 <code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code> 指定的所有自动配置类（是一个很大的字符串，里面都是自动配置类的全限定类名），装配到IOC容器中，之后自动配置类就会通过 <code>ImportSelector</code> 和 <code>@Import</code> 的机制被创建出来，之后就生效了。</p>
+<p>这也就解释了为什么 <strong>即便没有任何配置文件，SpringBoot的Web应用都能正常运行</strong>。</p>
+<h4 id="6-2-5-【总结规律】"><a href="#6-2-5-【总结规律】" class="headerlink" title="6.2.5 【总结规律】"></a>6.2.5 【总结规律】</h4><p>从上面的 Properties 中发现，所有配置的 <code>EnableAutoConfiguration</code> 的自动配置类，都<strong>以 AutoConfiguration 结尾</strong>！由此规律，以后我们要了解一个 SpringBoot 的模块或者第三方集成的模块时，就可以<strong>大胆猜测基本上一定会有 XXXAutoConfiguration 类出现</strong>！</p>
+<h3 id="6-3-【扩展】SpringBoot使用的工厂机制"><a href="#6-3-【扩展】SpringBoot使用的工厂机制" class="headerlink" title="6.3 【扩展】SpringBoot使用的工厂机制"></a>6.3 【扩展】SpringBoot使用的工厂机制</h3><p>SpringBoot 在非常多的位置都利用类似于上面 “通过读取 <code>spring.factories</code> 加载一组预先配置的类” 的机制，而这个机制的核心源码来自 <code>SpringFactoriesLoader</code> 。这一章节我们来详细了解一下这个类，对于后续 SpringBoot 的应用启动过程的源码阅读和原理的理解都有所帮助。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package org.springframework.core.io.support;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * ......</span><br><span class="line"> *</span><br><span class="line"> * @since 3.2</span><br><span class="line"> */</span><br><span class="line">public final class SpringFactoriesLoader</span><br></pre></td></tr></table></figure>
+<p>我们发现它不是来自 SpringBoot，而是在 SpringFramework3.2 就已经有了的类。它的文档注释原文翻译：</p>
+<blockquote>
+<p>General purpose factory loading mechanism for internal use within the framework. SpringFactoriesLoader loads and instantiates factories of a given type from <code>&quot;META-INF/spring.factories&quot;</code> files which may be present in multiple JAR files in the classpath. The <code>spring.factories</code> file must be in <code>Properties</code> format, where the key is the fully qualified name of the interface or abstract class, and the value is a comma-separated list of implementation class names. For example: <code>example.MyService=example.MyServiceImpl1,example.MyServiceImpl2</code> where example.MyService is the name of the interface, and MyServiceImpl1 and MyServiceImpl2 are two implementations.</p>
+<p>它是一个框架内部内部使用的通用工厂加载机制。</p>
+<p><code>SpringFactoriesLoader</code> 从 <code>META-INF/spring.factories</code> 文件中加载并实例化给定类型的工厂，这些文件可能存在于类路径中的多个jar包中。<code>spring.factories</code> 文件必须采用 <strong>properties</strong> 格式，其中key是接口或抽象类的全限定名，而value是用逗号分隔的实现类的全限定类名列表。</p>
+<p>例如：<code>example.MyService=example.MyServiceImpl1,example.MyServiceImpl2</code></p>
+<p>其中 <code>example.MyService</code> 是接口的名称，而 <code>MyServiceImpl1</code> 和 <code>MyServiceImpl2</code> 是两个该接口的实现类。</p>
+</blockquote>
+<p>到这里已经能够发现，这个思路跟Java原生的SPI非常类似。</p>
+<h4 id="6-3-1-【扩展】Java的SPI"><a href="#6-3-1-【扩展】Java的SPI" class="headerlink" title="6.3.1 【扩展】Java的SPI"></a>6.3.1 【扩展】Java的SPI</h4><p>SPI全称为 <strong>Service Provider Interface</strong>，是jdk内置的一种服务提供发现机制。简单来说，它就是一种动态替换发现的机制。</p>
+<p>SPI规定，所有要预先声明的类都应该放在 <code>META-INF/services</code> 中。配置的文件名是接口/抽象类的全限定名，文件内容是抽象类的子类或接口的实现类的全限定类名，如果有多个，借助换行符，一行一个。</p>
+<p>具体使用时，使用jdk内置的 <code>ServiceLoader</code> 类来加载预先配置好的实现类。</p>
+<p>举个例子：</p>
+<p>在 <code>META-INF/services</code> 中声明一个文件名为 <code>com.linkedbear.boot.demo.SpiDemoInterface</code> 的文件，文件内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">com.linkedbear.boot.demo.SpiDemoInterfaceImpl</span><br></pre></td></tr></table></figure>
+<p>在 <code>com.linkedbear.boot.demo</code> 包下新建一个接口，类名必须跟上面配置的文件名一样：<code>SpiDemoInterface</code>。</p>
+<p>在接口中声明一个 <code>test()</code> 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface SpiDemoInterface &#123;</span><br><span class="line">    void test();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来再新建一个类 <code>SpiDemoInterfaceImpl</code>，并实现 <code>SpiDemoInterface</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class SpiDemoInterfaceImpl implements SpiDemoInterface &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void test() &#123;</span><br><span class="line">        System.out.println(&quot;SpiDemoInterfaceImpl#test() run...&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编写主运行类，测试效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class App &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        ServiceLoader&lt;SpiDemoInterface&gt; loaders = ServiceLoader.load(SpiDemoInterface.class);</span><br><span class="line">        loaders.foreach(SpiDemoInterface::test);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SpiDemoInterfaceImpl#test() run...</span><br></pre></td></tr></table></figure>
+<h4 id="6-3-2-SpringFramework的SpringFactoriesLoader"><a href="#6-3-2-SpringFramework的SpringFactoriesLoader" class="headerlink" title="6.3.2 SpringFramework的SpringFactoriesLoader"></a>6.3.2 SpringFramework的SpringFactoriesLoader</h4><p>SpringFramework 利用 <code>SpringFactoriesLoader</code> 都是调用 <code>loadFactoryNames</code> 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Load the fully qualified class names of factory implementations of the</span><br><span class="line"> * given type from &#123;@value #FACTORIES_RESOURCE_LOCATION&#125;, using the given</span><br><span class="line"> * class loader.</span><br><span class="line"> * @param factoryClass the interface or abstract class representing the factory</span><br><span class="line"> * @param classLoader the ClassLoader to use for loading resources; can be</span><br><span class="line"> * &#123;@code null&#125; to use the default</span><br><span class="line"> * @throws IllegalArgumentException if an error occurs while loading factory names</span><br><span class="line"> * @see #loadFactories</span><br><span class="line"> */</span><br><span class="line">public static List&lt;String&gt; loadFactoryNames(Class&lt;?&gt; factoryClass, @Nullable ClassLoader classLoader) &#123;</span><br><span class="line">    String factoryClassName = factoryClass.getName();</span><br><span class="line">    return loadSpringFactories(classLoader).getOrDefault(factoryClassName, Collections.emptyList());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>文档注释原文翻译：</p>
+<blockquote>
+<p>Load the fully qualified class names of factory implementations of the given type from “META-INF/spring.factories”, using the given class loader.</p>
+<p>使用给定的类加载器从 <code>META-INF/spring.factories</code> 中加载给定类型的工厂实现的全限定类名。</p>
+</blockquote>
+<p>文档注释中没有提到接口、抽象类、实现类的概念，结合之前看到过的 <code>spring.factories</code> 文件，应该能意识到它<strong>只是key-value的关系</strong>！</p>
+<p>这么设计的好处：<strong>不再局限于接口-实现类的模式，key可以随意定义！</strong> （如上面的 <code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code> 是一个注解）</p>
+<p>来看方法实现，第一行代码获取的是要被加载的接口/抽象类的全限定名，下面的 return 分为两部分：<code>loadSpringFactories</code> 和 <code>getOrDefault</code>。<code>getOrDefault</code> 方法很明显是Map中的方法，不再解释，主要来详细看 <code>loadSpringFactories</code> 方法。</p>
+<h4 id="6-3-3-loadSpringFactories"><a href="#6-3-3-loadSpringFactories" class="headerlink" title="6.3.3 loadSpringFactories"></a>6.3.3 loadSpringFactories</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public static final String FACTORIES_RESOURCE_LOCATION = &quot;META-INF/spring.factories&quot;;</span><br><span class="line"></span><br><span class="line">private static final Map&lt;ClassLoader, MultiValueMap&lt;String, String&gt;&gt; cache = new ConcurrentReferenceHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">// 这个方法仅接收了一个类加载器</span><br><span class="line">private static Map&lt;String, List&lt;String&gt;&gt; loadSpringFactories(@Nullable ClassLoader classLoader) &#123;</span><br><span class="line">    MultiValueMap&lt;String, String&gt; result = cache.get(classLoader);</span><br><span class="line">    if (result != null) &#123;</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        Enumeration&lt;URL&gt; urls = (classLoader != null ?</span><br><span class="line">                 classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :</span><br><span class="line">                 ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));</span><br><span class="line">        result = new LinkedMultiValueMap&lt;&gt;();</span><br><span class="line">        while (urls.hasMoreElements()) &#123;</span><br><span class="line">            URL url = urls.nextElement();</span><br><span class="line">            UrlResource resource = new UrlResource(url);</span><br><span class="line">            Properties properties = PropertiesLoaderUtils.loadProperties(resource);</span><br><span class="line">            for (Map.Entry&lt;?, ?&gt; entry : properties.entrySet()) &#123;</span><br><span class="line">                String factoryClassName = ((String) entry.getKey()).trim();</span><br><span class="line">                for (String factoryName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) &#123;</span><br><span class="line">                    result.add(factoryClassName, factoryName.trim());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cache.put(classLoader, result);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">    catch (IOException ex) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;Unable to load factories from location [&quot; +</span><br><span class="line">                                       FACTORIES_RESOURCE_LOCATION + &quot;]&quot;, ex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们分段来看。</p>
+<h5 id="6-3-3-1-获取本地缓存"><a href="#6-3-3-1-获取本地缓存" class="headerlink" title="6.3.3.1 获取本地缓存"></a>6.3.3.1 获取本地缓存</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MultiValueMap&lt;String, String&gt; result = cache.get(classLoader);</span><br><span class="line">if (result != null) &#123;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入方法后先从本地缓存中根据当前的类加载器获取是否有一个类型为 <code>MultiValueMap</code> 的值，这个类型有些陌生，我们先看看这是个什么东西：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">package org.springframework.util;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Extension of the &#123;@code Map&#125; interface that stores multiple values.</span><br><span class="line"> *</span><br><span class="line"> * @since 3.0</span><br><span class="line"> * @param &lt;K&gt; the key type</span><br><span class="line"> * @param &lt;V&gt; the value element type</span><br><span class="line"> */</span><br><span class="line">public interface MultiValueMap&lt;K, V&gt; extends Map&lt;K, List&lt;V&gt;&gt;</span><br></pre></td></tr></table></figure>
+<p>发现它实际上就是一个 <code>Map&gt;</code>。</p>
+<p>那第一次从cache中肯定获取不到值，故下面的if结构肯定不进入，进入下面的try块。</p>
+<h5 id="6-3-3-2-加载spring-factories"><a href="#6-3-3-2-加载spring-factories" class="headerlink" title="6.3.3.2 加载spring.factories"></a>6.3.3.2 加载spring.factories</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Enumeration&lt;URL&gt; urls = (classLoader != null ?</span><br><span class="line">         classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :</span><br><span class="line">         ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));</span><br><span class="line">result = new LinkedMultiValueMap&lt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>这部分动作就是获取当前 classpath 下<strong>所有jar包</strong>中有的 <code>spring.factories</code> 文件，并将它们加载到内存中。</p>
+<h5 id="6-3-3-3-缓存到本地"><a href="#6-3-3-3-缓存到本地" class="headerlink" title="6.3.3.3 缓存到本地"></a>6.3.3.3 缓存到本地</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">while (urls.hasMoreElements()) &#123;</span><br><span class="line">    URL url = urls.nextElement();</span><br><span class="line">    UrlResource resource = new UrlResource(url);</span><br><span class="line">    Properties properties = PropertiesLoaderUtils.loadProperties(resource);</span><br><span class="line">    for (Map.Entry&lt;?, ?&gt; entry : properties.entrySet()) &#123;</span><br><span class="line">        String factoryClassName = ((String) entry.getKey()).trim();</span><br><span class="line">        for (String factoryName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) &#123;</span><br><span class="line">            result.add(factoryClassName, factoryName.trim());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">cache.put(classLoader, result);</span><br></pre></td></tr></table></figure>
+<p>它拿到每一个文件，并用 <code>Properties</code> 方式加载文件，之后把这个文件中每一组键值对都加载出来，放入 <code>MultiValueMap</code> 中。</p>
+<p>如果一个接口/抽象类有多个对应的目标类，则使用英文逗号隔开。<code>StringUtils.commaDelimitedListToStringArray</code>会将大字符串拆成一个一个的全限定类名。</p>
+<p>整理完后，整个result放入cache中。下一次再加载时就无需再次加载 <code>spring.factories</code> 文件了。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/31/SpringBoot启动引导-原理概述及包扫描/" rel="next" title="SpringBoot启动引导-原理概述及包扫描">
+                <i class="fa fa-chevron-left"></i> SpringBoot启动引导-原理概述及包扫描
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/03/SpringBoot启动引导-自动装备实例SpringWebMvc/" rel="prev" title="SpringBoot启动引导-自动装备实例SpringWebMvc">
+                SpringBoot启动引导-自动装备实例SpringWebMvc <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-SpringBoot的自动装配"><span class="nav-text">6. SpringBoot的自动装配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-AutoConfigurationPackage"><span class="nav-text">6.1 @AutoConfigurationPackage</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-1-AutoConfigurationPackages-Registrar"><span class="nav-text">6.1.1 AutoConfigurationPackages.Registrar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1-2-register方法"><span class="nav-text">6.1.2 register方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Import-AutoConfigurationImportSelector-class"><span class="nav-text">6.2 @Import(AutoConfigurationImportSelector.class)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-1-AutoConfigurationImportSelector"><span class="nav-text">6.2.1 AutoConfigurationImportSelector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-2-DeferredImportSelector"><span class="nav-text">6.2.2 DeferredImportSelector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-3-getAutoConfigurationEntry-autoConfigurationMetadata-annotationMetadata"><span class="nav-text">6.2.3 getAutoConfigurationEntry(autoConfigurationMetadata, annotationMetadata)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-4-SpringFactoriesLoader-loadFactoryNames"><span class="nav-text">6.2.4 SpringFactoriesLoader.loadFactoryNames</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2-5-【总结规律】"><span class="nav-text">6.2.5 【总结规律】</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-【扩展】SpringBoot使用的工厂机制"><span class="nav-text">6.3 【扩展】SpringBoot使用的工厂机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-1-【扩展】Java的SPI"><span class="nav-text">6.3.1 【扩展】Java的SPI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-2-SpringFramework的SpringFactoriesLoader"><span class="nav-text">6.3.2 SpringFramework的SpringFactoriesLoader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3-3-loadSpringFactories"><span class="nav-text">6.3.3 loadSpringFactories</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#6-3-3-1-获取本地缓存"><span class="nav-text">6.3.3.1 获取本地缓存</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-3-3-2-加载spring-factories"><span class="nav-text">6.3.3.2 加载spring.factories</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-3-3-3-缓存到本地"><span class="nav-text">6.3.3.3 缓存到本地</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>

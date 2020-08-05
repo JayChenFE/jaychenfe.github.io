@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.4.2" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png?v=6.4.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.4.2" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.2',
+    sidebar: {"position":"left","sidebar_width":350,"display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="原理装饰模式（Decorator Pattern）：动态地给一个对象增加一些额外的职责（Responsibility），就增加对象功能来说，装饰模式比生成子类实现更为灵活。 结构图 示例穿衣服(python实现)给自己搭配了一套着装：一条卡其色休闲裤、一双深色休闲皮鞋、一条银色针扣头的黑色腰带、一件紫红色针织毛衣、一件白色衬衫、一副方形黑框眼镜。但类似的着装也可以穿在其他的人身上，比如一个老师也可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="装饰者模式">
+<meta property="og:url" content="https://jaychenfe.github.io/2019/05/04/装饰者模式/index.html">
+<meta property="og:site_name" content="习习的自留地">
+<meta property="og:description" content="原理装饰模式（Decorator Pattern）：动态地给一个对象增加一些额外的职责（Responsibility），就增加对象功能来说，装饰模式比生成子类实现更为灵活。 结构图 示例穿衣服(python实现)给自己搭配了一套着装：一条卡其色休闲裤、一双深色休闲皮鞋、一条银色针扣头的黑色腰带、一件紫红色针织毛衣、一件白色衬衫、一副方形黑框眼镜。但类似的着装也可以穿在其他的人身上，比如一个老师也可">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190504133206.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190505220317.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190505220514.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190505222545.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508100801.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508100946.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508101539.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508102016.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508102229.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508144226.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508104815.png">
+<meta property="og:updated_time" content="2020-08-05T02:40:11.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="装饰者模式">
+<meta name="twitter:description" content="原理装饰模式（Decorator Pattern）：动态地给一个对象增加一些额外的职责（Responsibility），就增加对象功能来说，装饰模式比生成子类实现更为灵活。 结构图 示例穿衣服(python实现)给自己搭配了一套着装：一条卡其色休闲裤、一双深色休闲皮鞋、一条银色针扣头的黑色腰带、一件紫红色针织毛衣、一件白色衬衫、一副方形黑框眼镜。但类似的着装也可以穿在其他的人身上，比如一个老师也可">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20190504133206.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="习习的自留地" type="application/atom+xml">
+
+
+
+
+  <link rel="canonical" href="https://jaychenfe.github.io/2019/05/04/装饰者模式/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>装饰者模式 | 习习的自留地</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">习习的自留地</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">写代码是件很有意思的事情</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-rss">
+    <a href="/atom.xml" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-rss"></i> <br>RSS订阅</a>
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jaychenfe.github.io/2019/05/04/装饰者模式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="习习">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="习习的自留地">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">装饰者模式
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-04 13:31:07" itemprop="dateCreated datePublished" datetime="2019-05-04T13:31:07+00:00">2019-05-04</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-08-05 02:40:11" itemprop="dateModified" datetime="2020-08-05T02:40:11+00:00">2020-08-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/设计模式/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p><strong>装饰模式</strong>（Decorator Pattern）：动态地给一个对象增加一些额外的职责（Responsibility），就增加对象功能来说，装饰模式比生成子类实现更为灵活。</p>
+<h2 id="结构图"><a href="#结构图" class="headerlink" title="结构图"></a>结构图</h2><p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190504133206.png" alt=""></p>
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="穿衣服-python实现"><a href="#穿衣服-python实现" class="headerlink" title="穿衣服(python实现)"></a>穿衣服(python实现)</h2><p>给自己搭配了一套着装：一条卡其色休闲裤、一双深色休闲皮鞋、一条银色针扣头的黑色腰带、一件紫红色针织毛衣、一件白色衬衫、一副方形黑框眼镜。但类似的着装也可以穿在其他的人身上，比如一个老师也可以这样穿：一双深色休闲皮鞋、一件白色衬衫、一副方形黑框眼镜。</p>
+<p>我们就用程序来模拟这样一个情景。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>:</span></span><br><span class="line">    <span class="string">"人"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.__name = name</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getName</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.__name</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"我的着装是："</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Engineer</span><span class="params">(Person)</span>:</span></span><br><span class="line">    <span class="string">"工程师"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, skill)</span>:</span></span><br><span class="line">        super().__init__(name)</span><br><span class="line">        self.__skill = skill</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getSkill</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.__skill</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"我是"</span> + self.getSkill() + <span class="string">"工程师"</span> + self.getName())</span><br><span class="line">        super().wear()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Teacher</span><span class="params">(Person)</span>:</span></span><br><span class="line">    <span class="string">"教师"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, name, title)</span>:</span></span><br><span class="line">        super().__init__(name)</span><br><span class="line">        self.__title = title</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getTitle</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.__title</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"我是"</span> + self.getName() + self.getTitle())</span><br><span class="line">        super().wear()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClothingDecorator</span><span class="params">(Person)</span>:</span></span><br><span class="line">    <span class="string">"服装装饰器"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        self._decorated = person</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        self._decorated.wear()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CasualPantDecorator</span><span class="params">(ClothingDecorator)</span>:</span></span><br><span class="line">    <span class="string">"休闲裤"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        super().__init__(person)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().wear()</span><br><span class="line">        print(<span class="string">"一条卡其色休闲裤"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BeltDecorator</span><span class="params">(ClothingDecorator)</span>:</span></span><br><span class="line">    <span class="string">"腰带"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        super().__init__(person)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().wear()</span><br><span class="line">        print(<span class="string">"一条银色针扣头的黑色腰带"</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LeatherShoesDecorator</span><span class="params">(ClothingDecorator)</span>:</span></span><br><span class="line">    <span class="string">"皮鞋"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        super().__init__(person)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().wear()</span><br><span class="line">        print(<span class="string">"一双深色休闲皮鞋"</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KnittedSweaterDecorator</span><span class="params">(ClothingDecorator)</span>:</span></span><br><span class="line">    <span class="string">"针织毛衣"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        super().__init__(person)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().wear()</span><br><span class="line">        print(<span class="string">"一件紫红色针织毛衣"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WhiteShirtDecorator</span><span class="params">(ClothingDecorator)</span>:</span></span><br><span class="line">    <span class="string">"白色衬衫"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        super().__init__(person)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().wear()</span><br><span class="line">        print(<span class="string">"一件白色衬衫"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GlassesDecorator</span><span class="params">(ClothingDecorator)</span>:</span></span><br><span class="line">    <span class="string">"眼镜"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, person)</span>:</span></span><br><span class="line">        super().__init__(person)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wear</span><span class="params">(self)</span>:</span></span><br><span class="line">        super().wear()</span><br><span class="line">        print(<span class="string">"一副方形黑框眼镜"</span>)</span><br></pre></td></tr></table></figure>
+<p>客户端:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testDecorator</span><span class="params">()</span>:</span></span><br><span class="line">    tony = Engineer(<span class="string">"Tony"</span>, <span class="string">"客户端"</span>)</span><br><span class="line">    pant = CasualPantDecorator(tony)</span><br><span class="line">    belt = BeltDecorator(pant)</span><br><span class="line">    shoes = LeatherShoesDecorator(belt)</span><br><span class="line">    shirt = WhiteShirtDecorator(shoes)</span><br><span class="line">    sweater = KnittedSweaterDecorator(shirt)</span><br><span class="line">    glasses = GlassesDecorator(sweater)</span><br><span class="line">    glasses.wear()</span><br><span class="line"></span><br><span class="line">    print()</span><br><span class="line">    decorateTeacher = GlassesDecorator(WhiteShirtDecorator(LeatherShoesDecorator(Teacher(<span class="string">"wells"</span>, <span class="string">"教授"</span>))))</span><br><span class="line">    decorateTeacher.wear()</span><br></pre></td></tr></table></figure></p>
+<p><code>decorateTeacher = GlassesDecorator(WhiteShirtDecorator(LeatherShoesDecorator(Teacher(&quot;wells&quot;, &quot;教授&quot;))))</code>这个写法，大家不要觉得奇怪，它其实就是将多个对象的创建过程合在了一起，其实是一种优雅的写法（是不是少了好几行代码？）。创建的 Teacher 对象又通过参数传给 <code>LeatherShoesDecorator</code>的构造函数，而创建的 <code>LeatherShoesDecorator</code> 对象又通过参数传给<code>WhiteShirtDecorator</code>的构造函数，以此类推……</p>
+<p>输出结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">我是客户端工程师Tony</span><br><span class="line">我的着装是：</span><br><span class="line">一条卡其色休闲裤</span><br><span class="line">一条银色针扣头的黑色腰带</span><br><span class="line">一双深色休闲皮鞋</span><br><span class="line">一件白色衬衫</span><br><span class="line">一件紫红色针织毛衣</span><br><span class="line">一副方形黑框眼镜</span><br><span class="line"></span><br><span class="line">我是wells教授</span><br><span class="line">我的着装是：</span><br><span class="line">一双深色休闲皮鞋</span><br><span class="line">一件白色衬衫</span><br><span class="line">一副方形黑框眼镜</span><br></pre></td></tr></table></figure>
+<h3 id="装饰关系VS继承关系"><a href="#装饰关系VS继承关系" class="headerlink" title="装饰关系VS继承关系"></a>装饰关系VS继承关系</h3><p>装饰关系:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190505220317.png" alt=""></p>
+<p>继承关系:</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190505220514.png" alt=""></p>
+<h3 id="装饰模式的特点"><a href="#装饰模式的特点" class="headerlink" title="装饰模式的特点"></a>装饰模式的特点</h3><ul>
+<li><p><strong>可灵活地给一个对象增加职责或拓展功能</strong></p>
+<p>如上面的示例中，可任意地穿上自己想穿的衣服。不管穿上什么衣服，你还是那个你，但穿上不同的衣服你就会有不同的外表。</p>
+</li>
+<li><p><strong>可增加任意多个装饰</strong></p>
+<p>你可以只穿一件衣服，也可以只穿一条裤子，也可以衣服和裤子各种搭配的穿，全随你意！</p>
+</li>
+<li><p><strong>装饰的顺序不同，可能产生不同的效果</strong></p>
+<p>在上面的示例中，Tony 是针织毛衣穿在外面，白色衬衫穿在里面。当然，如果你愿意（或因为怕冷），也可以针织毛衣穿在里面，白色衬衫穿在外面。但两种着装穿出来的效果，给人的感觉肯定是完全不一样的，自己脑补一下，哈哈！</p>
+</li>
+</ul>
+<p>使用装饰模式的方式，想要改变装饰的顺序，也是非常简单的。只要把测试代码稍微改动一下即可，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">testDecorator2</span><span class="params">()</span>:</span></span><br><span class="line">    tony = Engineer(<span class="string">"Tony"</span>, <span class="string">"客户端"</span>)</span><br><span class="line">    pant = CasualPantDecorator(tony)</span><br><span class="line">    belt = BeltDecorator(pant)</span><br><span class="line">    shoes = LeatherShoesDecorator(belt)</span><br><span class="line">    sweater = KnittedSweaterDecorator(shoes)</span><br><span class="line">    shirt = WhiteShirtDecorator(sweater)</span><br><span class="line">    glasses = GlassesDecorator(shirt)</span><br><span class="line">    glasses.wear()</span><br></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">我是客户端工程师Tony</span><br><span class="line">我的着装是：</span><br><span class="line">一条卡其色休闲裤</span><br><span class="line">一条银色针扣头的黑色腰带</span><br><span class="line">一双深色休闲皮鞋</span><br><span class="line">一件紫红色针织毛衣</span><br><span class="line">一件白色衬衫</span><br><span class="line">一副方形黑框眼镜</span><br></pre></td></tr></table></figure>
+<h3 id="模型抽象"><a href="#模型抽象" class="headerlink" title="模型抽象"></a>模型抽象</h3><p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190505222545.png" alt=""></p>
+<p>上图中的 Component 是一个抽象类，代表具有某中功能（function）的组件，ComponentImplA 和 ComponentImplB 分别是其具体的实现子类。Decorator 是 Component 装饰器，里面有一个 Component 的对象 decorated，这就是被装饰的对象，装饰器可为被装饰对象添加额外的功能或行为（addBehavior）。DecoratorImplA 和 DecoratorImplB 分别是两个具体的装饰器（实现子类）。</p>
+<p>这样一种模式很好地将装饰器与被装饰的对象进行解耦。</p>
+<h2 id="Js中的装饰模式-Js实现"><a href="#Js中的装饰模式-Js实现" class="headerlink" title="Js中的装饰模式(Js实现)"></a>Js中的装饰模式(Js实现)</h2><h3 id="用-AOP-装饰函数"><a href="#用-AOP-装饰函数" class="headerlink" title="用 AOP 装饰函数"></a>用 AOP 装饰函数</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用 AOP 装饰函数</span></span><br><span class="line"><span class="built_in">Function</span>.prototype.before = <span class="function"><span class="keyword">function</span> (<span class="params">beforefn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> __self = <span class="keyword">this</span>; <span class="comment">// 保存原函数的引用</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="comment">// 返回包含了原函数和新函数的"代理"函数</span></span><br><span class="line">        beforefn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>); <span class="comment">// 执行新函数，且保证this 不被劫持，新函数接受的参数</span></span><br><span class="line">        <span class="comment">// 也会被原封不动地传入原函数，新函数在原函数之前执行</span></span><br><span class="line">        <span class="keyword">return</span> __self.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>); <span class="comment">// 执行原函数并返回原函数的执行结果，</span></span><br><span class="line">        <span class="comment">// 并且保证this 不被劫持</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">Function</span>.prototype.after = <span class="function"><span class="keyword">function</span> (<span class="params">afterfn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> __self = <span class="keyword">this</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> ret = __self.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">        afterfn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="给-window-绑定-onload-事件"><a href="#给-window-绑定-onload-事件" class="headerlink" title="给 window 绑定 onload 事件"></a>给 window 绑定 onload 事件</h4><h5 id="不使用AOP"><a href="#不使用AOP" class="headerlink" title="不使用AOP"></a>不使用AOP</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line"> alert (<span class="number">1</span>); </span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">var</span> _onload = <span class="built_in">window</span>.onload || <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;; </span><br><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line"> _onload(); </span><br><span class="line"> alert (<span class="number">2</span>); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="使用AOP"><a href="#使用AOP" class="headerlink" title="使用AOP"></a>使用AOP</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  alert (<span class="number">1</span>); </span><br><span class="line">&#125; </span><br><span class="line"><span class="built_in">window</span>.onload = ( <span class="built_in">window</span>.onload || <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125; ).after(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  alert (<span class="number">2</span>); </span><br><span class="line">&#125;).after(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  alert (<span class="number">3</span>); </span><br><span class="line">&#125;).after(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  alert (<span class="number">4</span>); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h5 id="不污染原型"><a href="#不污染原型" class="headerlink" title="不污染原型"></a>不污染原型</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> before = <span class="function"><span class="keyword">function</span>(<span class="params"> fn, beforefn </span>)</span>&#123; </span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  beforefn.apply( <span class="keyword">this</span>, <span class="built_in">arguments</span> ); </span><br><span class="line">  <span class="keyword">return</span> fn.apply( <span class="keyword">this</span>, <span class="built_in">arguments</span> );  &#125; </span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">var</span> a = before( </span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;alert (<span class="number">3</span>)&#125;, </span><br><span class="line">  <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;alert (<span class="number">2</span>)&#125; </span><br><span class="line">); </span><br><span class="line">a = before( a, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;alert (<span class="number">1</span>);&#125; ); </span><br><span class="line">a();</span><br></pre></td></tr></table></figure>
+<h3 id="AOP-的应用实例"><a href="#AOP-的应用实例" class="headerlink" title="AOP 的应用实例"></a>AOP 的应用实例</h3><h4 id="数据统计上报"><a href="#数据统计上报" class="headerlink" title="数据统计上报"></a>数据统计上报</h4><p>页面中有一个登录 button，点击这个 button 会弹出登录浮层，与此同时要进行数据上报，<br>来统计有多少用户点击了这个登录 button：</p>
+<h5 id="不使用AOP-1"><a href="#不使用AOP-1" class="headerlink" title="不使用AOP"></a>不使用AOP</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;button tag=<span class="string">"login"</span> id=<span class="string">"button"</span>&gt;点击打开登录浮层&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">	var showLogin = function()&#123;</span></span><br><span class="line"><span class="regexp">		console.log( '打开登录浮层' );</span></span><br><span class="line"><span class="regexp">		log( this.getAttribute( 'tag' ) );</span></span><br><span class="line"><span class="regexp">	&#125;</span></span><br><span class="line"><span class="regexp">	var log = function( tag )&#123;</span></span><br><span class="line"><span class="regexp">		console.log( '上报标签为: ' + tag );</span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ (new Image).src = 'http:/</span><span class="regexp">/ xxx.com/</span>report?tag=<span class="string">' + tag; // 真正的上报代码略</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">document.getElementById( '</span>button<span class="string">' ).onclick = showLogin;</span></span><br><span class="line"><span class="string">&lt;/script&gt;</span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在 showLogin 函数里，既要负责打开登录浮层，又要负责数据上报，这是两个层面<br>的功能，在此处却被耦合在一个函数里</p>
+<h5 id="使用AOP-1"><a href="#使用AOP-1" class="headerlink" title="使用AOP"></a>使用AOP</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;button tag=<span class="string">"login"</span> id=<span class="string">"button"</span>&gt;点击打开登录浮层&lt;<span class="regexp">/button&gt;</span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">    Function.prototype.after = function (afterfn) &#123;</span></span><br><span class="line"><span class="regexp">        var __self = this;</span></span><br><span class="line"><span class="regexp">        return function () &#123;</span></span><br><span class="line"><span class="regexp">            var ret = __self.apply(this, arguments);</span></span><br><span class="line"><span class="regexp">            afterfn.apply(this, arguments);</span></span><br><span class="line"><span class="regexp">            return ret;</span></span><br><span class="line"><span class="regexp">        &#125;</span></span><br><span class="line"><span class="regexp">    &#125;;</span></span><br><span class="line"><span class="regexp">    var showLogin = function () &#123;</span></span><br><span class="line"><span class="regexp">        console.log('打开登录浮层');</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp">    var log = function () &#123;</span></span><br><span class="line"><span class="regexp">        console.log('上报标签为: ' + this.getAttribute('tag'));</span></span><br><span class="line"><span class="regexp">    &#125;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">    showLogin = showLogin.after(log); /</span><span class="regexp">/ 打开登录浮层之后上报数据</span></span><br><span class="line"><span class="regexp">    document.getElementById('button').onclick = showLogin;</span></span><br><span class="line"><span class="regexp">&lt;/</span>script&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="动态改变函数的参数"><a href="#动态改变函数的参数" class="headerlink" title="动态改变函数的参数"></a>动态改变函数的参数</h4><p>观察Function.prototype.before 方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Function</span>.prototype.before = <span class="function"><span class="keyword">function</span> (<span class="params">beforefn</span>) </span>&#123;</span><br><span class="line">       <span class="keyword">var</span> __self = <span class="keyword">this</span>;</span><br><span class="line">       <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">           beforefn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>); <span class="comment">// (1)</span></span><br><span class="line">           <span class="keyword">return</span> __self.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>); <span class="comment">// (2)</span></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>从这段代码的(1)处和(2)处可以看到，beforefn 和原函数<code>__self</code> 共用一组参数列表arguments，当我们在beforefn 的函数体内改变arguments 的时候，原函数<code>__self</code> 接收的参数列表自然也会变化。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> func = <span class="function"><span class="keyword">function</span>(<span class="params"> param </span>)</span>&#123;</span><br><span class="line"><span class="built_in">console</span>.log( param ); </span><br><span class="line">&#125;</span><br><span class="line">func = func.before( <span class="function"><span class="keyword">function</span>(<span class="params"> param </span>)</span>&#123;</span><br><span class="line">param.b = <span class="string">'b'</span>;</span><br><span class="line">&#125;);</span><br><span class="line">func( &#123;<span class="attr">a</span>: <span class="string">'a'</span>&#125; );<span class="comment">// 输出： &#123;a: "a", b: "b"&#125;</span></span><br></pre></td></tr></table></figure>
+<p>在ajax请求中增加token</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getToken = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Token'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> ajax = <span class="function"><span class="keyword">function</span> (<span class="params">type, url, param</span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.dir(param);</span><br><span class="line">        <span class="comment">// 发送ajax 请求的代码略</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    ajax = ajax.before(<span class="function"><span class="keyword">function</span> (<span class="params">type, url, param</span>) </span>&#123;</span><br><span class="line">        param.token = getToken();</span><br><span class="line">    &#125;);</span><br><span class="line">    ajax(<span class="string">'get'</span>, <span class="string">'http:// xxx.com/userinfo'</span>, &#123; <span class="attr">name</span>: <span class="string">'sven'</span> &#125;);</span><br><span class="line">    <span class="comment">//&#123; name: "sven", token: "Token" &#125;</span></span><br></pre></td></tr></table></figure>
+<p>从ajax 函数打印的log 可以看到，token 参数已经被附加到了ajax 请求的参数中：<br><code>{name: &quot;sven&quot;, Token: &quot;Token&quot;}</code><br>明显可以看到，用AOP 的方式给ajax 函数动态装饰上Token 参数，<strong>保证了ajax 函数是一</strong><br><strong>个相对纯净的函数，提高了ajax 函数的可复用性，它在被迁往其他项目的时候，不需要做任何</strong><br><strong>修改</strong>。</p>
+<h4 id="插件式的表单验证"><a href="#插件式的表单验证" class="headerlink" title="插件式的表单验证"></a>插件式的表单验证</h4><p>我们很多人都写过许多表单验证的代码，在一个Web 项目中，可能存在非常多的表单，如<br>注册、登录、修改用户信息等。在表单数据提交给后台之前，常常要做一些校验，比如登录的时<br>候需要验证用户名和密码是否为空，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;html&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br><span class="line">    用户名：&lt;input id=<span class="string">"username"</span> type=<span class="string">"text"</span> /&gt;</span><br><span class="line"></span><br><span class="line">    密码： &lt;input id=<span class="string">"password"</span> type=<span class="string">"password"</span> /&gt;</span><br><span class="line">    &lt;input id=<span class="string">"submitBtn"</span> type=<span class="string">"button"</span> value=<span class="string">"提交"</span>&gt;<span class="xml"><span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">&lt;<span class="regexp">/body&gt;</span></span><br><span class="line"><span class="regexp">&lt;script&gt;</span></span><br><span class="line"><span class="regexp">    var username = document.getElementById('username'),</span></span><br><span class="line"><span class="regexp">        password = document.getElementById('password'),</span></span><br><span class="line"><span class="regexp">        submitBtn = document.getElementById('submitBtn');</span></span><br><span class="line"><span class="regexp">    var formSubmit = function () &#123;</span></span><br><span class="line"><span class="regexp">        if (username.value === '') &#123;</span></span><br><span class="line"><span class="regexp">            return alert('用户名不能为空');</span></span><br><span class="line"><span class="regexp">        &#125;</span></span><br><span class="line"><span class="regexp">        if (password.value === '') &#123;</span></span><br><span class="line"><span class="regexp">            return alert('密码不能为空');</span></span><br><span class="line"><span class="regexp">        &#125;</span></span><br><span class="line"><span class="regexp">        var param = &#123;</span></span><br><span class="line"><span class="regexp">            username: username.value,</span></span><br><span class="line"><span class="regexp">            password: password.value</span></span><br><span class="line"><span class="regexp">        &#125;</span></span><br><span class="line"><span class="regexp">        ajax('http:/</span><span class="regexp">/ xxx.com/</span>login<span class="string">', param); // ajax 具体实现略</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    submitBtn.onclick = function () &#123;</span></span><br><span class="line"><span class="string">        formSubmit();</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&lt;/script&gt;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">&lt;/html&gt;</span></span><br></pre></td></tr></table></figure>
+<p>formSubmit 函数在此处承担了两个职责，除了提交ajax 请求之外，还要验证用户输入的合法<br>性。这种代码一来会造成函数臃肿，职责混乱，二来谈不上任何可复用性。</p>
+<p>可以将校验输入的逻辑放到validata<br>函数中，并且约定当validata 函数返回false 的时候，表示校验未通过，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> validata = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (username.value === <span class="string">''</span>) &#123;</span><br><span class="line">            alert(<span class="string">'用户名不能为空'</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (password.value === <span class="string">''</span>) &#123;</span><br><span class="line">            alert(<span class="string">'密码不能为空'</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> formSubmit = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (validata() === <span class="literal">false</span>) &#123; <span class="comment">// 校验未通过</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">var</span> param = &#123;</span><br><span class="line">            username: username.value,</span><br><span class="line">            password: password.value</span><br><span class="line">        &#125;</span><br><span class="line">        ajax(<span class="string">'http:// xxx.com/login'</span>, param);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>现在的代码已经有了一些改进，我们把校验的逻辑都放到了validata 函数中，但formSubmit函数的内部还要计算validata 函数的返回值，因为返回值的结果表明了是否通过校验。<br>接下来进一步优化这段代码，使validata 和formSubmit 完全分离开来。首先要改写Function.prototype.before， 如果beforefn 的执行结果返回false，表示不再执行后面的原函数，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">submitBtn.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">       formSubmit();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="built_in">Function</span>.prototype.before = <span class="function"><span class="keyword">function</span> (<span class="params">beforefn</span>) </span>&#123;</span><br><span class="line">       <span class="keyword">var</span> __self = <span class="keyword">this</span>;</span><br><span class="line">       <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (beforefn.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>) === <span class="literal">false</span>) &#123;</span><br><span class="line">               <span class="comment">// beforefn 返回false 的情况直接return，不再执行后面的原函数</span></span><br><span class="line">               <span class="keyword">return</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">return</span> __self.apply(<span class="keyword">this</span>, <span class="built_in">arguments</span>);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> validata = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (username.value === <span class="string">''</span>) &#123;</span><br><span class="line">           alert(<span class="string">'用户名不能为空'</span>);</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (password.value === <span class="string">''</span>) &#123;</span><br><span class="line">           alert(<span class="string">'密码不能为空'</span>);</span><br><span class="line">           <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">var</span> formSubmit = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">       <span class="keyword">var</span> param = &#123;</span><br><span class="line">           username: username.value,</span><br><span class="line">           password: password.value</span><br><span class="line">       &#125;</span><br><span class="line">       ajax(<span class="string">'http:// xxx.com/login'</span>, param);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   formSubmit = formSubmit.before(validata);</span><br><span class="line"></span><br><span class="line">   submitBtn.onclick = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">       formSubmit();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>在这段代码中，校验输入和提交表单的代码完全分离开来，它们不再有任何耦合关系，<code>formSubmit = formSubmit.before( validata )</code>这句代码，如同把校验规则动态接在formSubmit 函数之前，validata 成为一个即插即用的函数，它甚至可以被写成配置文件的形式，这有利于我们分开维护这两个函数。再利用<strong>策略模式</strong>稍加改造，我们就可以把这些校验规则都写成插件的形式，用在不同的项目当中</p>
+<h2 id="日志记录-C-实现"><a href="#日志记录-C-实现" class="headerlink" title="日志记录(C#实现)"></a>日志记录(C#实现)</h2><p>现在要求我们开发的记录日志的组件，除了要支持数据库记录DatabaseLog和文本文件记录TextFileLog两种方式外，我们还需要在不同的应用环境中增加一些额外的功能，比如需要记录日志信息的错误严重级别，需要记录日志信息的优先级别，还有日志信息的扩展属性等功能。在这里，如果我们不去考虑设计模式，解决问题的方法其实很简单，可以通过继承机制去实现，日志类结构图如下：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508100801.png" alt=""></p>
+<p>实现如下:</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Log</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DatabaseLog</span> : <span class="title">Log</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">       Console.WriteLine(<span class="string">"记录到数据库"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TextFileLog</span> : <span class="title">Log</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"记录到文本"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要记录日志信息的错误严重级别功能和记录日志信息优先级别的功能，只要在原来子类DatabaseLog和TextFileLog的基础上再生成子类即可，同时需要引进两个新的接口IError和IPriority，类结构图如下：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508100946.png" alt=""></p>
+<p>实现代码如下</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IError</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SetError</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IPriority</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SetPriority</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DBErrorLog</span> : <span class="title">DatabaseLog</span>, <span class="title">IError</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.Write(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetError</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"......功能扩展，实现了记录错误严重级别"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DBPriorityLog</span> : <span class="title">DatabaseLog</span>, <span class="title">IPriority</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.Write(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetPriority</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">         Console.WriteLine(<span class="string">"......功能扩展，实现了记录优先级别"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TFErrorLog</span> : <span class="title">TextFileLog</span>, <span class="title">IError</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.Write(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetError</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"......功能扩展，实现了记录错误严重级别"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TFPriorityLog</span> : <span class="title">TextFileLog</span>, <span class="title">IPriority</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.Write(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetPriority</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"......功能扩展，实现了记录优先级别"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时可以看到，如果需要相应的功能，直接使用这些子类就可以了。这里我们采用了类的继承方式来解决了对象功能的扩展问题，这种方式是可以达到我们预期的目的。</p>
+<p>然而，它却带来了一系列的问题:</p>
+<ul>
+<li><p>首先，前面的分析只是进行了一种功能的扩展，如果既需要记录错误严重级别，又需要记录优先级时，子类就需要进行接口的多重继承，这在某些情况下会违反类的单一职责原则，注意下图中的蓝色区域：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508101539.png" alt=""></p>
+</li>
+</ul>
+<p>实现代码：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DBEPLog</span> : <span class="title">DatabaseLog</span>, <span class="title">IError</span>, <span class="title">IPriority</span></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>) </span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        SetError();</span><br><span class="line">SetPriority();</span><br><span class="line">		<span class="keyword">base</span>.Write(log);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetError</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="comment">//......功能扩展，实现了记录错误严重级别</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetPriority</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="comment">//......功能扩展，实现了记录优先级别</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TFEPLog</span> : <span class="title">DatabaseLog</span>, <span class="title">IError</span>, <span class="title">IPriority</span> </span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>) </span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		SetError();</span><br><span class="line">		SetPriority();</span><br><span class="line">		<span class="keyword">base</span>.Write(log);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetError</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="comment">//......功能扩展，实现了记录错误严重级别</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetPriority</span>(<span class="params"></span>) </span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="comment">//......功能扩展，实现了记录优先级别</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>其次，随着以后扩展功能的增多，子类会迅速的膨胀，可以看到，子类的出现其实是DatabaseLog和TextFileLog两个子类与新增加的接口的一种排列组合关系，所以类结构会变得很复杂而难以维护,“子类复子类，子类何其多”</li>
+<li>最后，这种方式的扩展是一种静态的扩展方式，并没有能够真正实现扩展功能的动态添加，客户程序不能选择添加扩展功能的方式和时机。</li>
+</ul>
+<p>现在又该是Decorator模式出场的时候了，解决方案是把Log对象嵌入到另一个对象中，由这个对象来扩展功能。首先我们要定义一个抽象的包装类LogWrapper，让它继承于Log类，结构图如下：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508102016.png" alt=""></p>
+<p>实现代码如下：<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">LogWrapper</span>: <span class="title">Log</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">readonly</span> Log _log;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">LogWrapper</span>(<span class="params">Log log</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            _log = log;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            _log.Write(log);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在对于每个扩展的功能，都增加一个包装类的子类，让它们来实现具体的扩展功能，如下图中绿色的区域：</p>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508102229.png" alt=""></p>
+<p>实现如下</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">LogErrorWrapper</span> : <span class="title">LogWrapper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LogErrorWrapper</span>(<span class="params">Log _log</span>) : <span class="title">base</span>(<span class="params">_log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        SetError(); </span><br><span class="line">        <span class="keyword">base</span>.Write(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetError</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"......功能扩展，实现了记录错误严重级别"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">LogPriorityWrapper</span> : <span class="title">LogWrapper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LogPriorityWrapper</span>(<span class="params">Log log</span>) : <span class="title">base</span>(<span class="params">log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Write</span>(<span class="params"><span class="keyword">string</span> log</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        SetPriority();</span><br><span class="line">        <span class="keyword">base</span>.Write(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetPriority</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"......功能扩展,实现了记录优先级别"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这里，LogErrorWrapper类和LogPriorityWrapper类真正实现了对错误严重级别和优先级别的功能的扩展。我们来看一下客户程序如何去调用它：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Log dbLog = <span class="keyword">new</span> DatabaseLog();</span><br><span class="line">        LogWrapper logErrorWrapper1 = <span class="keyword">new</span> LogErrorWrapper(dbLog);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//扩展了记录错误严重级别</span></span><br><span class="line">        logErrorWrapper1.Write(<span class="string">"Log Message"</span>);</span><br><span class="line">        Console.WriteLine();</span><br><span class="line"></span><br><span class="line">        LogPriorityWrapper logPriorityWrapper1 = <span class="keyword">new</span> LogPriorityWrapper(dbLog);</span><br><span class="line">        <span class="comment">//扩展了记录优先级别</span></span><br><span class="line">        logPriorityWrapper1.Write(<span class="string">"Log Message"</span>);</span><br><span class="line">        Console.WriteLine();</span><br><span class="line"></span><br><span class="line">        LogWrapper logErrorWrapper2 = <span class="keyword">new</span> LogErrorWrapper(dbLog);</span><br><span class="line">        LogPriorityWrapper logPriorityWrapper2 = <span class="keyword">new</span> LogPriorityWrapper(logErrorWrapper2);</span><br><span class="line">        <span class="comment">//同时扩展了错误严重级别和优先级别</span></span><br><span class="line">        logPriorityWrapper2.Write(<span class="string">"Log Message"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508144226.png" alt=""></p>
+<p>注意在上面程序中的第三段装饰才真正体现出了Decorator模式的精妙所在，这里总共包装了两次：第一次对log对象进行错误严重级别的装饰，变成了logErrorWrapper2对象，第二次再对logErrorWrapper2对象进行装饰，于是变成了logPriorityWrapper2对象，此时的logPriorityWrapper2对象同时扩展了错误严重级别和优先级别的功能。也就是说我们需要哪些功能，就可以这样继续包装下去。到这里也许有人会说LogPriorityWrapper类的构造函数接收的是一个Log对象，为什么这里可以传入LogErrorWrapper对象呢？通过类结构图就能发现，LogErrorWrapper类其实也是Log类的一个子类。</p>
+<p>我们分析一下这样会带来什么好处？首先对于扩展功能已经实现了真正的动态增加，只在需要某种功能的时候才进行包装；其次，如果再出现一种新的扩展功能，只需要增加一个对应的包装子类（注意：这一点任何时候都是避免不了的），而无需再进行很多子类的继承，不会出现子类的膨胀，同时Decorator模式也很好的符合了面向对象设计原则中的“优先使用对象组合而非继承”和“开放-封闭”原则。</p>
+<h2 id="NET中的Stream-C-实现"><a href="#NET中的Stream-C-实现" class="headerlink" title=".NET中的Stream(C#实现)"></a>.NET中的Stream(C#实现)</h2><p><img src="https://raw.githubusercontent.com/JayChenFE/pic/master/20190508104815.png" alt=""></p>
+<p>可以看到， BufferedStream和CryptoStream其实就是两个包装类，这里的Decorator模式省略了抽象装饰角色（Decorator），示例代码如下：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">            MemoryStream ms = <span class="keyword">new</span> MemoryStream(<span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; <span class="number">100</span>, <span class="number">112</span>, <span class="number">114</span>, <span class="number">222</span>, <span class="number">255</span> &#125;);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//扩展了缓冲的功能</span></span><br><span class="line">            BufferedStream buff = <span class="keyword">new</span> BufferedStream(ms);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//扩展了缓冲，加密的功能</span></span><br><span class="line">            CryptoStream crypto = <span class="keyword">new</span> CryptoStream(buff, <span class="literal">null</span>, CryptoStreamMode.Write);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中BufferedStream类的代码（只列出部分），它是继承于Stream类：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">BufferedStream</span> : <span class="title">Stream</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Methods</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">BufferedStream</span>(<span class="params"></span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BufferedStream</span>(<span class="params">Stream stream</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BufferedStream</span>(<span class="params">Stream stream, <span class="keyword">int</span> bufferSize</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Fields</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> _bufferSize;</span><br><span class="line">    <span class="keyword">private</span> Stream _s;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>java中也是如此,java IO中的 FilterInputStream 和 FilterOutputStream的实现其实就是一个装饰模式。FilterInputStream(FilterOutputStream) 就是一个装饰器，而 InputStream(OutputStream) 就是被装饰的对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">DataInputStream dataInputStream = <span class="keyword">new</span> DataInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"C:/text.txt"</span>));</span><br><span class="line">DataOutputStream dataOutputStream = <span class="keyword">new</span> DataOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">"C:/text.txt"</span>));</span><br></pre></td></tr></table></figure>
+<h1 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h1><p><strong>装饰模式的优点：</strong></p>
+<ul>
+<li><p>使用装饰模式来实现扩展比继承更加灵活，它可以在不需要创造更多子类的情况下，将对象的功能加以扩展。</p>
+</li>
+<li><p>可以动态地给一个对象附加更多的功能。</p>
+</li>
+<li><p>可以用不同的装饰器进行多重装饰，装饰的顺序不同，可能产生不同的效果。</p>
+</li>
+<li><p>装饰类和被装饰类可以独立发展，不会相互耦合；装饰模式相当于是继承的一个替代模式。</p>
+</li>
+</ul>
+<p><strong>装饰模式的缺点：</strong></p>
+<ul>
+<li>与继承相比，用装饰的方式拓展功能更加容易出错，排错也更困难。对于多次装饰的对象，调试时寻找错误可能需要逐级排查，较为烦琐。</li>
+</ul>
+<h1 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h1><ul>
+<li><p>有大量独立的扩展，为支持每一种组合将产生大量的子类，使得子类数目呈爆炸性增长。</p>
+</li>
+<li><p>需要动态地增加或撤销功能时。</p>
+</li>
+<li><p>不能采用生成子类的方法进行扩充时，如类定义不能用于生成子类。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/02/职责链模式/" rel="next" title="职责链模式">
+                <i class="fa fa-chevron-left"></i> 职责链模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/09/策略模式/" rel="prev" title="策略模式">
+                策略模式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+  <div id="gitalk-container"></div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://raw.githubusercontent.com/JayChenFE/pic/master/20181021115217.png" alt="习习">
+            
+              <p class="site-author-name" itemprop="name">习习</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">31</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/JayChenFE" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结构图"><span class="nav-text">结构图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例"><span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#穿衣服-python实现"><span class="nav-text">穿衣服(python实现)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰关系VS继承关系"><span class="nav-text">装饰关系VS继承关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#装饰模式的特点"><span class="nav-text">装饰模式的特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模型抽象"><span class="nav-text">模型抽象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Js中的装饰模式-Js实现"><span class="nav-text">Js中的装饰模式(Js实现)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用-AOP-装饰函数"><span class="nav-text">用 AOP 装饰函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#给-window-绑定-onload-事件"><span class="nav-text">给 window 绑定 onload 事件</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#不使用AOP"><span class="nav-text">不使用AOP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用AOP"><span class="nav-text">使用AOP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#不污染原型"><span class="nav-text">不污染原型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP-的应用实例"><span class="nav-text">AOP 的应用实例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据统计上报"><span class="nav-text">数据统计上报</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#不使用AOP-1"><span class="nav-text">不使用AOP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用AOP-1"><span class="nav-text">使用AOP</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态改变函数的参数"><span class="nav-text">动态改变函数的参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插件式的表单验证"><span class="nav-text">插件式的表单验证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#日志记录-C-实现"><span class="nav-text">日志记录(C#实现)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NET中的Stream-C-实现"><span class="nav-text">.NET中的Stream(C#实现)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#优缺点"><span class="nav-text">优缺点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#应用场景"><span class="nav-text">应用场景</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">习习</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'e70707e486d30a2cde6d',
+          clientSecret: '45fc186ef6a49401f73f9cff3397594b52b43637',
+          repo: 'pic',
+          owner: 'JayChenFE',
+          admin: ['JayChenFE'],
+          id: md5(window.location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+<script type="text/javascript" src="/js/src/clipboard.min.js"></script>  
+<script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+</body>
+</html>
