@@ -1,11 +1,12 @@
 language: node_js
-node_js: 
-    - '6'
+env:
+  - TRAVIS_NODE_VERSION="10.9.0"
 
 # S: Build Lifecycle
 install:
+  - nvm install TRAVIS_NODE_VERSION
+  - nvm alias default TRAVIS_NODE_VERSION
   - npm install
-
 
 #before_script:
  # - npm install -g gulp
